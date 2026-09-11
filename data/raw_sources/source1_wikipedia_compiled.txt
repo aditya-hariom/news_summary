@@ -1,0 +1,16 @@
+SOURCE: Wikipedia (compiled from multiple wire reports)
+DATE RANGE: Late July - Early August 2026
+EVENT: 2026 Assam Floods
+TYPE: Aggregated/compiled reference source
+
+KEY CLAIMS:
+- The Hindu (26 July 2026): Flood toll reported at 66.
+- Times of India (26 July 2026): Flood toll reported at 66 (matches The Hindu on same date).
+- Times of India (2 Aug 2026): Death toll climbed to 82; 1.78 lakh people affected.
+- As of 8 August 2026: Total flood-related death toll reported at 98. Around 155,000 people affected, Golaghat worst-hit district. 10,748 hectares of cropland submerged.
+- As of 4 August 2026: 85 people reported dead, more than 1 lakh (100,000) people still affected.
+- In Sivasagar district: 48 fatalities reported, of which 29 attributed to Nazira flood incidents; separately, 29 people reported swept away in Charaideo.
+- A local news source reported that around 481 villages were completely submerged.
+- Chief Minister Himanta Biswa Sarma stated the government would conduct door-to-door digital damage assessments by 9 August.
+
+NOTE (from Wikipedia's own editorial note): "While many sources report the toll..." — the page itself flags that different reports counted deaths using different methods (some counted the full monsoon season total, others counted only confirmed 2026 flood deaths, others focused on a single deadly 24-hour period).

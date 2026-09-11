@@ -1,0 +1,16 @@
+SOURCE: MapsOfIndia (news explainer/FAQ style outlet)
+DATE: 2026 (undated within article, general overview page)
+EVENT: 2026 Assam Floods
+TYPE: Explainer/aggregator, cites "official" figures
+
+KEY CLAIMS:
+- "The official death toll in Assam floods has swelled to 47."
+- More than 7.2 lakh (720,000) people have been affected by the floods.
+- Brahmaputra River and its tributaries crossed danger levels at several locations.
+- Relief carried out by Assam government, NDRF, SDRF, Indian Army, local authorities, and volunteer organizations.
+- Describes floods as among the worst in recent years for the state.
+
+ATTRIBUTION: Labelled as "official" figure, but does not name a specific ministry/department spokesperson.
+
+*** CONTRADICTION FLAG ***
+This source's "7.2 lakh affected" figure is dramatically higher than Source 1's "155,000 affected" (8 Aug) and Source 1's "1 lakh affected" (4 Aug) figures — even though all are nominally about the same event. This is exactly the kind of same-fact-slot numeric contradiction your clustering + stance model should catch.

@@ -1,0 +1,14 @@
+SOURCE: The United Indian (digital news/blog outlet)
+DATE: 23 July 2026
+EVENT: 2026 Assam Floods
+TYPE: Regional digital outlet, cites ground reports
+
+KEY CLAIMS:
+- Times of India reported the overall monsoon-season death toll had crossed 50 by 22 July 2026.
+- Ground reports described unusually rapid flooding across inland parts of Sivasagar, Charaideo, and Jorhat districts.
+- Article explicitly notes discrepancy in counting method: "One report counted deaths across the full monsoon season. Another counted confirmed flood deaths during 2026, while earlier updates focused on one particularly deadly 24-hour period."
+- States that whole villages in Upper Assam went underwater within hours; roads became impassable, rescue teams struggled to reach some settlements even by boat.
+- Notes the death toll may change again as rescue teams verify reports from previously inaccessible villages.
+
+ATTRIBUTION: Mix of Times of India wire copy + own ground-report framing
+NOTE: This source itself acknowledges the cross-source counting-method contradiction — useful as a meta-example for your project.

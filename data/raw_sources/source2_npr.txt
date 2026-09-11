@@ -1,0 +1,12 @@
+SOURCE: NPR (National Public Radio, US wire report from Guwahati)
+DATE: 10 August 2026
+EVENT: 2026 Assam Floods
+TYPE: International wire/foreign correspondent report
+
+KEY CLAIMS:
+- Flood death toll reached 100 as of Monday, 10 August 2026, after two more deaths overnight, according to officials.
+- The Assam State Disaster Management Authority stated several rivers remained above danger levels, raising risk of fresh flooding.
+- Days of heavy monsoon rain caused rivers, including the Brahmaputra, to overflow, inundating communities and damaging infrastructure.
+- Thousands of people have lost their homes.
+
+ATTRIBUTION: Officials / Assam State Disaster Management Authority (government source)
