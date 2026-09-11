@@ -70,11 +70,14 @@ def render_markdown(confirmed, disputed, unconfirmed) -> str:
             if pair_key in seen_edges:
                 continue
             seen_edges.add(pair_key)
+            conf_str = f" [Confidence: {e.get('confidence', 0.85):.0%}]" if e.get("confidence") else ""
+            reasoning_str = f"\n  - *AI Verification Reasoning*: {e['reasoning']}" if e.get("reasoning") else ""
             lines.append(
-                f"- **DISAGREEMENT DETECTED**:\n"
+                f"- **DISAGREEMENT DETECTED**{conf_str}:\n"
                 f"  - **[{e['source_a']}]**: \"{e['claim_a']}\"\n"
                 f"  - *versus*\n"
                 f"  - **[{e['source_b']}]**: \"{e['claim_b']}\""
+                f"{reasoning_str}"
             )
         lines.append("")
 

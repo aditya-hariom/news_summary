@@ -33,30 +33,69 @@ client = Groq(api_key=api_key)
 
 MODEL_NAME = "qwen/qwen3.8-27b"
 
-EXTRACTION_PROMPT = """You are a factual claim extraction system for a news-analysis pipeline.
+EXTRACTION_PROMPT = """You are an advanced factual claim extraction engine for news analysis across any domain (disasters, accidents, finance, elections, conflicts, health).
 
 Read the source document below and extract every ATOMIC FACTUAL CLAIM it contains.
-An atomic claim is a single, self-contained factual statement (usually about a number,
-an event, a status, damage, casualties, or an attributed statement) that could be TRUE or FALSE independently
-of other claims in the text.
+An atomic claim is a single, self-contained factual statement (specifically concerning counts, metrics, events, status, damage, casualties, or official statements) that can be verified independently.
 
 Rules:
-- Break compound sentences into separate atomic claims.
-- Preserve any attribution (who stated it: "officials", "Times of India", "Chief Minister", "ASDMA", etc., or null if unattributed).
-- Preserve any date mentioned for the claim (e.g. "26 July", "2 August", "10 August", or null if not stated).
-- Do NOT include opinions, speculative commentary, or editorial background — only checkable factual claims.
-- Output ONLY valid JSON containing a top-level list named "claims".
+1. Break compound sentences into separate, self-contained atomic claims.
+2. For any claim containing a quantitative metric, extract the normalized numerical_value (convert '1.78 lakh' -> 178000, '7.2 lakh' -> 720000, '5 million' -> 5000000, '47' -> 47).
+3. Assign a concise 'topic' category (e.g., 'casualties', 'affected_population', 'damage', 'financial', 'rescue', 'status', 'statement').
+4. Preserve explicit dates mentioned for the claim, or null.
+5. Preserve attribution (who stated it: e.g. 'Times of India', 'officials', 'police', 'CEO', or null).
+6. Output ONLY valid JSON with a top-level list named "claims".
 
-Output JSON format:
+Few-Shot Examples:
+Example A (Disaster / Incident):
+Source: "On 2 August, Times of India reported that 1.78 lakh people were affected across 15 districts, with 82 dead."
+Output:
 {{
   "claims": [
     {{
-      "claim": "short atomic factual statement",
-      "attribution": "who stated it, or null",
-      "date": "date if mentioned, or null"
+      "claim": "1.78 lakh people were affected across 15 districts.",
+      "topic": "affected_population",
+      "numerical_value": 178000,
+      "numerical_unit": "people",
+      "date": "2 August 2026",
+      "attribution": "Times of India"
+    }},
+    {{
+      "claim": "The death toll climbed to 82.",
+      "topic": "casualties",
+      "numerical_value": 82,
+      "numerical_unit": "deaths",
+      "date": "2 August 2026",
+      "attribution": "Times of India"
     }}
   ]
 }}
+
+Example B (Business / General News):
+Source: "On Monday, TechCorp announced 1,200 layoffs, though union leaders claim over 3,000 workers were terminated."
+Output:
+{{
+  "claims": [
+    {{
+      "claim": "TechCorp announced 1,200 layoffs.",
+      "topic": "layoffs",
+      "numerical_value": 1200,
+      "numerical_unit": "employees",
+      "date": "Monday",
+      "attribution": "TechCorp"
+    }},
+    {{
+      "claim": "Union leaders claim over 3,000 workers were terminated.",
+      "topic": "layoffs",
+      "numerical_value": 3000,
+      "numerical_unit": "employees",
+      "date": "Monday",
+      "attribution": "union leaders"
+    }}
+  ]
+}}
+
+Now extract all atomic claims from this document:
 
 SOURCE DOCUMENT:
 {document_text}
@@ -133,9 +172,14 @@ def extract_claims_from_file(filepath: str, max_retries: int = 3) -> list:
             if not claims:
                 raise ValueError("Parsed claims list is empty.")
 
-            # Attach source_file to each claim
+            # Attach source_file and normalize schema fields
             for c in claims:
                 c["source_file"] = source_name
+                c["topic"] = c.get("topic", "general")
+                c["numerical_value"] = c.get("numerical_value", None)
+                c["numerical_unit"] = c.get("numerical_unit", None)
+                c["attribution"] = c.get("attribution", None)
+                c["date"] = c.get("date", None)
 
             return claims
 

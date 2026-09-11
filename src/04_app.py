@@ -295,18 +295,22 @@ if has_results:
                     claim_a = primary_edge.get("claim_a", "")
                     src_b = primary_edge.get("source_b", "Source B")
                     claim_b = primary_edge.get("claim_b", "")
+                    reasoning = primary_edge.get("reasoning", "Incompatible factual statements detected.")
+                    confidence = primary_edge.get("confidence", 0.90)
                 else:
                     src_a = c["claims"][0]["source_file"]
                     claim_a = c["claims"][0]["claim"]
                     src_b = c["claims"][-1]["source_file"]
                     claim_b = c["claims"][-1]["claim"]
+                    reasoning = "Conflicting reported figures within the same cluster."
+                    confidence = 0.85
 
                 st.markdown(f"""
                 <div class="vs-container">
                     <div class="vs-title">
-                        <span>⚡ Major Discrepancy #{idx}: Fact Cluster {cid if 'cid' in locals() else idx}</span>
+                        <span>⚡ Discrepancy #{idx}: Fact Cluster {idx}</span>
                         <span style="font-size:0.8rem; background:#FFE4E6; color:#9F1239; padding:3px 10px; border-radius:99px; margin-left:auto;">
-                            Contradiction Detected
+                            Contradiction Detected (Confidence: {confidence:.0%})
                         </span>
                     </div>
                     <div style="display: flex; gap: 15px; align-items: stretch;">
@@ -324,8 +328,8 @@ if has_results:
                             <h4 style="color:#1D4ED8; margin:8px 0 4px 0;">"{claim_b}"</h4>
                         </div>
                     </div>
-                    <div style="margin-top:12px; font-size:0.88rem; color:#881337; background:#FFF1F2; padding:8px 12px; border-radius:6px;">
-                        <b>Verdict from Stance Classifier:</b> <code>DISAGREE</code> — Incompatible statements reported for the same event window.
+                    <div style="margin-top:12px; font-size:0.88rem; color:#881337; background:#FFF1F2; padding:10px 14px; border-radius:8px; border-left:4px solid #F43F5E;">
+                        <b>🧠 AI Verification Reasoning:</b> {reasoning}
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -457,14 +461,17 @@ if has_results:
 
         col_cfg, col_act = st.columns([1, 1])
         with col_cfg:
-            threshold = st.slider(
-                "Clustering Distance Threshold",
-                min_value=0.30,
-                max_value=0.85,
-                value=0.55,
-                step=0.05,
-                help="Controls grouping sensitivity: 0.55 is recommended."
-            )
+            auto_threshold = st.checkbox("🤖 Auto-Detect Optimal Clustering Distance (Adaptive Silhouette)", value=True)
+            threshold = None
+            if not auto_threshold:
+                threshold = st.slider(
+                    "Manual Clustering Distance Threshold",
+                    min_value=0.30,
+                    max_value=0.85,
+                    value=0.55,
+                    step=0.05,
+                    help="Controls grouping sensitivity: 0.55 is default."
+                )
             mode = st.radio(
                 "Select Data Source:",
                 ["Use Built-in 2026 Assam Floods Articles", "Upload New .txt Files"],

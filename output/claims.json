@@ -1,230 +1,308 @@
 [
   {
     "claim": "The flood toll was reported at 66.",
-    "attribution": "The Hindu",
+    "topic": "casualties",
+    "numerical_value": 66,
+    "numerical_unit": "deaths",
     "date": "26 July 2026",
+    "attribution": "The Hindu",
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "The flood toll was reported at 66.",
-    "attribution": "Times of India",
+    "topic": "casualties",
+    "numerical_value": 66,
+    "numerical_unit": "deaths",
     "date": "26 July 2026",
+    "attribution": "Times of India",
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "The death toll climbed to 82.",
+    "topic": "casualties",
+    "numerical_value": 82,
+    "numerical_unit": "deaths",
+    "date": "2 August 2026",
     "attribution": "Times of India",
-    "date": "2 Aug 2026",
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "1.78 lakh people were affected.",
+    "topic": "affected_population",
+    "numerical_value": 178000,
+    "numerical_unit": "people",
+    "date": "2 August 2026",
     "attribution": "Times of India",
-    "date": "2 Aug 2026",
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "The total flood-related death toll was reported at 98.",
-    "attribution": null,
+    "topic": "casualties",
+    "numerical_value": 98,
+    "numerical_unit": "deaths",
     "date": "8 August 2026",
+    "attribution": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "Around 155,000 people were affected.",
-    "attribution": null,
+    "topic": "affected_population",
+    "numerical_value": 155000,
+    "numerical_unit": "people",
     "date": "8 August 2026",
+    "attribution": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "Golaghat was the worst-hit district.",
-    "attribution": null,
+    "topic": "status",
+    "numerical_value": null,
+    "numerical_unit": null,
     "date": "8 August 2026",
+    "attribution": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "10,748 hectares of cropland were submerged.",
-    "attribution": null,
+    "topic": "damage",
+    "numerical_value": 10748,
+    "numerical_unit": "hectares",
     "date": "8 August 2026",
+    "attribution": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "85 people were reported dead.",
-    "attribution": null,
+    "topic": "casualties",
+    "numerical_value": 85,
+    "numerical_unit": "deaths",
     "date": "4 August 2026",
+    "attribution": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
-    "claim": "More than 1 lakh (100,000) people were still affected.",
-    "attribution": null,
+    "claim": "More than 100,000 people were still affected.",
+    "topic": "affected_population",
+    "numerical_value": 100000,
+    "numerical_unit": "people",
     "date": "4 August 2026",
+    "attribution": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "48 fatalities were reported in Sivasagar district.",
-    "attribution": null,
+    "topic": "casualties",
+    "numerical_value": 48,
+    "numerical_unit": "deaths",
     "date": null,
+    "attribution": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "29 fatalities in Sivasagar district were attributed to Nazira flood incidents.",
-    "attribution": null,
+    "topic": "casualties",
+    "numerical_value": 29,
+    "numerical_unit": "deaths",
     "date": null,
+    "attribution": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "29 people were reported swept away in Charaideo.",
-    "attribution": null,
+    "topic": "casualties",
+    "numerical_value": 29,
+    "numerical_unit": "people",
     "date": null,
+    "attribution": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "Around 481 villages were completely submerged.",
-    "attribution": "A local news source",
+    "topic": "damage",
+    "numerical_value": 481,
+    "numerical_unit": "villages",
     "date": null,
+    "attribution": "local news source",
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "The government would conduct door-to-door digital damage assessments by 9 August.",
+    "topic": "statement",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "9 August 2026",
     "attribution": "Chief Minister Himanta Biswa Sarma",
-    "date": null,
     "source_file": "source1_wikipedia_compiled"
   },
   {
     "claim": "The flood death toll reached 100.",
-    "attribution": "officials",
+    "topic": "casualties",
+    "numerical_value": 100,
+    "numerical_unit": "deaths",
     "date": "10 August 2026",
+    "attribution": "officials",
     "source_file": "source2_npr"
   },
   {
     "claim": "Two more deaths occurred overnight.",
-    "attribution": "officials",
+    "topic": "casualties",
+    "numerical_value": 2,
+    "numerical_unit": "deaths",
     "date": "10 August 2026",
+    "attribution": "officials",
     "source_file": "source2_npr"
   },
   {
     "claim": "Several rivers remained above danger levels.",
+    "topic": "status",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "10 August 2026",
     "attribution": "Assam State Disaster Management Authority",
-    "date": null,
     "source_file": "source2_npr"
   },
   {
     "claim": "The risk of fresh flooding was raised.",
+    "topic": "status",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "10 August 2026",
     "attribution": "Assam State Disaster Management Authority",
-    "date": null,
     "source_file": "source2_npr"
   },
   {
-    "claim": "Days of heavy monsoon rain caused rivers to overflow.",
-    "attribution": null,
+    "claim": "Days of heavy monsoon rain caused rivers, including the Brahmaputra, to overflow.",
+    "topic": "event",
+    "numerical_value": null,
+    "numerical_unit": null,
     "date": null,
-    "source_file": "source2_npr"
-  },
-  {
-    "claim": "The Brahmaputra river overflowed.",
     "attribution": null,
-    "date": null,
     "source_file": "source2_npr"
   },
   {
     "claim": "Communities were inundated.",
-    "attribution": null,
+    "topic": "affected_population",
+    "numerical_value": null,
+    "numerical_unit": null,
     "date": null,
+    "attribution": null,
     "source_file": "source2_npr"
   },
   {
     "claim": "Infrastructure was damaged.",
-    "attribution": null,
+    "topic": "damage",
+    "numerical_value": null,
+    "numerical_unit": null,
     "date": null,
+    "attribution": null,
     "source_file": "source2_npr"
   },
   {
     "claim": "Thousands of people have lost their homes.",
-    "attribution": null,
+    "topic": "affected_population",
+    "numerical_value": null,
+    "numerical_unit": "people",
     "date": null,
+    "attribution": null,
     "source_file": "source2_npr"
   },
   {
     "claim": "The overall monsoon-season death toll had crossed 50 by 22 July 2026.",
-    "attribution": "Times of India",
+    "topic": "casualties",
+    "numerical_value": 50,
+    "numerical_unit": "deaths",
     "date": "22 July 2026",
+    "attribution": "Times of India",
     "source_file": "source3_theunitedindian"
   },
   {
     "claim": "Unusually rapid flooding occurred across inland parts of Sivasagar, Charaideo, and Jorhat districts.",
+    "topic": "status",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "23 July 2026",
     "attribution": "Ground reports",
-    "date": null,
-    "source_file": "source3_theunitedindian"
-  },
-  {
-    "claim": "One report counted deaths across the full monsoon season.",
-    "attribution": "The United Indian",
-    "date": null,
-    "source_file": "source3_theunitedindian"
-  },
-  {
-    "claim": "Another report counted confirmed flood deaths during 2026.",
-    "attribution": "The United Indian",
-    "date": null,
-    "source_file": "source3_theunitedindian"
-  },
-  {
-    "claim": "Earlier updates focused on one particularly deadly 24-hour period.",
-    "attribution": "The United Indian",
-    "date": null,
     "source_file": "source3_theunitedindian"
   },
   {
     "claim": "Whole villages in Upper Assam went underwater within hours.",
+    "topic": "damage",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "23 July 2026",
     "attribution": "The United Indian",
-    "date": null,
     "source_file": "source3_theunitedindian"
   },
   {
-    "claim": "Roads became impassable.",
+    "claim": "Roads became impassable due to the flooding.",
+    "topic": "damage",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "23 July 2026",
     "attribution": "The United Indian",
-    "date": null,
     "source_file": "source3_theunitedindian"
   },
   {
     "claim": "Rescue teams struggled to reach some settlements even by boat.",
+    "topic": "rescue",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "23 July 2026",
     "attribution": "The United Indian",
-    "date": null,
     "source_file": "source3_theunitedindian"
   },
   {
     "claim": "The death toll may change again as rescue teams verify reports from previously inaccessible villages.",
+    "topic": "status",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "23 July 2026",
     "attribution": "The United Indian",
-    "date": null,
     "source_file": "source3_theunitedindian"
   },
   {
-    "claim": "The official death toll in the Assam floods is 47.",
+    "claim": "The official death toll in Assam floods has swelled to 47.",
+    "topic": "casualties",
+    "numerical_value": 47,
+    "numerical_unit": "deaths",
+    "date": null,
     "attribution": "official",
-    "date": null,
     "source_file": "source4_mapsofindia"
   },
   {
-    "claim": "More than 7.2 lakh (720,000) people have been affected by the Assam floods.",
+    "claim": "More than 7.2 lakh people have been affected by the floods.",
+    "topic": "affected_population",
+    "numerical_value": 720000,
+    "numerical_unit": "people",
+    "date": null,
     "attribution": "official",
-    "date": null,
     "source_file": "source4_mapsofindia"
   },
   {
-    "claim": "The Brahmaputra River and its tributaries crossed danger levels at several locations.",
-    "attribution": null,
+    "claim": "Brahmaputra River and its tributaries crossed danger levels at several locations.",
+    "topic": "status",
+    "numerical_value": null,
+    "numerical_unit": null,
     "date": null,
+    "attribution": null,
     "source_file": "source4_mapsofindia"
   },
   {
-    "claim": "Relief operations in the Assam floods were carried out by the Assam government, NDRF, SDRF, Indian Army, local authorities, and volunteer organizations.",
-    "attribution": null,
+    "claim": "Relief was carried out by Assam government, NDRF, SDRF, Indian Army, local authorities, and volunteer organizations.",
+    "topic": "rescue",
+    "numerical_value": null,
+    "numerical_unit": null,
     "date": null,
+    "attribution": null,
     "source_file": "source4_mapsofindia"
   },
   {
-    "claim": "The 2026 Assam floods are among the worst in recent years for the state.",
-    "attribution": null,
+    "claim": "The floods are described as among the worst in recent years for the state.",
+    "topic": "status",
+    "numerical_value": null,
+    "numerical_unit": null,
     "date": null,
+    "attribution": "MapsOfIndia",
     "source_file": "source4_mapsofindia"
   }
 ]
