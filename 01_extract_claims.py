@@ -148,10 +148,13 @@ def extract_claims_from_file(filepath: str, max_retries: int = 3) -> list:
                 raise
 
 
-def main():
-    input_files = sorted(glob.glob("data/raw_sources/source*.txt"))
+def main(input_files=None):
+    if input_files is None:
+        all_candidates = sorted(glob.glob("data/raw_sources/*.txt"))
+        input_files = [f for f in all_candidates if not os.path.basename(f).startswith("README")]
+
     if not input_files:
-        raise FileNotFoundError("No source files found in data/raw_sources/ matching 'source*.txt'")
+        raise FileNotFoundError("No source files found in data/raw_sources/ to process.")
 
     print(f"Found {len(input_files)} source files to process.")
     all_claims = []

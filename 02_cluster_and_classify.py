@@ -38,11 +38,11 @@ embedder = SentenceTransformer("all-MiniLM-L6-v2")
 MODEL_NAME = "qwen/qwen3.8-27b"
 
 STANCE_PROMPT = """You are a stance classifier following the FNC-1 (Fake News Challenge) task definition.
-Given two factual claims about the 2026 Assam Floods, classify the relationship between Claim B and Claim A as exactly one of:
+Given two factual claims about the same news event or situation, classify the relationship between Claim B and Claim A as exactly one of:
 
 - "agree": Claim B confirms, supports, or is substantively consistent with Claim A (same facts, same impacts, or corroborating status).
-- "disagree": Claim B contradicts Claim A (conflicting casualty figures for the same event, conflicting people affected counts e.g. 1.78L vs 7.2L, or contradictory official totals e.g. 47 vs 82/100).
-- "discuss": Claim B is about the same topic but neither confirms nor contradicts directly. CRITICAL: If Claim A and Claim B report death tolls from DIFFERENT DATES showing numbers increasing chronologically over time (e.g. 66 on 26 July vs 100 on 10 August), this is temporal progression, NOT a contradiction. Classify as "discuss".
+- "disagree": Claim B contradicts Claim A (conflicting casualty figures for the same event, conflicting people affected counts, or contradictory official totals).
+- "discuss": Claim B is about the same topic but neither confirms nor contradicts directly. CRITICAL: If Claim A and Claim B report statistics from DIFFERENT DATES showing numbers increasing chronologically over time, this is temporal progression, NOT a contradiction. Classify as "discuss".
 - "unrelated": Claim B is about a completely different fact or detail than Claim A.
 
 Claim A (from {source_a}, date: {date_a}): "{claim_a}"

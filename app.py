@@ -279,83 +279,65 @@ if has_results:
     # ================= TAB 1: SHOWCASE KEY CONTRADICTIONS =================
     with tab_showcase:
         st.markdown("### 🚨 Detected Contradictions (Aamne-Saamne Comparison)")
-        st.info("Here are the direct factual contradictions discovered across the 4 news sources. Notice how conflicting figures are placed side-by-side with exact outlet names.")
+        st.info("Here are the direct factual contradictions discovered across the news sources. Notice how conflicting statements and figures are placed side-by-side with exact outlet names.")
 
-        # Major Dispute #1: People Affected
-        st.markdown("""
-        <div class="vs-container">
-            <div class="vs-title">
-                <span>⚡ Major Discrepancy #1: Number of People Affected</span>
-                <span style="font-size:0.8rem; background:#FFE4E6; color:#9F1239; padding:3px 10px; border-radius:99px; margin-left:auto;">4x Difference Detected</span>
-            </div>
-            <div style="display: flex; gap: 15px; align-items: stretch;">
-                <div style="flex: 5;" class="source-card source-card-a">
-                    <span style="background:#FCA5A5; color:#7F1D1D; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
-                        Outlier Source: MapsOfIndia
-                    </span>
-                    <h3 style="color:#991B1B; margin:8px 0 4px 0;">7.2 Lakh (720,000) People</h3>
-                    <p style="margin:0; font-size:0.9rem; color:#4B5563;">
-                        <b>Quote:</b> <i>"More than 7.2 lakh people have been affected by the Assam floods across multiple districts."</i>
-                    </p>
-                </div>
-                <div style="flex: 1;" class="vs-badge-center">VS</div>
-                <div style="flex: 5;" class="source-card source-card-b">
-                    <span style="background:#93C5FD; color:#1E3A8A; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
-                        Official / Compiled: Times of India & Wikipedia
-                    </span>
-                    <h3 style="color:#1D4ED8; margin:8px 0 4px 0;">1.78 Lakh (178,000) People</h3>
-                    <p style="margin:0; font-size:0.9rem; color:#4B5563;">
-                        <b>Quote:</b> <i>"1.78 lakh people were affected across 15 districts (later easing to 1.55 lakh)."</i>
-                    </p>
-                </div>
-            </div>
-            <div style="margin-top:12px; font-size:0.9rem; color:#881337; background:#FFF1F2; padding:8px 12px; border-radius:6px;">
-                <b>Verdict from Stance Classifier:</b> <code>DISAGREE</code> — Same time period, but MapsOfIndia exaggerated figures by over 400%.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        if not disputed_list:
+            st.success("🎉 **No factual contradictions detected!** All analyzed sources agree or report complementary, non-conflicting facts.")
+        else:
+            for idx, c in enumerate(disputed_list, 1):
+                sources = sorted(set(m["source_file"] for m in c["claims"]))
+                disagree_edges = [e for e in c.get("edges", []) if e.get("stance") == "disagree"]
+                
+                # Pick the primary disagreement pair if available
+                if disagree_edges:
+                    primary_edge = disagree_edges[0]
+                    src_a = primary_edge.get("source_a", "Source A")
+                    claim_a = primary_edge.get("claim_a", "")
+                    src_b = primary_edge.get("source_b", "Source B")
+                    claim_b = primary_edge.get("claim_b", "")
+                else:
+                    src_a = c["claims"][0]["source_file"]
+                    claim_a = c["claims"][0]["claim"]
+                    src_b = c["claims"][-1]["source_file"]
+                    claim_b = c["claims"][-1]["claim"]
 
-        # Major Dispute #2: Death Toll
-        st.markdown("""
-        <div class="vs-container">
-            <div class="vs-title">
-                <span>⚡ Major Discrepancy #2: Flood Death Toll</span>
-                <span style="font-size:0.8rem; background:#FFE4E6; color:#9F1239; padding:3px 10px; border-radius:99px; margin-left:auto;">2x Gap Detected</span>
-            </div>
-            <div style="display: flex; gap: 15px; align-items: stretch;">
-                <div style="flex: 5;" class="source-card source-card-a">
-                    <span style="background:#FCA5A5; color:#7F1D1D; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
-                        Under-reported: MapsOfIndia
-                    </span>
-                    <h3 style="color:#991B1B; margin:8px 0 4px 0;">47 Deaths</h3>
-                    <p style="margin:0; font-size:0.9rem; color:#4B5563;">
-                        <b>Quote:</b> <i>"The official death toll in the Assam floods is 47."</i> (Undated report)
-                    </p>
+                st.markdown(f"""
+                <div class="vs-container">
+                    <div class="vs-title">
+                        <span>⚡ Major Discrepancy #{idx}: Fact Cluster {cid if 'cid' in locals() else idx}</span>
+                        <span style="font-size:0.8rem; background:#FFE4E6; color:#9F1239; padding:3px 10px; border-radius:99px; margin-left:auto;">
+                            Contradiction Detected
+                        </span>
+                    </div>
+                    <div style="display: flex; gap: 15px; align-items: stretch;">
+                        <div style="flex: 5;" class="source-card source-card-a">
+                            <span style="background:#FCA5A5; color:#7F1D1D; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
+                                Outlet: {src_a}
+                            </span>
+                            <h4 style="color:#991B1B; margin:8px 0 4px 0;">"{claim_a}"</h4>
+                        </div>
+                        <div style="flex: 1;" class="vs-badge-center">VS</div>
+                        <div style="flex: 5;" class="source-card source-card-b">
+                            <span style="background:#93C5FD; color:#1E3A8A; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
+                                Outlet: {src_b}
+                            </span>
+                            <h4 style="color:#1D4ED8; margin:8px 0 4px 0;">"{claim_b}"</h4>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; font-size:0.88rem; color:#881337; background:#FFF1F2; padding:8px 12px; border-radius:6px;">
+                        <b>Verdict from Stance Classifier:</b> <code>DISAGREE</code> — Incompatible statements reported for the same event window.
+                    </div>
                 </div>
-                <div style="flex: 1;" class="vs-badge-center">VS</div>
-                <div style="flex: 5;" class="source-card source-card-b">
-                    <span style="background:#93C5FD; color:#1E3A8A; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
-                        Verified Outlets: NPR & Times of India
-                    </span>
-                    <h3 style="color:#1D4ED8; margin:8px 0 4px 0;">98 to 100 Deaths</h3>
-                    <p style="margin:0; font-size:0.9rem; color:#4B5563;">
-                        <b>Quote:</b> <i>"The flood death toll reached 100"</i> (NPR, 10 Aug) & <i>"Total flood-related death toll reached 98"</i> (TOI, 8 Aug).
-                    </p>
-                </div>
-            </div>
-            <div style="margin-top:12px; font-size:0.9rem; color:#881337; background:#FFF1F2; padding:8px 12px; border-radius:6px;">
-                <b>Verdict from Stance Classifier:</b> <code>DISAGREE</code> — MapsOfIndia failed to update casualties while national/international outlets recorded deaths reaching 100.
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
 
-        # Meta Contradiction: Counting Methodology
+        # Meta Contradiction: Counting Methodology (Explainer)
         with st.expander("🔍 Show Meta-Contradiction: Why do news channels disagree? (Counting Methodology)", expanded=False):
             st.markdown("""
-            **Source 3 (`theunitedindian.txt`) provides the exact explanation in plain text:**
-            - **Different Counting Windows:** Some agencies count deaths across the *entire monsoon season* (including landslides and early pre-monsoon rain).
-            - **Strict Flood Window:** Other agencies count *only verified flood-drowning deaths* during a single peak 24-hour wave.
-            - *This explains why automated aggregators fail when they don't look at methodology!*
+            **Why do news channels disagree on numbers?**
+            - **Different Counting Windows:** Some agencies count figures across the *entire season* (including pre-monsoon and landslides).
+            - **Strict Event Window:** Other agencies count *only verified drowning deaths* during a single peak 24-hour wave.
+            - **Delayed Verification:** Ground rescue teams submit delayed tallies, leading to temporary differences in reported stats.
+            - *This is why automated aggregators fail when they don't look at methodology!*
             """)
 
     # ================= TAB 2: CONFIRMED & DEVELOPING FACTS =================
@@ -491,50 +473,66 @@ if has_results:
 
         with col_act:
             st.markdown("#### Trigger Execution")
-            run_btn = st.button("⚡ Run Full AI Pipeline Now", type="primary", use_container_width=True)
-
+            uploaded_paths = []
             if mode == "Upload New .txt Files":
                 uploaded_files = st.file_uploader(
                     "Upload 2 or more conflicting news .txt files",
                     type=["txt"],
-                    accept_multiple_files=True
+                    accept_multiple_files=True,
+                    help="Upload articles from different newspapers/sources about the same incident."
                 )
                 if uploaded_files:
-                    os.makedirs("data/raw_sources", exist_ok=True)
+                    custom_dir = "data/custom_sources"
+                    os.makedirs(custom_dir, exist_ok=True)
+                    # Clear out prior custom files
+                    for old_f in glob.glob(f"{custom_dir}/*"):
+                        try:
+                            os.remove(old_f)
+                        except Exception:
+                            pass
                     for uf in uploaded_files:
-                        with open(os.path.join("data/raw_sources", uf.name), "wb") as f:
+                        fp = os.path.join(custom_dir, uf.name)
+                        with open(fp, "wb") as f:
                             f.write(uf.getbuffer())
-                    st.success(f"Loaded {len(uploaded_files)} files!")
+                        uploaded_paths.append(fp)
+                    st.success(f"Loaded {len(uploaded_paths)} files ready for analysis!")
+
+            run_btn = st.button("⚡ Run Full AI Pipeline Now", type="primary", use_container_width=True)
 
         if run_btn:
-            with st.spinner("Running 4-stage pipeline..."):
-                prog = st.progress(0)
-                status = st.empty()
+            if mode == "Upload New .txt Files" and len(uploaded_paths) < 2:
+                st.error("Please upload at least 2 news articles (.txt) to analyze contradictions!")
+            else:
+                with st.spinner("Running 4-stage pipeline..."):
+                    prog = st.progress(0)
+                    status = st.empty()
 
-                status.info("Step 1/3: Extracting atomic claims via Groq LLM...")
-                prog.progress(20)
-                spec1 = importlib.util.spec_from_file_location("step1", "src/01_extract_claims.py")
-                step1 = importlib.util.module_from_spec(spec1)
-                spec1.loader.exec_module(step1)
-                step1.main()
+                    status.info("Step 1/3: Extracting atomic claims via Groq LLM...")
+                    prog.progress(20)
+                    spec1 = importlib.util.spec_from_file_location("step1", "src/01_extract_claims.py")
+                    step1 = importlib.util.module_from_spec(spec1)
+                    spec1.loader.exec_module(step1)
+                    
+                    target_sources = uploaded_paths if mode == "Upload New .txt Files" else None
+                    step1.main(input_files=target_sources)
 
-                status.info("Step 2/3: Clustering facts & classifying stances...")
-                prog.progress(60)
-                spec2 = importlib.util.spec_from_file_location("step2", "src/02_cluster_and_classify.py")
-                step2 = importlib.util.module_from_spec(spec2)
-                spec2.loader.exec_module(step2)
-                step2.run_pipeline_step2(distance_threshold=threshold)
+                    status.info("Step 2/3: Clustering facts & classifying stances...")
+                    prog.progress(60)
+                    spec2 = importlib.util.spec_from_file_location("step2", "src/02_cluster_and_classify.py")
+                    step2 = importlib.util.module_from_spec(spec2)
+                    spec2.loader.exec_module(step2)
+                    step2.run_pipeline_step2(distance_threshold=threshold)
 
-                status.info("Step 3/3: Synthesizing Contradiction-Aware Report...")
-                prog.progress(90)
-                spec3 = importlib.util.spec_from_file_location("step3", "src/03_generate_summary.py")
-                step3 = importlib.util.module_from_spec(spec3)
-                spec3.loader.exec_module(step3)
-                step3.run_pipeline_step3()
+                    status.info("Step 3/3: Synthesizing Contradiction-Aware Report...")
+                    prog.progress(90)
+                    spec3 = importlib.util.spec_from_file_location("step3", "src/03_generate_summary.py")
+                    step3 = importlib.util.module_from_spec(spec3)
+                    spec3.loader.exec_module(step3)
+                    step3.run_pipeline_step3()
 
-                prog.progress(100)
-                status.success("✅ Analysis successfully completed! Refreshing results...")
-                st.rerun()
+                    prog.progress(100)
+                    status.success("✅ Analysis successfully completed! Refreshing results...")
+                    st.rerun()
 
         st.markdown("---")
         st.subheader("📥 Export Outputs")
