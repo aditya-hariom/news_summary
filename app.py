@@ -451,7 +451,7 @@ if has_results:
         """, language="text")
 
     # ================= TAB 5: RUN / TEST CUSTOM PIPELINE =================
-    with tab_report: # tab 5: Run / Test & Reports
+    with tab_run:
         st.markdown("### 🚀 Run Analysis on Custom or Default News Files")
         st.caption("You can run the entire pipeline live during your presentation demo.")
 
