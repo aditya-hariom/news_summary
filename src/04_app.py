@@ -571,30 +571,15 @@ if has_results:
 
         st.markdown("---")
         st.subheader("📥 Export Outputs")
-        exp_col1, exp_col2 = st.columns(2)
-        with exp_col1:
-            with open(summary_file, "r", encoding="utf-8") as f:
-                md_text = f.read()
-            st.download_button(
-                "📥 Download Summary Report (.md)",
-                md_text,
-                "final_summary.md",
-                "text/markdown",
-                use_container_width=True
-            )
-
-        with exp_col2:
-            pdf_path = "Project_Implementation_Report.pdf"
-            if os.path.exists(pdf_path):
-                with open(pdf_path, "rb") as f:
-                    pdf_bytes = f.read()
-                st.download_button(
-                    "📄 Download Project Report (.pdf)",
-                    pdf_bytes,
-                    "Project_Report.pdf",
-                    "application/pdf",
-                    use_container_width=True
-                )
+        with open(summary_file, "r", encoding="utf-8") as f:
+            md_text = f.read()
+        st.download_button(
+            "📥 Download Final Summary Report (.md)",
+            md_text,
+            "final_summary.md",
+            "text/markdown",
+            use_container_width=True
+        )
 
         with st.expander("View Raw Generated Markdown Report"):
             st.markdown(md_text)
