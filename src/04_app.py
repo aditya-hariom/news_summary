@@ -9,13 +9,29 @@ import json
 import glob
 import streamlit as st
 import importlib.util
+from dotenv import load_dotenv
+
+# Load local environment variables if available
+load_dotenv()
+
+# Streamlit Cloud secrets integration (supports secrets.toml in cloud)
+try:
+    if hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
+        if not os.environ.get("GROQ_API_KEY"):
+            os.environ["GROQ_API_KEY"] = str(st.secrets["GROQ_API_KEY"]).strip()
+except Exception:
+    pass
+
+# Ensure essential output and data directories exist
+os.makedirs("output", exist_ok=True)
+os.makedirs("data/custom_sources", exist_ok=True)
 
 # 1. Page Configuration
 st.set_page_config(
     page_title="Contradiction-Aware News Summarizer",
     page_icon="⚖️",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 # 2. Modern, Clean, Presentation-Ready Styling
@@ -175,27 +191,33 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 4. Presentation & Viva Helper (Expendable for Student)
-with st.expander("🎓 <b>Presentation & Viva Guide (Click to show: What to say to your Professor)</b>", expanded=False):
-    st.markdown("""
-    ### 🎙️ 1-Minute Presentation Pitch (Say this in your demo):
-    > *"Good morning Sir/Ma'am. In fast-breaking events like natural disasters, different news agencies report conflicting figures — for instance, one paper reports 47 deaths while another reports 100, or 1.78 lakh affected vs 7.2 lakh affected.*
-    > 
-    > *Traditional LLM summarizers like ChatGPT or Google Gemini merge all texts together and produce hallucinated or misleading averages. Our project solves this through a 4-step NLP pipeline:*
-    > 1. **Extracts atomic factual claims** preserving exact source attribution and dates.
-    > 2. **Semantically clusters** claims by topic using Sentence Transformers.
-    > 3. **Classifies pairwise cross-source stance** to actively detect Contradictions vs Agreements.
-    > 4. **Generates a 3-category report**: Confirmed Facts (Green), Disputed Facts (Red side-by-side), and Unconfirmed Single-Source Facts (Gray).*
-    
-    ---
-    ### ❓ Top 3 Viva Questions & Quick Answers:
-    - **Q1: What is an 'atomic claim'?**
-      - *Answer:* A single, self-contained statement (e.g. "85 people were reported dead") broken down from complex compound sentences, so it can be evaluated independently.
-    - **Q2: How do you identify contradictions?**
-      - *Answer:* We pair claims from different sources within the same semantic cluster and use our Stance Classifier to categorize the relationship into Agree, Disagree, Discuss, or Unrelated (inspired by the Fake News Challenge FNC-1 framework).
-    - **Q3: Why not just ask ChatGPT to find contradictions directly?**
-      - *Answer:* Direct LLM summarization suffers from lost-in-the-middle attention degradation and often synthesizes false compromises. Our pipeline enforces strict attribution and mathematical clustering before verification.
-    """)
+# 4. Sidebar: API Key Status & Controls
+with st.sidebar:
+    st.markdown("### ⚙️ System Controls")
+    has_api_key = bool(os.environ.get("GROQ_API_KEY"))
+    if has_api_key:
+        st.success("🟢 **Groq API**: Connected")
+    else:
+        st.warning("🟡 **Groq API**: Missing")
+        user_key_input = st.text_input(
+            "Enter Groq API Key:",
+            type="password",
+            placeholder="gsk_...",
+            help="Required to run live analysis on new documents. Get a free key at console.groq.com"
+        )
+        if user_key_input:
+            os.environ["GROQ_API_KEY"] = user_key_input.strip()
+            st.success("✅ API key set for this session!")
+            st.rerun()
+
+    st.markdown("---")
+    st.markdown("### 📋 Quick Stats")
+    st.markdown("- **Model:** Groq Qwen 2.5-32B / 27B")
+    st.markdown("- **Embedding:** Sentence-Transformers")
+    st.markdown("- **Clustering:** Agglomerative")
+    st.markdown("- **Stance:** FNC-1 Stance Detection")
+    st.markdown("---")
+    st.caption("Contradiction-Aware Multi-Document Summarizer")
 
 # 5. Core Motivation Card: Standard AI vs Our System
 col_bad, col_good = st.columns(2)
@@ -507,6 +529,12 @@ if has_results:
             run_btn = st.button("⚡ Run Full AI Pipeline Now", type="primary", use_container_width=True)
 
         if run_btn:
+            # Validate API Key before execution
+            active_key = os.environ.get("GROQ_API_KEY", "").strip()
+            if not active_key:
+                st.error("🔑 **Groq API Key is required to run live analysis!** Please provide your key in the left sidebar or configure it in Streamlit Cloud Secrets (`GROQ_API_KEY`).")
+                st.stop()
+
             if mode == "Upload New .txt Files" and len(uploaded_paths) < 2:
                 st.error("Please upload at least 2 news articles (.txt) to analyze contradictions!")
             else:
@@ -543,11 +571,31 @@ if has_results:
 
         st.markdown("---")
         st.subheader("📥 Export Outputs")
-        with open(summary_file, "r", encoding="utf-8") as f:
-            md_text = f.read()
-        
-        st.download_button("📥 Download Final Summary Report (.md)", md_text, "final_summary.md", "text/markdown")
-        
+        exp_col1, exp_col2 = st.columns(2)
+        with exp_col1:
+            with open(summary_file, "r", encoding="utf-8") as f:
+                md_text = f.read()
+            st.download_button(
+                "📥 Download Summary Report (.md)",
+                md_text,
+                "final_summary.md",
+                "text/markdown",
+                use_container_width=True
+            )
+
+        with exp_col2:
+            pdf_path = "Project_Implementation_Report.pdf"
+            if os.path.exists(pdf_path):
+                with open(pdf_path, "rb") as f:
+                    pdf_bytes = f.read()
+                st.download_button(
+                    "📄 Download Project Report (.pdf)",
+                    pdf_bytes,
+                    "Project_Report.pdf",
+                    "application/pdf",
+                    use_container_width=True
+                )
+
         with st.expander("View Raw Generated Markdown Report"):
             st.markdown(md_text)
 

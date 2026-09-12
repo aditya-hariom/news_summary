@@ -1,65 +1,65 @@
 [
   {
-    "claim": "Nearly 180 people were hurt in Monday's clashes near Jantar Mantar.",
+    "claim": "Heavy monsoon rains over the past week caused the Kavery River to overflow its banks across Rivendale District.",
+    "topic": "event",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "12 September 2026",
+    "attribution": "Dainik Samachar",
+    "source_file": "outlet_A_dainik_samachar"
+  },
+  {
+    "claim": "The Kavery River overflow submerged dozens of villages in Rivendale District.",
+    "topic": "damage",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "12 September 2026",
+    "attribution": "Dainik Samachar",
+    "source_file": "outlet_A_dainik_samachar"
+  },
+  {
+    "claim": "52 deaths have been recorded across Rivendale District as of Thursday evening.",
     "topic": "casualties",
-    "numerical_value": 180,
-    "numerical_unit": "people",
-    "date": "Monday",
-    "attribution": "Delhi Police",
-    "source_file": "cjp_2_delhi_police"
+    "numerical_value": 52,
+    "numerical_unit": "deaths",
+    "date": "Thursday evening",
+    "attribution": "District Disaster Management Office",
+    "source_file": "outlet_A_dainik_samachar"
   },
   {
-    "claim": "60 protesters were hurt in the clashes.",
-    "topic": "casualties",
-    "numerical_value": 60,
-    "numerical_unit": "protesters",
-    "date": "Monday",
-    "attribution": "Delhi Police",
-    "source_file": "cjp_2_delhi_police"
-  },
-  {
-    "claim": "118 security personnel were hurt in the clashes.",
-    "topic": "casualties",
-    "numerical_value": 118,
-    "numerical_unit": "security personnel",
-    "date": "Monday",
-    "attribution": "Delhi Police",
-    "source_file": "cjp_2_delhi_police"
-  },
-  {
-    "claim": "70 protesters had been detained.",
-    "topic": "detentions",
-    "numerical_value": 70,
-    "numerical_unit": "protesters",
-    "date": "Monday",
-    "attribution": "Delhi Police",
-    "source_file": "cjp_2_delhi_police"
-  },
-  {
-    "claim": "The Cockroach Janta Party (CJP) said its leaders would pause street marches.",
+    "claim": "EastWind News visited Manikpur block on Friday.",
     "topic": "status",
     "numerical_value": null,
     "numerical_unit": null,
-    "date": "July 20, 2026",
-    "attribution": "Cockroach Janta Party (CJP)",
-    "source_file": "cjp_1_aljazeera"
+    "date": "Friday",
+    "attribution": "EastWind News",
+    "source_file": "outlet_C_eastwind_news"
   },
   {
-    "claim": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
-    "topic": "casualties",
+    "claim": "Manikpur block is one of the worst-affected areas in the Rivendale floods.",
+    "topic": "status",
     "numerical_value": null,
     "numerical_unit": null,
-    "date": "July 20, 2026",
-    "attribution": "Al Jazeera",
-    "source_file": "cjp_1_aljazeera"
+    "date": null,
+    "attribution": "EastWind News",
+    "source_file": "outlet_C_eastwind_news"
   },
   {
-    "claim": "Around 150 protesters were injured.",
+    "claim": "Several homes in Manikpur block are still partially submerged.",
+    "topic": "damage",
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": null,
+    "attribution": "Local residents",
+    "source_file": "outlet_C_eastwind_news"
+  },
+  {
+    "claim": "The confirmed death toll stands at 52.",
     "topic": "casualties",
-    "numerical_value": 150,
-    "numerical_unit": "protesters",
-    "date": "July 20, 2026",
-    "attribution": "Abhijeet Dipke",
-    "source_file": "cjp_1_aljazeera"
+    "numerical_value": 52,
+    "numerical_unit": "deaths",
+    "date": null,
+    "attribution": "District Disaster Management Office",
+    "source_file": "outlet_C_eastwind_news"
   }
 ]

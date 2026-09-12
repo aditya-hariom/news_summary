@@ -33,7 +33,16 @@ if not api_key:
         api_key = os.getenv("GROQ_API_KEY")
 
 if not api_key:
-    raise ValueError("GROQ_API_KEY is not set in .env")
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
+            api_key = str(st.secrets["GROQ_API_KEY"]).strip()
+            os.environ["GROQ_API_KEY"] = api_key
+    except Exception:
+        pass
+
+if not api_key:
+    raise ValueError("GROQ_API_KEY is not set in .env or Streamlit Cloud Secrets.")
 
 client = Groq(api_key=api_key)
 embedder = SentenceTransformer("all-MiniLM-L6-v2")

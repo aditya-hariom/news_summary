@@ -1,6 +1,6 @@
 # Contradiction-Aware Multi-Document News Summary
 
-**Generated Report** | Confirmed: 1 | Disputed: 0 | Unconfirmed/Developing: 1
+**Generated Report** | Confirmed: 1 | Disputed: 0 | Unconfirmed/Developing: 2
 
 ---
 
@@ -14,19 +14,19 @@ _None detected in this batch._
 
 > *Corroborated by 2 or more independent news sources with direct agreement and zero detected disagreements.*
 
-### 1. Nearly 180 people were hurt in Monday's clashes near Jantar Mantar.
+### 1. 52 deaths have been recorded across Rivendale District as of Thursday evening.
 
-- **Corroborating Sources**: `cjp_1_aljazeera`, `cjp_2_delhi_police`
+- **Corroborating Sources**: `outlet_A_dainik_samachar`, `outlet_C_eastwind_news`
 - **Source Statements**:
-  - **cjp_2_delhi_police** (Monday): "Nearly 180 people were hurt in Monday's clashes near Jantar Mantar." [Attr: Delhi Police]
-  - **cjp_2_delhi_police** (Monday): "60 protesters were hurt in the clashes." [Attr: Delhi Police]
-  - **cjp_2_delhi_police** (Monday): "118 security personnel were hurt in the clashes." [Attr: Delhi Police]
-  - **cjp_2_delhi_police** (Monday): "70 protesters had been detained." [Attr: Delhi Police]
-  - **cjp_1_aljazeera** (July 20, 2026): "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi." [Attr: Al Jazeera]
-  - **cjp_1_aljazeera** (July 20, 2026): "Around 150 protesters were injured." [Attr: Abhijeet Dipke]
+  - **outlet_A_dainik_samachar** (Thursday evening): "52 deaths have been recorded across Rivendale District as of Thursday evening." [Attr: District Disaster Management Office]
+  - **outlet_C_eastwind_news**: "The confirmed death toll stands at 52." [Attr: District Disaster Management Office]
 
 ## Unconfirmed & Developing Claims
 
 > *Reported by a single outlet or lacking multi-source agreement; pending cross-verification.*
 
-- **[cjp_1_aljazeera]** (July 20, 2026): "The Cockroach Janta Party (CJP) said its leaders would pause street marches." [Attr: Cockroach Janta Party (CJP)]
+- **[outlet_A_dainik_samachar]** (12 September 2026): "Heavy monsoon rains over the past week caused the Kavery River to overflow its banks across Rivendale District." [Attr: Dainik Samachar]
+- **[outlet_A_dainik_samachar]** (12 September 2026): "The Kavery River overflow submerged dozens of villages in Rivendale District." [Attr: Dainik Samachar]
+- **[outlet_C_eastwind_news]** (Friday): "EastWind News visited Manikpur block on Friday." [Attr: EastWind News]
+- **[outlet_C_eastwind_news]**: "Manikpur block is one of the worst-affected areas in the Rivendale floods." [Attr: EastWind News]
+- **[outlet_C_eastwind_news]**: "Several homes in Manikpur block are still partially submerged." [Attr: Local residents]

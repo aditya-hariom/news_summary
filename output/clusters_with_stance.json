@@ -1,169 +1,97 @@
 {
-  "0": {
+  "2": {
     "claims": [
       {
-        "claim": "Nearly 180 people were hurt in Monday's clashes near Jantar Mantar.",
-        "topic": "casualties",
-        "numerical_value": 180,
-        "numerical_unit": "people",
-        "date": "Monday",
-        "attribution": "Delhi Police",
-        "source_file": "cjp_2_delhi_police",
-        "cluster_id": 0
-      },
-      {
-        "claim": "60 protesters were hurt in the clashes.",
-        "topic": "casualties",
-        "numerical_value": 60,
-        "numerical_unit": "protesters",
-        "date": "Monday",
-        "attribution": "Delhi Police",
-        "source_file": "cjp_2_delhi_police",
-        "cluster_id": 0
-      },
-      {
-        "claim": "118 security personnel were hurt in the clashes.",
-        "topic": "casualties",
-        "numerical_value": 118,
-        "numerical_unit": "security personnel",
-        "date": "Monday",
-        "attribution": "Delhi Police",
-        "source_file": "cjp_2_delhi_police",
-        "cluster_id": 0
-      },
-      {
-        "claim": "70 protesters had been detained.",
-        "topic": "detentions",
-        "numerical_value": 70,
-        "numerical_unit": "protesters",
-        "date": "Monday",
-        "attribution": "Delhi Police",
-        "source_file": "cjp_2_delhi_police",
-        "cluster_id": 0
-      },
-      {
-        "claim": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
-        "topic": "casualties",
+        "claim": "Heavy monsoon rains over the past week caused the Kavery River to overflow its banks across Rivendale District.",
+        "topic": "event",
         "numerical_value": null,
         "numerical_unit": null,
-        "date": "July 20, 2026",
-        "attribution": "Al Jazeera",
-        "source_file": "cjp_1_aljazeera",
-        "cluster_id": 0
+        "date": "12 September 2026",
+        "attribution": "Dainik Samachar",
+        "source_file": "outlet_A_dainik_samachar",
+        "cluster_id": 2
       },
       {
-        "claim": "Around 150 protesters were injured.",
-        "topic": "casualties",
-        "numerical_value": 150,
-        "numerical_unit": "protesters",
-        "date": "July 20, 2026",
-        "attribution": "Abhijeet Dipke",
-        "source_file": "cjp_1_aljazeera",
-        "cluster_id": 0
+        "claim": "The Kavery River overflow submerged dozens of villages in Rivendale District.",
+        "topic": "damage",
+        "numerical_value": null,
+        "numerical_unit": null,
+        "date": "12 September 2026",
+        "attribution": "Dainik Samachar",
+        "source_file": "outlet_A_dainik_samachar",
+        "cluster_id": 2
       }
     ],
-    "edges": [
-      {
-        "claim_a": "Nearly 180 people were hurt in Monday's clashes near Jantar Mantar.",
-        "source_a": "cjp_2_delhi_police",
-        "date_a": "Monday",
-        "claim_b": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
-        "source_b": "cjp_1_aljazeera",
-        "date_b": "July 20, 2026",
-        "stance": "discuss",
-        "reasoning": "Fallback classification due to API interruption.",
-        "confidence": 0.5
-      },
-      {
-        "claim_a": "Nearly 180 people were hurt in Monday's clashes near Jantar Mantar.",
-        "source_a": "cjp_2_delhi_police",
-        "date_a": "Monday",
-        "claim_b": "Around 150 protesters were injured.",
-        "source_b": "cjp_1_aljazeera",
-        "date_b": "July 20, 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: cjp_2_delhi_police reported 180 (monday) and cjp_1_aljazeera reported 150 (july 20, 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "60 protesters were hurt in the clashes.",
-        "source_a": "cjp_2_delhi_police",
-        "date_a": "Monday",
-        "claim_b": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
-        "source_b": "cjp_1_aljazeera",
-        "date_b": "July 20, 2026",
-        "stance": "agree",
-        "reasoning": "Claim B's description of 'dozens' of supporters hurt is substantively consistent with Claim A's specific figure of '60' protesters hurt, as 60 falls within the range of 'dozens' and both refer to the same violent police crackdown incident in New Delhi.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "60 protesters were hurt in the clashes.",
-        "source_a": "cjp_2_delhi_police",
-        "date_a": "Monday",
-        "claim_b": "Around 150 protesters were injured.",
-        "source_b": "cjp_1_aljazeera",
-        "date_b": "July 20, 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: cjp_2_delhi_police reported 60 (monday) and cjp_1_aljazeera reported 150 (july 20, 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "118 security personnel were hurt in the clashes.",
-        "source_a": "cjp_2_delhi_police",
-        "date_a": "Monday",
-        "claim_b": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
-        "source_b": "cjp_1_aljazeera",
-        "date_b": "July 20, 2026",
-        "stance": "discuss",
-        "reasoning": "Fallback classification due to API interruption.",
-        "confidence": 0.5
-      },
-      {
-        "claim_a": "118 security personnel were hurt in the clashes.",
-        "source_a": "cjp_2_delhi_police",
-        "date_a": "Monday",
-        "claim_b": "Around 150 protesters were injured.",
-        "source_b": "cjp_1_aljazeera",
-        "date_b": "July 20, 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: cjp_2_delhi_police reported 118 (monday) and cjp_1_aljazeera reported 150 (july 20, 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "70 protesters had been detained.",
-        "source_a": "cjp_2_delhi_police",
-        "date_a": "Monday",
-        "claim_b": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
-        "source_b": "cjp_1_aljazeera",
-        "date_b": "July 20, 2026",
-        "stance": "unrelated",
-        "reasoning": "Different factual topic domains (detentions vs casualties).",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "70 protesters had been detained.",
-        "source_a": "cjp_2_delhi_police",
-        "date_a": "Monday",
-        "claim_b": "Around 150 protesters were injured.",
-        "source_b": "cjp_1_aljazeera",
-        "date_b": "July 20, 2026",
-        "stance": "unrelated",
-        "reasoning": "Different factual topic domains (detentions vs casualties).",
-        "confidence": 0.95
-      }
-    ]
+    "edges": []
   },
   "1": {
     "claims": [
       {
-        "claim": "The Cockroach Janta Party (CJP) said its leaders would pause street marches.",
+        "claim": "52 deaths have been recorded across Rivendale District as of Thursday evening.",
+        "topic": "casualties",
+        "numerical_value": 52,
+        "numerical_unit": "deaths",
+        "date": "Thursday evening",
+        "attribution": "District Disaster Management Office",
+        "source_file": "outlet_A_dainik_samachar",
+        "cluster_id": 1
+      },
+      {
+        "claim": "The confirmed death toll stands at 52.",
+        "topic": "casualties",
+        "numerical_value": 52,
+        "numerical_unit": "deaths",
+        "date": null,
+        "attribution": "District Disaster Management Office",
+        "source_file": "outlet_C_eastwind_news",
+        "cluster_id": 1
+      }
+    ],
+    "edges": [
+      {
+        "claim_a": "52 deaths have been recorded across Rivendale District as of Thursday evening.",
+        "source_a": "outlet_A_dainik_samachar",
+        "date_a": "Thursday evening",
+        "claim_b": "The confirmed death toll stands at 52.",
+        "source_b": "outlet_C_eastwind_news",
+        "date_b": null,
+        "stance": "agree",
+        "reasoning": "Exact matching statistics (52) confirmed by both outlets.",
+        "confidence": 0.98
+      }
+    ]
+  },
+  "0": {
+    "claims": [
+      {
+        "claim": "EastWind News visited Manikpur block on Friday.",
         "topic": "status",
         "numerical_value": null,
         "numerical_unit": null,
-        "date": "July 20, 2026",
-        "attribution": "Cockroach Janta Party (CJP)",
-        "source_file": "cjp_1_aljazeera",
-        "cluster_id": 1
+        "date": "Friday",
+        "attribution": "EastWind News",
+        "source_file": "outlet_C_eastwind_news",
+        "cluster_id": 0
+      },
+      {
+        "claim": "Manikpur block is one of the worst-affected areas in the Rivendale floods.",
+        "topic": "status",
+        "numerical_value": null,
+        "numerical_unit": null,
+        "date": null,
+        "attribution": "EastWind News",
+        "source_file": "outlet_C_eastwind_news",
+        "cluster_id": 0
+      },
+      {
+        "claim": "Several homes in Manikpur block are still partially submerged.",
+        "topic": "damage",
+        "numerical_value": null,
+        "numerical_unit": null,
+        "date": null,
+        "attribution": "Local residents",
+        "source_file": "outlet_C_eastwind_news",
+        "cluster_id": 0
       }
     ],
     "edges": []
