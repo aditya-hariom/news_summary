@@ -1,855 +1,171 @@
 {
-  "1": {
-    "claims": [
-      {
-        "claim": "The flood toll was reported at 66.",
-        "topic": "casualties",
-        "numerical_value": 66,
-        "numerical_unit": "deaths",
-        "date": "26 July 2026",
-        "attribution": "The Hindu",
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 1
-      },
-      {
-        "claim": "The flood toll was reported at 66.",
-        "topic": "casualties",
-        "numerical_value": 66,
-        "numerical_unit": "deaths",
-        "date": "26 July 2026",
-        "attribution": "Times of India",
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 1
-      },
-      {
-        "claim": "The death toll climbed to 82.",
-        "topic": "casualties",
-        "numerical_value": 82,
-        "numerical_unit": "deaths",
-        "date": "2 August 2026",
-        "attribution": "Times of India",
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 1
-      },
-      {
-        "claim": "The total flood-related death toll was reported at 98.",
-        "topic": "casualties",
-        "numerical_value": 98,
-        "numerical_unit": "deaths",
-        "date": "8 August 2026",
-        "attribution": null,
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 1
-      },
-      {
-        "claim": "85 people were reported dead.",
-        "topic": "casualties",
-        "numerical_value": 85,
-        "numerical_unit": "deaths",
-        "date": "4 August 2026",
-        "attribution": null,
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 1
-      },
-      {
-        "claim": "48 fatalities were reported in Sivasagar district.",
-        "topic": "casualties",
-        "numerical_value": 48,
-        "numerical_unit": "deaths",
-        "date": null,
-        "attribution": null,
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 1
-      },
-      {
-        "claim": "29 fatalities in Sivasagar district were attributed to Nazira flood incidents.",
-        "topic": "casualties",
-        "numerical_value": 29,
-        "numerical_unit": "deaths",
-        "date": null,
-        "attribution": null,
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 1
-      },
-      {
-        "claim": "29 people were reported swept away in Charaideo.",
-        "topic": "casualties",
-        "numerical_value": 29,
-        "numerical_unit": "people",
-        "date": null,
-        "attribution": null,
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 1
-      },
-      {
-        "claim": "The flood death toll reached 100.",
-        "topic": "casualties",
-        "numerical_value": 100,
-        "numerical_unit": "deaths",
-        "date": "10 August 2026",
-        "attribution": "officials",
-        "source_file": "source2_npr",
-        "cluster_id": 1
-      },
-      {
-        "claim": "Two more deaths occurred overnight.",
-        "topic": "casualties",
-        "numerical_value": 2,
-        "numerical_unit": "deaths",
-        "date": "10 August 2026",
-        "attribution": "officials",
-        "source_file": "source2_npr",
-        "cluster_id": 1
-      },
-      {
-        "claim": "The overall monsoon-season death toll had crossed 50 by 22 July 2026.",
-        "topic": "casualties",
-        "numerical_value": 50,
-        "numerical_unit": "deaths",
-        "date": "22 July 2026",
-        "attribution": "Times of India",
-        "source_file": "source3_theunitedindian",
-        "cluster_id": 1
-      },
-      {
-        "claim": "The death toll may change again as rescue teams verify reports from previously inaccessible villages.",
-        "topic": "status",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": "23 July 2026",
-        "attribution": "The United Indian",
-        "source_file": "source3_theunitedindian",
-        "cluster_id": 1
-      },
-      {
-        "claim": "The official death toll in Assam floods has swelled to 47.",
-        "topic": "casualties",
-        "numerical_value": 47,
-        "numerical_unit": "deaths",
-        "date": null,
-        "attribution": "official",
-        "source_file": "source4_mapsofindia",
-        "cluster_id": 1
-      }
-    ],
-    "edges": [
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "The flood death toll reached 100.",
-        "source_b": "source2_npr",
-        "date_b": "10 August 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: source1_wikipedia_compiled reported 66 (26 july 2026) and source2_npr reported 100 (10 august 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "Two more deaths occurred overnight.",
-        "source_b": "source2_npr",
-        "date_b": "10 August 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: source1_wikipedia_compiled reported 66 (26 july 2026) and source2_npr reported 2 (10 august 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "The overall monsoon-season death toll had crossed 50 by 22 July 2026.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "22 July 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: source1_wikipedia_compiled reported 66 (26 july 2026) and source3_theunitedindian reported 50 (22 july 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "The death toll may change again as rescue teams verify reports from previously inaccessible villages.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
-        "stance": "unrelated",
-        "reasoning": "Different factual topic domains (casualties vs status).",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "The official death toll in Assam floods has swelled to 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "disagree",
-        "reasoning": "Numerical contradiction: source1_wikipedia_compiled reports 66 vs source4_mapsofindia reports 47 (1.4x disparity) for the same event window.",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "The flood death toll reached 100.",
-        "source_b": "source2_npr",
-        "date_b": "10 August 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: source1_wikipedia_compiled reported 66 (26 july 2026) and source2_npr reported 100 (10 august 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "Two more deaths occurred overnight.",
-        "source_b": "source2_npr",
-        "date_b": "10 August 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: source1_wikipedia_compiled reported 66 (26 july 2026) and source2_npr reported 2 (10 august 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "The overall monsoon-season death toll had crossed 50 by 22 July 2026.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "22 July 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: source1_wikipedia_compiled reported 66 (26 july 2026) and source3_theunitedindian reported 50 (22 july 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "The death toll may change again as rescue teams verify reports from previously inaccessible villages.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
-        "stance": "unrelated",
-        "reasoning": "Different factual topic domains (casualties vs status).",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "The flood toll was reported at 66.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "claim_b": "The official death toll in Assam floods has swelled to 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "disagree",
-        "reasoning": "Numerical contradiction: source1_wikipedia_compiled reports 66 vs source4_mapsofindia reports 47 (1.4x disparity) for the same event window.",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "The death toll climbed to 82.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "2 August 2026",
-        "claim_b": "The flood death toll reached 100.",
-        "source_b": "source2_npr",
-        "date_b": "10 August 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: source1_wikipedia_compiled reported 82 (2 august 2026) and source2_npr reported 100 (10 august 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "The death toll climbed to 82.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "2 August 2026",
-        "claim_b": "Two more deaths occurred overnight.",
-        "source_b": "source2_npr",
-        "date_b": "10 August 2026",
-        "stance": "discuss",
-        "reasoning": "Temporal progression: source1_wikipedia_compiled reported 82 (2 august 2026) and source2_npr reported 2 (10 august 2026). Figures naturally progress across dates.",
-        "confidence": 0.9
-      }
-    ]
-  },
-  "6": {
-    "claims": [
-      {
-        "claim": "1.78 lakh people were affected.",
-        "topic": "affected_population",
-        "numerical_value": 178000,
-        "numerical_unit": "people",
-        "date": "2 August 2026",
-        "attribution": "Times of India",
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 6
-      },
-      {
-        "claim": "Around 155,000 people were affected.",
-        "topic": "affected_population",
-        "numerical_value": 155000,
-        "numerical_unit": "people",
-        "date": "8 August 2026",
-        "attribution": null,
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 6
-      },
-      {
-        "claim": "More than 100,000 people were still affected.",
-        "topic": "affected_population",
-        "numerical_value": 100000,
-        "numerical_unit": "people",
-        "date": "4 August 2026",
-        "attribution": null,
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 6
-      },
-      {
-        "claim": "Communities were inundated.",
-        "topic": "affected_population",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": null,
-        "attribution": null,
-        "source_file": "source2_npr",
-        "cluster_id": 6
-      },
-      {
-        "claim": "Thousands of people have lost their homes.",
-        "topic": "affected_population",
-        "numerical_value": null,
-        "numerical_unit": "people",
-        "date": null,
-        "attribution": null,
-        "source_file": "source2_npr",
-        "cluster_id": 6
-      },
-      {
-        "claim": "More than 7.2 lakh people have been affected by the floods.",
-        "topic": "affected_population",
-        "numerical_value": 720000,
-        "numerical_unit": "people",
-        "date": null,
-        "attribution": "official",
-        "source_file": "source4_mapsofindia",
-        "cluster_id": 6
-      }
-    ],
-    "edges": [
-      {
-        "claim_a": "1.78 lakh people were affected.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "2 August 2026",
-        "claim_b": "Communities were inundated.",
-        "source_b": "source2_npr",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A provides a specific quantitative figure (1.78 lakh people) regarding the impact, while Claim B offers a qualitative description (communities inundated) without specific numbers or dates. Since Claim B does not confirm the specific count nor contradict it, but rather describes the general situation, it falls under discussing the same topic with supplementary details.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "1.78 lakh people were affected.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "2 August 2026",
-        "claim_b": "Thousands of people have lost their homes.",
-        "source_b": "source2_npr",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A provides a specific total count of affected individuals (1.78 lakh), while Claim B describes a specific subset of consequences (thousands losing homes) without providing a total count or contradicting the total figure. Since 'thousands' is consistent with a total of 1.78 lakh and describes a related but distinct aspect of the impact, it is substantively consistent but not a direct confirmation of the total metric.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "1.78 lakh people were affected.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "2 August 2026",
-        "claim_b": "More than 7.2 lakh people have been affected by the floods.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "disagree",
-        "reasoning": "Numerical contradiction: source1_wikipedia_compiled reports 178000 vs source4_mapsofindia reports 720000 (4.0x disparity) for the same event window.",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "Around 155,000 people were affected.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "8 August 2026",
-        "claim_b": "Communities were inundated.",
-        "source_b": "source2_npr",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A provides a specific quantitative figure (155,000 people) for the affected population, while Claim B offers a qualitative description of the event's impact (communities inundated) without specific numbers or dates. Since Claim B does not confirm the specific count nor contradict it, but rather describes the general situation, it falls under discussing the same topic with supplementary details.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "Around 155,000 people were affected.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "8 August 2026",
-        "claim_b": "Thousands of people have lost their homes.",
-        "source_b": "source2_npr",
-        "date_b": null,
-        "stance": "agree",
-        "reasoning": "Claim A provides a specific total count of affected individuals (155,000), while Claim B offers a qualitative description of a subset of that impact (thousands losing homes). These statements are substantively consistent as losing one's home is a form of being affected, and 'thousands' is compatible with the larger figure of 155,000.",
-        "confidence": 0.85
-      },
-      {
-        "claim_a": "Around 155,000 people were affected.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "8 August 2026",
-        "claim_b": "More than 7.2 lakh people have been affected by the floods.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "disagree",
-        "reasoning": "Numerical contradiction: source1_wikipedia_compiled reports 155000 vs source4_mapsofindia reports 720000 (4.6x disparity) for the same event window.",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "More than 100,000 people were still affected.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "4 August 2026",
-        "claim_b": "Communities were inundated.",
-        "source_b": "source2_npr",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A provides a specific quantitative figure (100,000+ people) regarding the impact, while Claim B offers a qualitative description (communities inundated) without specific numbers or dates. Since Claim B does not confirm the specific count nor contradict it, but rather describes the general state of the affected areas, it is substantively consistent but not a direct confirmation of the specific metric.",
-        "confidence": 0.85
-      },
-      {
-        "claim_a": "More than 100,000 people were still affected.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "4 August 2026",
-        "claim_b": "Thousands of people have lost their homes.",
-        "source_b": "source2_npr",
-        "date_b": null,
-        "stance": "agree",
-        "reasoning": "Claim A states that over 100,000 people were affected, while Claim B states that thousands lost their homes; these figures are not mutually exclusive as 'affected' is a broader category that includes those who lost homes, and 'thousands' is consistent with being a subset of '100,000'.",
-        "confidence": 0.85
-      },
-      {
-        "claim_a": "More than 100,000 people were still affected.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "4 August 2026",
-        "claim_b": "More than 7.2 lakh people have been affected by the floods.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "disagree",
-        "reasoning": "Numerical contradiction: source1_wikipedia_compiled reports 100000 vs source4_mapsofindia reports 720000 (7.2x disparity) for the same event window.",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "Communities were inundated.",
-        "source_a": "source2_npr",
-        "date_a": null,
-        "claim_b": "More than 7.2 lakh people have been affected by the floods.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A provides a qualitative description of the flooding impact ('inundated'), while Claim B provides a specific quantitative statistic on the number of people affected. Claim B supports the severity implied in Claim A but adds new specific data rather than directly confirming or contradicting the qualitative statement.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "Thousands of people have lost their homes.",
-        "source_a": "source2_npr",
-        "date_a": null,
-        "claim_b": "More than 7.2 lakh people have been affected by the floods.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A states that thousands of people lost their homes, while Claim B states that more than 7.2 lakh (720,000) people were affected. Since 'affected' is a broader category that includes those who lost homes, and the figures are not mutually exclusive (720,000 affected is consistent with thousands losing homes), Claim B provides supplementary scale information rather than a direct contradiction or strict confirmation of the specific 'lost homes' count.",
-        "confidence": 0.9
-      }
-    ]
-  },
-  "3": {
-    "claims": [
-      {
-        "claim": "Golaghat was the worst-hit district.",
-        "topic": "status",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": "8 August 2026",
-        "attribution": null,
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 3
-      }
-    ],
-    "edges": []
-  },
-  "5": {
-    "claims": [
-      {
-        "claim": "10,748 hectares of cropland were submerged.",
-        "topic": "damage",
-        "numerical_value": 10748,
-        "numerical_unit": "hectares",
-        "date": "8 August 2026",
-        "attribution": null,
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 5
-      },
-      {
-        "claim": "Around 481 villages were completely submerged.",
-        "topic": "damage",
-        "numerical_value": 481,
-        "numerical_unit": "villages",
-        "date": null,
-        "attribution": "local news source",
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 5
-      },
-      {
-        "claim": "Infrastructure was damaged.",
-        "topic": "damage",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": null,
-        "attribution": null,
-        "source_file": "source2_npr",
-        "cluster_id": 5
-      },
-      {
-        "claim": "Whole villages in Upper Assam went underwater within hours.",
-        "topic": "damage",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": "23 July 2026",
-        "attribution": "The United Indian",
-        "source_file": "source3_theunitedindian",
-        "cluster_id": 5
-      },
-      {
-        "claim": "Roads became impassable due to the flooding.",
-        "topic": "damage",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": "23 July 2026",
-        "attribution": "The United Indian",
-        "source_file": "source3_theunitedindian",
-        "cluster_id": 5
-      }
-    ],
-    "edges": [
-      {
-        "claim_a": "10,748 hectares of cropland were submerged.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "8 August 2026",
-        "claim_b": "Infrastructure was damaged.",
-        "source_b": "source2_npr",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A provides a specific quantitative figure regarding submerged cropland, while Claim B offers a general qualitative statement about infrastructure damage. These are distinct metrics (land area vs. infrastructure status) that do not directly confirm or contradict each other, but both relate to the impact of the same incident.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "10,748 hectares of cropland were submerged.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "8 August 2026",
-        "claim_b": "Whole villages in Upper Assam went underwater within hours.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
-        "stance": "discuss",
-        "reasoning": "Claim A provides a specific quantitative figure (10,748 hectares) for submerged cropland, while Claim B offers a qualitative description of villages going underwater without specific area metrics. Since Claim B does not provide data to confirm or contradict the specific hectare count in Claim A, it is a supplementary detail regarding the same event.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "10,748 hectares of cropland were submerged.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "8 August 2026",
-        "claim_b": "Roads became impassable due to the flooding.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
-        "stance": "discuss",
-        "reasoning": "Claim A provides a specific quantitative metric regarding submerged cropland, while Claim B describes the qualitative impact on road infrastructure; these are distinct aspects of the same flooding event that do not confirm or contradict each other.",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "Around 481 villages were completely submerged.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": null,
-        "claim_b": "Infrastructure was damaged.",
-        "source_b": "source2_npr",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A provides a specific quantitative detail about villages submerged, while Claim B offers a general qualitative statement about infrastructure damage. Since Claim B does not confirm the specific count of 481 villages nor contradict it, but rather discusses a related aspect of the same disaster, it falls under the 'discuss' category.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "Around 481 villages were completely submerged.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": null,
-        "claim_b": "Whole villages in Upper Assam went underwater within hours.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
-        "stance": "agree",
-        "reasoning": "Claim B qualitatively confirms the event described in Claim A (villages being submerged) but lacks the specific numerical figure (481) provided in Claim A, making it a supportive but less precise statement rather than a direct contradiction or unrelated topic.",
-        "confidence": 0.85
-      },
-      {
-        "claim_a": "Around 481 villages were completely submerged.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": null,
-        "claim_b": "Roads became impassable due to the flooding.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
-        "stance": "discuss",
-        "reasoning": "Claim A specifies the number of submerged villages (481), while Claim B describes the condition of roads (impassable). These are distinct metrics regarding the impact of the flooding; neither confirms nor contradicts the specific figure in Claim A, but they discuss the same incident.",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "Infrastructure was damaged.",
-        "source_a": "source2_npr",
-        "date_a": null,
-        "claim_b": "Whole villages in Upper Assam went underwater within hours.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
-        "stance": "discuss",
-        "reasoning": "Claim B describes a specific flooding event where villages went underwater, which is a distinct type of damage from the general 'infrastructure' damage mentioned in Claim A; while flooding can damage infrastructure, the claims focus on different aspects (general infrastructure vs. residential submersion) and do not directly confirm or contradict each other's specific metrics.",
-        "confidence": 0.85
-      },
-      {
-        "claim_a": "Infrastructure was damaged.",
-        "source_a": "source2_npr",
-        "date_a": null,
-        "claim_b": "Roads became impassable due to the flooding.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
-        "stance": "agree",
-        "reasoning": "Claim B provides specific details (roads impassable) that substantively confirm the general statement in Claim A (infrastructure damaged) regarding the same flooding incident.",
-        "confidence": 0.95
-      }
-    ]
-  },
-  "4": {
-    "claims": [
-      {
-        "claim": "The government would conduct door-to-door digital damage assessments by 9 August.",
-        "topic": "statement",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": "9 August 2026",
-        "attribution": "Chief Minister Himanta Biswa Sarma",
-        "source_file": "source1_wikipedia_compiled",
-        "cluster_id": 4
-      }
-    ],
-    "edges": []
-  },
   "0": {
     "claims": [
       {
-        "claim": "Several rivers remained above danger levels.",
-        "topic": "status",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": "10 August 2026",
-        "attribution": "Assam State Disaster Management Authority",
-        "source_file": "source2_npr",
+        "claim": "Nearly 180 people were hurt in Monday's clashes near Jantar Mantar.",
+        "topic": "casualties",
+        "numerical_value": 180,
+        "numerical_unit": "people",
+        "date": "Monday",
+        "attribution": "Delhi Police",
+        "source_file": "cjp_2_delhi_police",
         "cluster_id": 0
       },
       {
-        "claim": "The risk of fresh flooding was raised.",
-        "topic": "status",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": "10 August 2026",
-        "attribution": "Assam State Disaster Management Authority",
-        "source_file": "source2_npr",
+        "claim": "60 protesters were hurt in the clashes.",
+        "topic": "casualties",
+        "numerical_value": 60,
+        "numerical_unit": "protesters",
+        "date": "Monday",
+        "attribution": "Delhi Police",
+        "source_file": "cjp_2_delhi_police",
         "cluster_id": 0
       },
       {
-        "claim": "Days of heavy monsoon rain caused rivers, including the Brahmaputra, to overflow.",
-        "topic": "event",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": null,
-        "attribution": null,
-        "source_file": "source2_npr",
+        "claim": "118 security personnel were hurt in the clashes.",
+        "topic": "casualties",
+        "numerical_value": 118,
+        "numerical_unit": "security personnel",
+        "date": "Monday",
+        "attribution": "Delhi Police",
+        "source_file": "cjp_2_delhi_police",
         "cluster_id": 0
       },
       {
-        "claim": "Unusually rapid flooding occurred across inland parts of Sivasagar, Charaideo, and Jorhat districts.",
-        "topic": "status",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": "23 July 2026",
-        "attribution": "Ground reports",
-        "source_file": "source3_theunitedindian",
+        "claim": "70 protesters had been detained.",
+        "topic": "detentions",
+        "numerical_value": 70,
+        "numerical_unit": "protesters",
+        "date": "Monday",
+        "attribution": "Delhi Police",
+        "source_file": "cjp_2_delhi_police",
         "cluster_id": 0
       },
       {
-        "claim": "Brahmaputra River and its tributaries crossed danger levels at several locations.",
-        "topic": "status",
+        "claim": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
+        "topic": "casualties",
         "numerical_value": null,
         "numerical_unit": null,
-        "date": null,
-        "attribution": null,
-        "source_file": "source4_mapsofindia",
+        "date": "July 20, 2026",
+        "attribution": "Al Jazeera",
+        "source_file": "cjp_1_aljazeera",
         "cluster_id": 0
       },
       {
-        "claim": "The floods are described as among the worst in recent years for the state.",
-        "topic": "status",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": null,
-        "attribution": "MapsOfIndia",
-        "source_file": "source4_mapsofindia",
+        "claim": "Around 150 protesters were injured.",
+        "topic": "casualties",
+        "numerical_value": 150,
+        "numerical_unit": "protesters",
+        "date": "July 20, 2026",
+        "attribution": "Abhijeet Dipke",
+        "source_file": "cjp_1_aljazeera",
         "cluster_id": 0
       }
     ],
     "edges": [
       {
-        "claim_a": "Several rivers remained above danger levels.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "claim_b": "Unusually rapid flooding occurred across inland parts of Sivasagar, Charaideo, and Jorhat districts.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
+        "claim_a": "Nearly 180 people were hurt in Monday's clashes near Jantar Mantar.",
+        "source_a": "cjp_2_delhi_police",
+        "date_a": "Monday",
+        "claim_b": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
+        "source_b": "cjp_1_aljazeera",
+        "date_b": "July 20, 2026",
         "stance": "discuss",
-        "reasoning": "Claim B describes the onset of rapid flooding in specific districts in July, while Claim A reports that rivers remained above danger levels in August; these are consistent statements describing the progression and persistence of the same flood event over time.",
+        "reasoning": "Fallback classification due to API interruption.",
+        "confidence": 0.5
+      },
+      {
+        "claim_a": "Nearly 180 people were hurt in Monday's clashes near Jantar Mantar.",
+        "source_a": "cjp_2_delhi_police",
+        "date_a": "Monday",
+        "claim_b": "Around 150 protesters were injured.",
+        "source_b": "cjp_1_aljazeera",
+        "date_b": "July 20, 2026",
+        "stance": "discuss",
+        "reasoning": "Temporal progression: cjp_2_delhi_police reported 180 (monday) and cjp_1_aljazeera reported 150 (july 20, 2026). Figures naturally progress across dates.",
         "confidence": 0.9
       },
       {
-        "claim_a": "Several rivers remained above danger levels.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "claim_b": "Brahmaputra River and its tributaries crossed danger levels at several locations.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
+        "claim_a": "60 protesters were hurt in the clashes.",
+        "source_a": "cjp_2_delhi_police",
+        "date_a": "Monday",
+        "claim_b": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
+        "source_b": "cjp_1_aljazeera",
+        "date_b": "July 20, 2026",
         "stance": "agree",
-        "reasoning": "Claim A states that rivers remained above danger levels, while Claim B states that the Brahmaputra and its tributaries crossed danger levels. Both claims describe the same factual situation of rivers being in a dangerous state (above or having crossed the threshold), making them substantively consistent.",
+        "reasoning": "Claim B's description of 'dozens' of supporters hurt is substantively consistent with Claim A's specific figure of '60' protesters hurt, as 60 falls within the range of 'dozens' and both refer to the same violent police crackdown incident in New Delhi.",
         "confidence": 0.9
       },
       {
-        "claim_a": "Several rivers remained above danger levels.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "claim_b": "The floods are described as among the worst in recent years for the state.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
+        "claim_a": "60 protesters were hurt in the clashes.",
+        "source_a": "cjp_2_delhi_police",
+        "date_a": "Monday",
+        "claim_b": "Around 150 protesters were injured.",
+        "source_b": "cjp_1_aljazeera",
+        "date_b": "July 20, 2026",
         "stance": "discuss",
-        "reasoning": "Claim A provides a specific status update regarding river levels, while Claim B offers a qualitative assessment of the flood's severity relative to historical records. These statements are complementary and consistent with each other, as severe floods typically involve rivers above danger levels, but they do not provide the same specific factual data points to constitute a direct confirmation or contradiction.",
+        "reasoning": "Temporal progression: cjp_2_delhi_police reported 60 (monday) and cjp_1_aljazeera reported 150 (july 20, 2026). Figures naturally progress across dates.",
         "confidence": 0.9
       },
       {
-        "claim_a": "The risk of fresh flooding was raised.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "claim_b": "Unusually rapid flooding occurred across inland parts of Sivasagar, Charaideo, and Jorhat districts.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
+        "claim_a": "118 security personnel were hurt in the clashes.",
+        "source_a": "cjp_2_delhi_police",
+        "date_a": "Monday",
+        "claim_b": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
+        "source_b": "cjp_1_aljazeera",
+        "date_b": "July 20, 2026",
         "stance": "discuss",
-        "reasoning": "Claim B describes a specific flooding event that occurred in July 2026, while Claim A refers to a raised risk of fresh flooding in August 2026; these are distinct temporal events (past occurrence vs. future risk) rather than direct confirmations or contradictions of the same fact.",
-        "confidence": 0.9
+        "reasoning": "Fallback classification due to API interruption.",
+        "confidence": 0.5
       },
       {
-        "claim_a": "The risk of fresh flooding was raised.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "claim_b": "Brahmaputra River and its tributaries crossed danger levels at several locations.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "agree",
-        "reasoning": "Claim B provides specific factual evidence (river crossing danger levels) that directly supports and explains the general assertion in Claim A that the risk of fresh flooding was raised.",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "The risk of fresh flooding was raised.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "claim_b": "The floods are described as among the worst in recent years for the state.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
+        "claim_a": "118 security personnel were hurt in the clashes.",
+        "source_a": "cjp_2_delhi_police",
+        "date_a": "Monday",
+        "claim_b": "Around 150 protesters were injured.",
+        "source_b": "cjp_1_aljazeera",
+        "date_b": "July 20, 2026",
         "stance": "discuss",
-        "reasoning": "Claim A focuses on the specific risk of new flooding events, while Claim B characterizes the severity of the floods as among the worst in recent years; these are complementary descriptions of the same situation that do not directly confirm or contradict each other's specific metrics.",
+        "reasoning": "Temporal progression: cjp_2_delhi_police reported 118 (monday) and cjp_1_aljazeera reported 150 (july 20, 2026). Figures naturally progress across dates.",
         "confidence": 0.9
       },
       {
-        "claim_a": "Days of heavy monsoon rain caused rivers, including the Brahmaputra, to overflow.",
-        "source_a": "source2_npr",
-        "date_a": null,
-        "claim_b": "Unusually rapid flooding occurred across inland parts of Sivasagar, Charaideo, and Jorhat districts.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "23 July 2026",
+        "claim_a": "70 protesters had been detained.",
+        "source_a": "cjp_2_delhi_police",
+        "date_a": "Monday",
+        "claim_b": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
+        "source_b": "cjp_1_aljazeera",
+        "date_b": "July 20, 2026",
         "stance": "unrelated",
-        "reasoning": "Different factual topic domains (event vs status).",
+        "reasoning": "Different factual topic domains (detentions vs casualties).",
         "confidence": 0.95
       },
       {
-        "claim_a": "Days of heavy monsoon rain caused rivers, including the Brahmaputra, to overflow.",
-        "source_a": "source2_npr",
-        "date_a": null,
-        "claim_b": "Brahmaputra River and its tributaries crossed danger levels at several locations.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
+        "claim_a": "70 protesters had been detained.",
+        "source_a": "cjp_2_delhi_police",
+        "date_a": "Monday",
+        "claim_b": "Around 150 protesters were injured.",
+        "source_b": "cjp_1_aljazeera",
+        "date_b": "July 20, 2026",
         "stance": "unrelated",
-        "reasoning": "Different factual topic domains (event vs status).",
+        "reasoning": "Different factual topic domains (detentions vs casualties).",
         "confidence": 0.95
-      },
-      {
-        "claim_a": "Days of heavy monsoon rain caused rivers, including the Brahmaputra, to overflow.",
-        "source_a": "source2_npr",
-        "date_a": null,
-        "claim_b": "The floods are described as among the worst in recent years for the state.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "unrelated",
-        "reasoning": "Different factual topic domains (event vs status).",
-        "confidence": 0.95
-      },
-      {
-        "claim_a": "Unusually rapid flooding occurred across inland parts of Sivasagar, Charaideo, and Jorhat districts.",
-        "source_a": "source3_theunitedindian",
-        "date_a": "23 July 2026",
-        "claim_b": "Brahmaputra River and its tributaries crossed danger levels at several locations.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A describes rapid flooding in specific inland districts, while Claim B states that the Brahmaputra River and its tributaries crossed danger levels; these are related but distinct aspects of the same flood event (inland inundation vs. river gauge levels) that do not directly confirm or contradict each other.",
-        "confidence": 0.9
-      },
-      {
-        "claim_a": "Unusually rapid flooding occurred across inland parts of Sivasagar, Charaideo, and Jorhat districts.",
-        "source_a": "source3_theunitedindian",
-        "date_a": "23 July 2026",
-        "claim_b": "The floods are described as among the worst in recent years for the state.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "agree",
-        "reasoning": "Claim B provides a qualitative assessment of the severity of the floods ('among the worst in recent years') which is consistent with and supports the description of 'unusually rapid flooding' in Claim A, without contradicting specific facts.",
-        "confidence": 0.9
       }
     ]
   },
-  "2": {
+  "1": {
     "claims": [
       {
-        "claim": "Rescue teams struggled to reach some settlements even by boat.",
-        "topic": "rescue",
+        "claim": "The Cockroach Janta Party (CJP) said its leaders would pause street marches.",
+        "topic": "status",
         "numerical_value": null,
         "numerical_unit": null,
-        "date": "23 July 2026",
-        "attribution": "The United Indian",
-        "source_file": "source3_theunitedindian",
-        "cluster_id": 2
-      },
-      {
-        "claim": "Relief was carried out by Assam government, NDRF, SDRF, Indian Army, local authorities, and volunteer organizations.",
-        "topic": "rescue",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": null,
-        "attribution": null,
-        "source_file": "source4_mapsofindia",
-        "cluster_id": 2
+        "date": "July 20, 2026",
+        "attribution": "Cockroach Janta Party (CJP)",
+        "source_file": "cjp_1_aljazeera",
+        "cluster_id": 1
       }
     ],
-    "edges": [
-      {
-        "claim_a": "Rescue teams struggled to reach some settlements even by boat.",
-        "source_a": "source3_theunitedindian",
-        "date_a": "23 July 2026",
-        "claim_b": "Relief was carried out by Assam government, NDRF, SDRF, Indian Army, local authorities, and volunteer organizations.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "stance": "discuss",
-        "reasoning": "Claim A describes the difficulty of access to settlements, while Claim B lists the specific agencies involved in relief operations; these are complementary details about the same incident that do not directly confirm or contradict each other.",
-        "confidence": 0.95
-      }
-    ]
+    "edges": []
   }
 }

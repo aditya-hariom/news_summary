@@ -1,308 +1,65 @@
 [
   {
-    "claim": "The flood toll was reported at 66.",
+    "claim": "Nearly 180 people were hurt in Monday's clashes near Jantar Mantar.",
     "topic": "casualties",
-    "numerical_value": 66,
-    "numerical_unit": "deaths",
-    "date": "26 July 2026",
-    "attribution": "The Hindu",
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "The flood toll was reported at 66.",
-    "topic": "casualties",
-    "numerical_value": 66,
-    "numerical_unit": "deaths",
-    "date": "26 July 2026",
-    "attribution": "Times of India",
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "The death toll climbed to 82.",
-    "topic": "casualties",
-    "numerical_value": 82,
-    "numerical_unit": "deaths",
-    "date": "2 August 2026",
-    "attribution": "Times of India",
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "1.78 lakh people were affected.",
-    "topic": "affected_population",
-    "numerical_value": 178000,
+    "numerical_value": 180,
     "numerical_unit": "people",
-    "date": "2 August 2026",
-    "attribution": "Times of India",
-    "source_file": "source1_wikipedia_compiled"
+    "date": "Monday",
+    "attribution": "Delhi Police",
+    "source_file": "cjp_2_delhi_police"
   },
   {
-    "claim": "The total flood-related death toll was reported at 98.",
+    "claim": "60 protesters were hurt in the clashes.",
     "topic": "casualties",
-    "numerical_value": 98,
-    "numerical_unit": "deaths",
-    "date": "8 August 2026",
-    "attribution": null,
-    "source_file": "source1_wikipedia_compiled"
+    "numerical_value": 60,
+    "numerical_unit": "protesters",
+    "date": "Monday",
+    "attribution": "Delhi Police",
+    "source_file": "cjp_2_delhi_police"
   },
   {
-    "claim": "Around 155,000 people were affected.",
-    "topic": "affected_population",
-    "numerical_value": 155000,
-    "numerical_unit": "people",
-    "date": "8 August 2026",
-    "attribution": null,
-    "source_file": "source1_wikipedia_compiled"
+    "claim": "118 security personnel were hurt in the clashes.",
+    "topic": "casualties",
+    "numerical_value": 118,
+    "numerical_unit": "security personnel",
+    "date": "Monday",
+    "attribution": "Delhi Police",
+    "source_file": "cjp_2_delhi_police"
   },
   {
-    "claim": "Golaghat was the worst-hit district.",
+    "claim": "70 protesters had been detained.",
+    "topic": "detentions",
+    "numerical_value": 70,
+    "numerical_unit": "protesters",
+    "date": "Monday",
+    "attribution": "Delhi Police",
+    "source_file": "cjp_2_delhi_police"
+  },
+  {
+    "claim": "The Cockroach Janta Party (CJP) said its leaders would pause street marches.",
     "topic": "status",
     "numerical_value": null,
     "numerical_unit": null,
-    "date": "8 August 2026",
-    "attribution": null,
-    "source_file": "source1_wikipedia_compiled"
+    "date": "July 20, 2026",
+    "attribution": "Cockroach Janta Party (CJP)",
+    "source_file": "cjp_1_aljazeera"
   },
   {
-    "claim": "10,748 hectares of cropland were submerged.",
-    "topic": "damage",
-    "numerical_value": 10748,
-    "numerical_unit": "hectares",
-    "date": "8 August 2026",
-    "attribution": null,
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "85 people were reported dead.",
+    "claim": "A violent police crackdown left dozens of supporters hurt during a rally near Parliament in New Delhi.",
     "topic": "casualties",
-    "numerical_value": 85,
-    "numerical_unit": "deaths",
-    "date": "4 August 2026",
-    "attribution": null,
-    "source_file": "source1_wikipedia_compiled"
+    "numerical_value": null,
+    "numerical_unit": null,
+    "date": "July 20, 2026",
+    "attribution": "Al Jazeera",
+    "source_file": "cjp_1_aljazeera"
   },
   {
-    "claim": "More than 100,000 people were still affected.",
-    "topic": "affected_population",
-    "numerical_value": 100000,
-    "numerical_unit": "people",
-    "date": "4 August 2026",
-    "attribution": null,
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "48 fatalities were reported in Sivasagar district.",
+    "claim": "Around 150 protesters were injured.",
     "topic": "casualties",
-    "numerical_value": 48,
-    "numerical_unit": "deaths",
-    "date": null,
-    "attribution": null,
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "29 fatalities in Sivasagar district were attributed to Nazira flood incidents.",
-    "topic": "casualties",
-    "numerical_value": 29,
-    "numerical_unit": "deaths",
-    "date": null,
-    "attribution": null,
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "29 people were reported swept away in Charaideo.",
-    "topic": "casualties",
-    "numerical_value": 29,
-    "numerical_unit": "people",
-    "date": null,
-    "attribution": null,
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "Around 481 villages were completely submerged.",
-    "topic": "damage",
-    "numerical_value": 481,
-    "numerical_unit": "villages",
-    "date": null,
-    "attribution": "local news source",
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "The government would conduct door-to-door digital damage assessments by 9 August.",
-    "topic": "statement",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": "9 August 2026",
-    "attribution": "Chief Minister Himanta Biswa Sarma",
-    "source_file": "source1_wikipedia_compiled"
-  },
-  {
-    "claim": "The flood death toll reached 100.",
-    "topic": "casualties",
-    "numerical_value": 100,
-    "numerical_unit": "deaths",
-    "date": "10 August 2026",
-    "attribution": "officials",
-    "source_file": "source2_npr"
-  },
-  {
-    "claim": "Two more deaths occurred overnight.",
-    "topic": "casualties",
-    "numerical_value": 2,
-    "numerical_unit": "deaths",
-    "date": "10 August 2026",
-    "attribution": "officials",
-    "source_file": "source2_npr"
-  },
-  {
-    "claim": "Several rivers remained above danger levels.",
-    "topic": "status",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": "10 August 2026",
-    "attribution": "Assam State Disaster Management Authority",
-    "source_file": "source2_npr"
-  },
-  {
-    "claim": "The risk of fresh flooding was raised.",
-    "topic": "status",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": "10 August 2026",
-    "attribution": "Assam State Disaster Management Authority",
-    "source_file": "source2_npr"
-  },
-  {
-    "claim": "Days of heavy monsoon rain caused rivers, including the Brahmaputra, to overflow.",
-    "topic": "event",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": null,
-    "attribution": null,
-    "source_file": "source2_npr"
-  },
-  {
-    "claim": "Communities were inundated.",
-    "topic": "affected_population",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": null,
-    "attribution": null,
-    "source_file": "source2_npr"
-  },
-  {
-    "claim": "Infrastructure was damaged.",
-    "topic": "damage",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": null,
-    "attribution": null,
-    "source_file": "source2_npr"
-  },
-  {
-    "claim": "Thousands of people have lost their homes.",
-    "topic": "affected_population",
-    "numerical_value": null,
-    "numerical_unit": "people",
-    "date": null,
-    "attribution": null,
-    "source_file": "source2_npr"
-  },
-  {
-    "claim": "The overall monsoon-season death toll had crossed 50 by 22 July 2026.",
-    "topic": "casualties",
-    "numerical_value": 50,
-    "numerical_unit": "deaths",
-    "date": "22 July 2026",
-    "attribution": "Times of India",
-    "source_file": "source3_theunitedindian"
-  },
-  {
-    "claim": "Unusually rapid flooding occurred across inland parts of Sivasagar, Charaideo, and Jorhat districts.",
-    "topic": "status",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": "23 July 2026",
-    "attribution": "Ground reports",
-    "source_file": "source3_theunitedindian"
-  },
-  {
-    "claim": "Whole villages in Upper Assam went underwater within hours.",
-    "topic": "damage",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": "23 July 2026",
-    "attribution": "The United Indian",
-    "source_file": "source3_theunitedindian"
-  },
-  {
-    "claim": "Roads became impassable due to the flooding.",
-    "topic": "damage",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": "23 July 2026",
-    "attribution": "The United Indian",
-    "source_file": "source3_theunitedindian"
-  },
-  {
-    "claim": "Rescue teams struggled to reach some settlements even by boat.",
-    "topic": "rescue",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": "23 July 2026",
-    "attribution": "The United Indian",
-    "source_file": "source3_theunitedindian"
-  },
-  {
-    "claim": "The death toll may change again as rescue teams verify reports from previously inaccessible villages.",
-    "topic": "status",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": "23 July 2026",
-    "attribution": "The United Indian",
-    "source_file": "source3_theunitedindian"
-  },
-  {
-    "claim": "The official death toll in Assam floods has swelled to 47.",
-    "topic": "casualties",
-    "numerical_value": 47,
-    "numerical_unit": "deaths",
-    "date": null,
-    "attribution": "official",
-    "source_file": "source4_mapsofindia"
-  },
-  {
-    "claim": "More than 7.2 lakh people have been affected by the floods.",
-    "topic": "affected_population",
-    "numerical_value": 720000,
-    "numerical_unit": "people",
-    "date": null,
-    "attribution": "official",
-    "source_file": "source4_mapsofindia"
-  },
-  {
-    "claim": "Brahmaputra River and its tributaries crossed danger levels at several locations.",
-    "topic": "status",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": null,
-    "attribution": null,
-    "source_file": "source4_mapsofindia"
-  },
-  {
-    "claim": "Relief was carried out by Assam government, NDRF, SDRF, Indian Army, local authorities, and volunteer organizations.",
-    "topic": "rescue",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": null,
-    "attribution": null,
-    "source_file": "source4_mapsofindia"
-  },
-  {
-    "claim": "The floods are described as among the worst in recent years for the state.",
-    "topic": "status",
-    "numerical_value": null,
-    "numerical_unit": null,
-    "date": null,
-    "attribution": "MapsOfIndia",
-    "source_file": "source4_mapsofindia"
+    "numerical_value": 150,
+    "numerical_unit": "protesters",
+    "date": "July 20, 2026",
+    "attribution": "Abhijeet Dipke",
+    "source_file": "cjp_1_aljazeera"
   }
 ]

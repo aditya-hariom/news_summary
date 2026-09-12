@@ -143,7 +143,7 @@ def parse_claims_json(raw_text: str) -> list:
     raise ValueError(f"Failed to parse claims JSON from output: {raw_text[:200]}...")
 
 
-def extract_claims_from_file(filepath: str, max_retries: int = 3) -> list:
+def extract_claims_from_file(filepath: str, max_retries: int = 5) -> list:
     with open(filepath, "r", encoding="utf-8") as f:
         text = f.read()
 
@@ -154,6 +154,7 @@ def extract_claims_from_file(filepath: str, max_retries: int = 3) -> list:
             response = client.chat.completions.create(
                 model=MODEL_NAME,
                 temperature=0.1,
+                max_tokens=350,
                 messages=[
                     {
                         "role": "system",
@@ -184,8 +185,13 @@ def extract_claims_from_file(filepath: str, max_retries: int = 3) -> list:
             return claims
 
         except Exception as e:
-            print(f"  [Attempt {attempt}/{max_retries}] Error processing {filepath}: {e}")
-            if attempt < max_retries:
+            err_msg = str(e)
+            print(f"  [Attempt {attempt}/{max_retries}] Error processing {filepath}: {err_msg[:120]}")
+            if "429" in err_msg or "rate_limit" in err_msg.lower() or "tokens" in err_msg.lower():
+                wait_time = 4.0 * attempt
+                print(f"  [Rate limit pause] Waiting {wait_time}s...")
+                time.sleep(wait_time)
+            elif attempt < max_retries:
                 time.sleep(1.5)
             else:
                 print(f"[ERROR] Could not extract claims for {filepath} after {max_retries} attempts.")
@@ -208,6 +214,7 @@ def main(input_files=None):
         claims = extract_claims_from_file(filepath)
         print(f"  -> {len(claims)} atomic claims extracted")
         all_claims.extend(claims)
+        time.sleep(1.0)
 
     os.makedirs("output", exist_ok=True)
     output_path = "output/claims.json"

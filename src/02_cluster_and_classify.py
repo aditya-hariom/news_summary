@@ -241,6 +241,7 @@ def classify_stance(claim_a: dict, claim_b: dict, max_retries: int = 4) -> dict:
             response = client.chat.completions.create(
                 model=MODEL_NAME,
                 temperature=0.0,
+                max_tokens=90,
                 messages=[
                     {
                         "role": "system",
