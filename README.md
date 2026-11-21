@@ -1,6 +1,12 @@
 # Contradiction-Aware Multi-Document News Analysis Using LLMs
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://newssummary-zzev4ju2gta656xhj4vtwa.streamlit.app/)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 An AI-powered NLP pipeline and interactive Streamlit dashboard that analyzes multiple conflicting news articles covering breaking events, extracts atomic factual claims, clusters them by topic, detects agreements and contradictions using a neuro-symbolic hybrid stance classifier, and generates transparent, contradiction-aware summaries with 100% source attribution.
+
+🌐 **Live Demo:** [https://newssummary-zzev4ju2gta656xhj4vtwa.streamlit.app/](https://newssummary-zzev4ju2gta656xhj4vtwa.streamlit.app/)
 
 ---
 
