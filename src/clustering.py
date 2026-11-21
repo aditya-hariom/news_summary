@@ -142,6 +142,17 @@ def cluster_claims(
     if not claims:
         return {}, distance_threshold or DEFAULT_DISTANCE_THRESHOLD
 
+    if len(claims) == 1:
+        claims[0]["cluster_id"] = 0
+        single_cluster = {
+            0: {
+                "cluster_id": 0,
+                "topic": claims[0].get("category") or claims[0].get("topic", "general"),
+                "claims": claims
+            }
+        }
+        return single_cluster, distance_threshold or DEFAULT_DISTANCE_THRESHOLD
+
     if embedder is None:
         embedder = get_embedder()
 
