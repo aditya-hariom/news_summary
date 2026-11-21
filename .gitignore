@@ -30,3 +30,8 @@ Desktop.ini
 
 # Streamlit credentials / secrets
 .streamlit/secrets.toml
+
+# Temporary user upload files during app runs
+data/custom_sources/*
+!data/custom_sources/.gitkeep
+
