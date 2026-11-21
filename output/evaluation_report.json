@@ -1,0 +1,131 @@
+{
+  "total_samples": 20,
+  "overall_accuracy": 0.75,
+  "macro_averages": {
+    "precision": 0.6667,
+    "recall": 0.6333,
+    "macro_f1": 0.6
+  },
+  "per_class_metrics": {
+    "AGREE": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "support": 5
+    },
+    "DISAGREE": {
+      "precision": 0.8333,
+      "recall": 0.8333,
+      "f1_score": 0.8333,
+      "support": 6
+    },
+    "DISCUSS": {
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1_score": 0.6667,
+      "support": 4
+    },
+    "UNRELATED": {
+      "precision": 1.0,
+      "recall": 0.3333,
+      "f1_score": 0.5,
+      "support": 3
+    },
+    "INSUFFICIENT_EVIDENCE": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "support": 2
+    }
+  },
+  "confusion_matrix": {
+    "AGREE": {
+      "AGREE": 5,
+      "DISAGREE": 0,
+      "DISCUSS": 0,
+      "UNRELATED": 0,
+      "INSUFFICIENT_EVIDENCE": 0
+    },
+    "DISAGREE": {
+      "AGREE": 0,
+      "DISAGREE": 5,
+      "DISCUSS": 1,
+      "UNRELATED": 0,
+      "INSUFFICIENT_EVIDENCE": 0
+    },
+    "DISCUSS": {
+      "AGREE": 0,
+      "DISAGREE": 0,
+      "DISCUSS": 4,
+      "UNRELATED": 0,
+      "INSUFFICIENT_EVIDENCE": 0
+    },
+    "UNRELATED": {
+      "AGREE": 0,
+      "DISAGREE": 0,
+      "DISCUSS": 2,
+      "UNRELATED": 1,
+      "INSUFFICIENT_EVIDENCE": 0
+    },
+    "INSUFFICIENT_EVIDENCE": {
+      "AGREE": 0,
+      "DISAGREE": 1,
+      "DISCUSS": 1,
+      "UNRELATED": 0,
+      "INSUFFICIENT_EVIDENCE": 0
+    }
+  },
+  "errors_count": 5,
+  "errors": [
+    {
+      "id": "pair_03",
+      "domain": "Accident / Train Derailment",
+      "claim_a": "Coromandel Express derailed near Bahanaga Bazar station killing 288 passengers.",
+      "claim_b": "Railway ministry confirmed 275 deaths in the Odisha three-train crash.",
+      "ground_truth": "DISAGREE",
+      "predicted": "DISCUSS",
+      "match": false,
+      "reasoning": "Claim A reports 288 deaths on June 3, while Claim B reports 275 deaths on June 4. Since the death toll of a major disaster is often revised as bodies are recovered and identified over time, and the dates are consecutive, this represents a temporal update or revision of the count rather than a direct contradiction of facts for the same specific moment."
+    },
+    {
+      "id": "pair_13",
+      "domain": "Disaster / Floods",
+      "claim_a": "52 deaths were confirmed across the district.",
+      "claim_b": "Relief teams distributed 5,000 dry food packets to displaced families.",
+      "ground_truth": "UNRELATED",
+      "predicted": "DISCUSS",
+      "match": false,
+      "reasoning": "Both claims refer to the same incident (implied by the context of a disaster in a district) and the same date, but they report different aspects of the situation: Claim A reports the death toll, while Claim B reports relief distribution activities. They are substantively consistent as part of the same event but do not directly confirm or contradict each other's specific metrics."
+    },
+    {
+      "id": "pair_15",
+      "domain": "Disaster Scope",
+      "claim_a": "Heavy damages were reported in several remote villages.",
+      "claim_b": "Three houses developed minor cracks following the earthquake tremor.",
+      "ground_truth": "INSUFFICIENT_EVIDENCE",
+      "predicted": "DISAGREE",
+      "match": false,
+      "reasoning": "Claim A reports 'heavy damages' in villages, while Claim B reports only 'minor cracks' in three houses; these descriptions represent incompatible levels of severity for the same incident."
+    },
+    {
+      "id": "pair_16",
+      "domain": "Election Reporting",
+      "claim_a": "Voter turnout crossed 65% by late afternoon according to polling agents.",
+      "claim_b": "Official final turnout will be tabulated by the Election Commission tomorrow.",
+      "ground_truth": "INSUFFICIENT_EVIDENCE",
+      "predicted": "DISCUSS",
+      "match": false,
+      "reasoning": "Claim A provides a preliminary estimate of voter turnout (65%) based on polling agents, while Claim B states that the official final figures will be released the next day. These statements are complementary, describing different stages of the reporting process (preliminary vs. final official data) rather than contradicting each other."
+    },
+    {
+      "id": "pair_19",
+      "domain": "Sports News",
+      "claim_a": "Stadium attendance was recorded at 42,000 spectators.",
+      "claim_b": "Police estimated crowd outside the arena at 15,000 fans.",
+      "ground_truth": "UNRELATED",
+      "predicted": "DISCUSS",
+      "match": false,
+      "reasoning": "Claim A reports the official stadium attendance (42,000), while Claim B reports the police estimate of the crowd outside the arena (15,000). These figures refer to different specific groups (inside vs. outside) and are not mutually exclusive, thus they discuss the same event with supplementary details rather than directly contradicting each other."
+    }
+  ]
+}
