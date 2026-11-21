@@ -50,8 +50,11 @@ EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 # PIPELINE HYPERPARAMETERS
 # ==============================================================================
 # Max tokens for Groq chat completions
-EXTRACTION_MAX_TOKENS = 1500  # Upgraded from 350 to prevent truncated JSON
-STANCE_MAX_TOKENS = 350       # Upgraded from 90 to prevent truncated CoT reasoning
+# NOTE: Free/On-Demand tier for qwen/qwen3.8-27b has an Output Tokens Per Minute (OTPM)
+# limit of 1000 tokens per request. Setting max_tokens=650 prevents HTTP 429 errors
+# while providing plenty of space (~4-8 claims) for full JSON output.
+EXTRACTION_MAX_TOKENS = 650
+STANCE_MAX_TOKENS = 300
 
 # Clustering parameters
 DEFAULT_DISTANCE_THRESHOLD = 0.55
