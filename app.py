@@ -233,19 +233,34 @@ for cid, cdata in clusters_dict.items():
 # Count total unique sources
 all_sources = sorted(set(c.get("source_name") or c.get("source_file") for c in claims_list))
 
-# 6. Main Five Simple Tabs
-tab_home, tab_analyze, tab_results, tab_explorer, tab_about = st.tabs([
+# 6. Main Navigation (Tabs with Auto-Switch support)
+tab_names = [
     "🏠 Home / Overview",
     "📰 Analyze News",
     "📊 Results",
     "🔍 Claims Explorer",
     "🧠 About / How It Works",
-])
+]
+
+# Set active tab via session state if requested (e.g. after analysis)
+if "active_nav_tab" not in st.session_state:
+    st.session_state["active_nav_tab"] = tab_names[0]
+
+# Radio-styled or Pills-styled top tabs
+selected_tab = st.radio(
+    "Navigation",
+    tab_names,
+    index=tab_names.index(st.session_state["active_nav_tab"]) if st.session_state["active_nav_tab"] in tab_names else 0,
+    horizontal=True,
+    label_visibility="collapsed",
+    key="main_navbar"
+)
+st.session_state["active_nav_tab"] = selected_tab
 
 # ==============================================================================
 # TAB 1: HOME / OVERVIEW
 # ==============================================================================
-with tab_home:
+if selected_tab == "🏠 Home / Overview":
     st.markdown("### 📌 Welcome to Contradiction-Aware News Analysis")
     st.write(
         "When breaking news happens, different newspapers often report conflicting death tolls, dates, or casualty numbers. "
@@ -315,7 +330,7 @@ with tab_home:
 # ==============================================================================
 # TAB 2: ANALYZE NEWS
 # ==============================================================================
-with tab_analyze:
+elif selected_tab == "📰 Analyze News":
     st.markdown("### 📰 Run News Analysis")
     st.caption("Choose how you want to input articles: paste text directly, upload .txt files, or use the built-in disaster corpus.")
 
@@ -334,20 +349,21 @@ with tab_analyze:
     if input_mode == "⚡ Paste News Text Directly (Quickest for Viva Demo)":
         st.markdown("##### Paste Two Conflicting News Reports")
         
-        # Quick Demo Button to pre-fill conflicting examples
+        # Quick Demo Button to pre-fill conflicting examples (same event window for immediate RED conflict card)
         if st.button("📋 Load Sample Conflicting Story (Assam Floods Casualties)", type="secondary"):
             st.session_state["p_src_1"] = "Times of India"
-            st.session_state["p_txt_1"] = "On 2 August 2026, state officials reported that 82 people have died across Assam due to severe flooding. Over 1.78 lakh people have been affected."
+            st.session_state["p_txt_1"] = "State officials confirmed that 82 people have died across Assam due to severe flooding. Over 1.78 lakh people have been affected."
             st.session_state["p_src_2"] = "MapsOfIndia Wire"
-            st.session_state["p_txt_2"] = "According to official reports, the death toll in the 2026 Assam floods has swelled to 47. More than 7.2 lakh people have been affected."
+            st.session_state["p_txt_2"] = "According to official disaster reports, the death toll in the Assam floods has reached 47. More than 7.2 lakh people have been affected."
+            st.rerun()
 
         col_a, col_b = st.columns(2)
         with col_a:
-            src1 = st.text_input("News Outlet 1 Name:", value=st.session_state.get("p_src_1", "Times of India"), key="src1_in")
-            txt1 = st.text_area("Article 1 Text:", value=st.session_state.get("p_txt_1", ""), height=150, placeholder="Paste first news story here...", key="txt1_in")
+            src1 = st.text_input("News Outlet 1 Name:", value=st.session_state.get("p_src_1", "Times of India"))
+            txt1 = st.text_area("Article 1 Text:", value=st.session_state.get("p_txt_1", ""), height=160, placeholder="Paste first news story here...")
         with col_b:
-            src2 = st.text_input("News Outlet 2 Name:", value=st.session_state.get("p_src_2", "MapsOfIndia Wire"), key="src2_in")
-            txt2 = st.text_area("Article 2 Text:", value=st.session_state.get("p_txt_2", ""), height=150, placeholder="Paste second news story here...", key="txt2_in")
+            src2 = st.text_input("News Outlet 2 Name:", value=st.session_state.get("p_src_2", "MapsOfIndia Wire"))
+            txt2 = st.text_area("Article 2 Text:", value=st.session_state.get("p_txt_2", ""), height=160, placeholder="Paste second news story here...")
 
     elif input_mode == "📁 Upload .txt Files (Multiple Articles)":
         uploaded = st.file_uploader(
@@ -405,13 +421,16 @@ with tab_analyze:
             run_summary_pipeline()
 
             prog.progress(100)
-            st.success("✅ Analysis Complete! Switch to the **Results** tab to view findings.")
+            # Auto-switch to Results tab
+            st.session_state["active_nav_tab"] = "📊 Results"
+            st.success("✅ Analysis Complete! Switching to Results tab...")
+            time.sleep(1)
             st.rerun()
 
 # ==============================================================================
 # TAB 3: RESULTS
 # ==============================================================================
-with tab_results:
+elif selected_tab == "📊 Results":
     st.markdown("### 📊 Contradiction-Aware Analysis Results")
     st.caption("Here is what our AI found after cross-checking all articles.")
 
@@ -523,7 +542,7 @@ with tab_results:
 # ==============================================================================
 # TAB 4: CLAIMS EXPLORER
 # ==============================================================================
-with tab_explorer:
+elif selected_tab == "🔍 Claims Explorer":
     st.markdown("### 🔍 Claims Explorer")
     st.caption("Search, filter, and inspect individual factual statements extracted by the AI.")
 
@@ -572,7 +591,7 @@ with tab_explorer:
 # ==============================================================================
 # TAB 5: ABOUT / HOW IT WORKS
 # ==============================================================================
-with tab_about:
+elif selected_tab == "🧠 About / How It Works":
     st.markdown("### 🧠 How the System Works (Viva Explanation Guide)")
     st.write(
         "This project is a **College Minor Project** designed to demonstrate how NLP and Large Language Models "
