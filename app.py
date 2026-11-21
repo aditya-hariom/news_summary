@@ -1,30 +1,38 @@
 """
 Contradiction-Aware News Summarizer — Presentation & Interactive Dashboard
 -------------------------------------------------------------------------
-Designed for faculty demonstrations, minor project viva, and multi-document analysis.
+Designed for faculty demonstrations, minor project viva, and multi-document news analysis.
+Supports direct text pasting, file uploads, claims exploration, and side-by-side contradiction tracking.
 """
 
 import os
+import sys
 import json
 import glob
 import streamlit as st
-import importlib.util
 from dotenv import load_dotenv
 
-# Load local environment variables if available
-load_dotenv()
+# Ensure project root is in sys.path for direct imports
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
-# Streamlit Cloud secrets integration (supports secrets.toml in cloud)
-try:
-    if hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
-        if not os.environ.get("GROQ_API_KEY"):
-            os.environ["GROQ_API_KEY"] = str(st.secrets["GROQ_API_KEY"]).strip()
-except Exception:
-    pass
-
-# Ensure essential output and data directories exist
-os.makedirs("output", exist_ok=True)
-os.makedirs("data/custom_sources", exist_ok=True)
+from src.config import (
+    get_groq_api_key,
+    GROQ_MODEL,
+    EMBEDDING_MODEL,
+    CLAIMS_FILE,
+    CLUSTERS_FILE,
+    SUMMARY_FILE,
+    RAW_SOURCES_DIR,
+    CUSTOM_SOURCES_DIR,
+)
+from src.extraction import (
+    extract_claims_from_text,
+    run_extraction_pipeline,
+)
+from src.stance_classifier import run_stance_pipeline
+from src.summarizer import run_summary_pipeline
 
 # 1. Page Configuration
 st.set_page_config(
@@ -34,7 +42,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# 2. Modern, Clean, Presentation-Ready Styling
+# 2. Modern, Presentation-Ready Styling
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -113,7 +121,7 @@ st.markdown("""
     }
     .vs-title {
         color: #BE123C;
-        font-size: 1.25rem;
+        font-size: 1.2rem;
         font-weight: 800;
         margin-bottom: 1rem;
         display: flex;
@@ -154,19 +162,13 @@ st.markdown("""
         margin-bottom: 0.9rem;
     }
 
-    /* Presentation Cheat Sheet */
-    .cheat-sheet-box {
+    /* Claim Tag */
+    .claim-box {
         background: #F8FAFC;
-        border: 1px solid #CBD5E1;
-        border-radius: 12px;
-        padding: 1.2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Metric Cards */
-    [data-testid="stMetricValue"] {
-        font-size: 2rem !important;
-        font-weight: 800 !important;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 0.8rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -176,59 +178,55 @@ st.markdown("""
 <div class="hero-container">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
         <div>
-            <h1 class="hero-title">⚖️ Contradiction-Aware News Summarizer</h1>
+            <h1 class="hero-title">⚖️ Contradiction-Aware News Analysis System</h1>
             <p class="hero-subtitle">
-                An intelligent multi-document AI engine that identifies <b>news contradictions side-by-side</b> instead of blending them into hallucinated summaries.
+                An intelligent multi-document AI engine that extracts atomic claims, clusters factual topics, and surfaces <b>news contradictions side-by-side</b> with 100% source attribution.
             </p>
             <div>
                 <span class="badge-pill badge-tech">Groq LLM (Qwen-27B)</span>
-                <span class="badge-pill badge-tech">Sentence-Transformers (MiniLM)</span>
+                <span class="badge-pill badge-tech">Sentence-Transformers (MiniLM-L6)</span>
                 <span class="badge-pill badge-tech">Agglomerative Clustering</span>
-                <span class="badge-pill badge-tech">FNC-1 Stance Classifier</span>
+                <span class="badge-pill badge-tech">Neuro-Symbolic Stance Engine</span>
             </div>
         </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# 4. Sidebar: API Key Status & Controls
+# 4. Sidebar: System Controls & API Status
 with st.sidebar:
     st.markdown("### ⚙️ System Controls")
-    has_api_key = bool(os.environ.get("GROQ_API_KEY"))
-    if has_api_key:
+    active_key = get_groq_api_key()
+    if active_key:
         st.success("🟢 **Groq API**: Connected")
     else:
         st.warning("🟡 **Groq API**: Missing")
-        user_key_input = st.text_input(
-            "Enter Groq API Key:",
-            type="password",
-            placeholder="gsk_...",
-            help="Required to run live analysis on new documents. Get a free key at console.groq.com"
-        )
-        if user_key_input:
-            os.environ["GROQ_API_KEY"] = user_key_input.strip()
-            st.success("✅ API key set for this session!")
+        user_key = st.text_input("Enter Groq API Key:", type="password", placeholder="gsk_...")
+        if user_key:
+            os.environ["GROQ_API_KEY"] = user_key.strip()
+            st.success("API key registered for session!")
             st.rerun()
 
     st.markdown("---")
-    st.markdown("### 📋 Quick Stats")
-    st.markdown("- **Model:** Groq Qwen 2.5-32B / 27B")
-    st.markdown("- **Embedding:** Sentence-Transformers")
-    st.markdown("- **Clustering:** Agglomerative")
-    st.markdown("- **Stance:** FNC-1 Stance Detection")
+    st.markdown("### 📋 Viva Reference Card")
+    st.markdown(f"- **LLM:** `{GROQ_MODEL}`")
+    st.markdown(f"- **Embedder:** `{EMBEDDING_MODEL}`")
+    st.markdown("- **Clustering:** Agglomerative (Cosine)")
+    st.markdown("- **Stance Scheme:** 5-Class FNC-1 Extended")
+    st.markdown("- **Threshold Search:** Adaptive Silhouette")
     st.markdown("---")
-    st.caption("Contradiction-Aware Multi-Document Summarizer")
+    st.caption("College Minor Project 2026 — Aditya")
 
-# 5. Core Motivation Card: Standard AI vs Our System
+# 5. Motivation Banner (Standard AI vs Our System)
 col_bad, col_good = st.columns(2)
 with col_bad:
     st.markdown("""
     <div class="comparison-box box-bad">
-        <h4 style="margin:0 0 8px 0; color:#991B1B;">❌ What Standard AI (ChatGPT / Gemini) Does:</h4>
-        <p style="margin:0; font-size:0.95rem; line-height:1.5;">
+        <h4 style="margin:0 0 6px 0; color:#991B1B;">❌ What Standard AI (ChatGPT / Gemini) Does:</h4>
+        <p style="margin:0; font-size:0.9rem; line-height:1.4;">
             Blends conflicting reports into a vague, misleading consensus:
-            <br><i>"Between 47 and 100 people died, and around 1.78 to 7.2 lakh people were affected..."</i>
-            <br><b style="color:#991B1B;">⚠️ Problem:</b> Hides who reported what, obscures real errors, and misinforms readers.
+            <br><i>"Between 47 and 100 people died, and 1.78 to 7.2 lakh people were affected..."</i>
+            <br><b style="color:#991B1B;">⚠️ Consequence:</b> Conceals discrepancies, obscures errors, and hallucinated false compromises.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -236,145 +234,163 @@ with col_bad:
 with col_good:
     st.markdown("""
     <div class="comparison-box box-good">
-        <h4 style="margin:0 0 8px 0; color:#166534;">✅ What Our System Does:</h4>
-        <p style="margin:0; font-size:0.95rem; line-height:1.5;">
-            Detects exact discrepancies and presents them side-by-side:
-            <br><b>⚡ DISPUTE:</b> <code>MapsOfIndia</code> claims <b>7.2 Lakh affected</b> vs <code>Times of India</code> claims <b>1.78 Lakh</b> (4x difference!).
-            <br><b style="color:#166534;">✨ Benefit:</b> 100% source traceability and zero hidden hallucinations.
+        <h4 style="margin:0 0 6px 0; color:#166534;">✅ What Our System Does:</h4>
+        <p style="margin:0; font-size:0.9rem; line-height:1.4;">
+            Isolates factual claims and displays discrepancies side-by-side:
+            <br><b>⚡ DISPUTE:</b> <code>MapsOfIndia</code> reports <b>7.2 Lakh affected</b> vs <code>Times of India</code> reports <b>1.78 Lakh</b> (4x disparity!).
+            <br><b style="color:#166534;">✨ Benefit:</b> Preserves exact source attribution, temporal context, and zero hidden edits.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
 # 6. Load Pre-Computed Pipeline Outputs
-claims_file = "output/claims.json"
-clusters_file = "output/clusters_with_stance.json"
-summary_file = "output/final_summary.md"
-
-has_results = os.path.exists(clusters_file) and os.path.exists(summary_file)
+has_results = os.path.exists(CLUSTERS_FILE) and os.path.exists(CLAIMS_FILE) and os.path.exists(SUMMARY_FILE)
 
 if has_results:
-    with open(clusters_file, "r", encoding="utf-8") as f:
+    with open(CLAIMS_FILE, "r", encoding="utf-8") as f:
+        claims_data = json.load(f)
+
+    with open(CLUSTERS_FILE, "r", encoding="utf-8") as f:
         clusters_data = json.load(f)
 
-    confirmed_list = []
-    disputed_list = []
-    unconfirmed_list = []
+    with open(SUMMARY_FILE, "r", encoding="utf-8") as f:
+        summary_markdown = f.read()
+
+    # Dynamic metrics calculation
+    all_sources = sorted(set(c.get("source_name") or c.get("source_file") for c in claims_data))
+    
+    disputed_clusters = []
+    corroborated_clusters = []
+    unconfirmed_clusters = []
+    total_disagreements = 0
 
     for cid, cdata in clusters_data.items():
-        sources = set(m["source_file"] for m in cdata["claims"])
+        claims = cdata["claims"]
         edges = cdata.get("edges", [])
-        has_disagree = any(e.get("stance") == "disagree" for e in edges)
-        has_agree = any(e.get("stance") == "agree" for e in edges)
+        sources = set(c.get("source_name") or c.get("source_file") for c in claims)
+        has_disagree = any(e.get("stance") == "DISAGREE" for e in edges)
+        has_agree = any(e.get("stance") == "AGREE" for e in edges)
+
+        disagree_count = sum(1 for e in edges if e.get("stance") == "DISAGREE")
+        total_disagreements += disagree_count
 
         if len(sources) <= 1:
-            unconfirmed_list.append(cdata)
+            unconfirmed_clusters.append(cdata)
         elif has_disagree:
-            disputed_list.append(cdata)
+            disputed_clusters.append(cdata)
         elif has_agree:
-            confirmed_list.append(cdata)
+            corroborated_clusters.append(cdata)
         else:
-            unconfirmed_list.append(cdata)
+            unconfirmed_clusters.append(cdata)
 
     # 7. Summary Metrics
-    st.markdown("### 📊 Analysis Overview (2026 Assam Floods Corpus)")
-    m1, m2, m3, m4 = st.columns(4)
+    st.markdown("### 📊 Active Corpus Overview")
+    m1, m2, m3, m4, m5 = st.columns(5)
     with m1:
-        st.metric("Source Documents", "4 News Outlets", delta="Wikipedia, NPR, TOI, MapsOfIndia")
+        st.metric("Source Articles", f"{len(all_sources)} Outlets", delta=f"{len(claims_data)} Claims")
     with m2:
-        st.metric("🚨 Disputed Contradictions", f"{len(disputed_list)} Clusters", delta="Active Conflicts", delta_color="inverse")
+        st.metric("Fact Clusters", f"{len(clusters_data)} Clusters", delta="Semantic Topics")
     with m3:
-        st.metric("✅ Confirmed Facts", f"{len(confirmed_list)} Clusters", delta="Multi-Source Agreement", delta_color="normal")
+        st.metric("🚨 Active Contradictions", f"{len(disputed_clusters)} Clusters", delta=f"{total_disagreements} Disagree Pairs", delta_color="inverse")
     with m4:
-        st.metric("ℹ️ Single-Source Facts", f"{len(unconfirmed_list)} Claims", delta="Pending Verification", delta_color="off")
+        st.metric("✅ Corroborated Facts", f"{len(corroborated_clusters)} Topics", delta="Multi-Source Agree", delta_color="normal")
+    with m5:
+        st.metric("ℹ️ Single-Source Facts", f"{len(unconfirmed_clusters)} Topics", delta="Pending Verification", delta_color="off")
 
     st.markdown("---")
 
-    # 8. Main Tabs
-    tab_showcase, tab_facts, tab_articles, tab_pipeline, tab_run = st.tabs([
-        "🎯 1. Key Contradictions (Live Demo)",
-        "✅ 2. Confirmed & Developing Facts",
-        "📰 3. Read Source Articles",
-        "🧠 4. How It Works (Pipeline)",
-        "🚀 5. Run Custom / Live Pipeline",
+    # 8. Main Interactive Tabs
+    tab_contra, tab_corrob, tab_claims, tab_summary, tab_articles, tab_architecture, tab_run = st.tabs([
+        "🎯 1. Contradiction Explorer",
+        "✅ 2. Corroborated & Developing",
+        "🔍 3. Claims Explorer",
+        "📄 4. Structured Summary",
+        "📰 5. Source Articles",
+        "🧠 6. Pipeline Architecture",
+        "🚀 7. Run Live Analysis",
     ])
 
-    # ================= TAB 1: SHOWCASE KEY CONTRADICTIONS =================
-    with tab_showcase:
-        st.markdown("### 🚨 Detected Contradictions (Aamne-Saamne Comparison)")
-        st.info("Here are the direct factual contradictions discovered across the news sources. Notice how conflicting statements and figures are placed side-by-side with exact outlet names.")
+    # ================= TAB 1: CONTRADICTION EXPLORER =================
+    with tab_contra:
+        st.markdown("### 🚨 Detected News Contradictions (Side-by-Side Perspectives)")
+        st.caption("These cross-source discrepancies were detected within the same factual topic cluster. Notice how figures and dates are juxtaposed without merging.")
 
-        if not disputed_list:
-            st.success("🎉 **No factual contradictions detected!** All analyzed sources agree or report complementary, non-conflicting facts.")
+        if not disputed_clusters:
+            st.success("🎉 No factual contradictions detected across the active sources.")
         else:
-            for idx, c in enumerate(disputed_list, 1):
-                sources = sorted(set(m["source_file"] for m in c["claims"]))
-                disagree_edges = [e for e in c.get("edges", []) if e.get("stance") == "disagree"]
+            for idx, c in enumerate(disputed_clusters, 1):
+                topic = c.get("topic", "General Incident").replace("_", " ").title()
+                disagree_edges = [e for e in c.get("edges", []) if e.get("stance") == "DISAGREE"]
                 
-                # Pick the primary disagreement pair if available
-                if disagree_edges:
-                    primary_edge = disagree_edges[0]
-                    src_a = primary_edge.get("source_a", "Source A")
-                    claim_a = primary_edge.get("claim_a", "")
-                    src_b = primary_edge.get("source_b", "Source B")
-                    claim_b = primary_edge.get("claim_b", "")
-                    reasoning = primary_edge.get("reasoning", "Incompatible factual statements detected.")
-                    confidence = primary_edge.get("confidence", 0.90)
-                else:
-                    src_a = c["claims"][0]["source_file"]
-                    claim_a = c["claims"][0]["claim"]
-                    src_b = c["claims"][-1]["source_file"]
-                    claim_b = c["claims"][-1]["claim"]
-                    reasoning = "Conflicting reported figures within the same cluster."
-                    confidence = 0.85
+                # Show each unique contradiction edge
+                seen_pairs = set()
+                for e_idx, edge in enumerate(disagree_edges, 1):
+                    pair_key = tuple(sorted([edge["claim_a"], edge["claim_b"]]))
+                    if pair_key in seen_pairs:
+                        continue
+                    seen_pairs.add(pair_key)
 
-                st.markdown(f"""
-                <div class="vs-container">
-                    <div class="vs-title">
-                        <span>⚡ Discrepancy #{idx}: Fact Cluster {idx}</span>
-                        <span style="font-size:0.8rem; background:#FFE4E6; color:#9F1239; padding:3px 10px; border-radius:99px; margin-left:auto;">
-                            Contradiction Detected (Confidence: {confidence:.0%})
-                        </span>
-                    </div>
-                    <div style="display: flex; gap: 15px; align-items: stretch;">
-                        <div style="flex: 5;" class="source-card source-card-a">
-                            <span style="background:#FCA5A5; color:#7F1D1D; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
-                                Outlet: {src_a}
-                            </span>
-                            <h4 style="color:#991B1B; margin:8px 0 4px 0;">"{claim_a}"</h4>
-                        </div>
-                        <div style="flex: 1;" class="vs-badge-center">VS</div>
-                        <div style="flex: 5;" class="source-card source-card-b">
-                            <span style="background:#93C5FD; color:#1E3A8A; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
-                                Outlet: {src_b}
-                            </span>
-                            <h4 style="color:#1D4ED8; margin:8px 0 4px 0;">"{claim_b}"</h4>
-                        </div>
-                    </div>
-                    <div style="margin-top:12px; font-size:0.88rem; color:#881337; background:#FFF1F2; padding:10px 14px; border-radius:8px; border-left:4px solid #F43F5E;">
-                        <b>🧠 AI Verification Reasoning:</b> {reasoning}
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                    src_a = edge.get("source_a", "Source A")
+                    claim_a = edge.get("claim_a", "")
+                    date_a = f" ({edge['date_a']})" if edge.get("date_a") else ""
+                    val_a_str = f" [Value: {edge['val_a']} {edge.get('unit_a','')}]" if edge.get("val_a") is not None else ""
 
-        # Meta Contradiction: Counting Methodology (Explainer)
-        with st.expander("🔍 Show Meta-Contradiction: Why do news channels disagree? (Counting Methodology)", expanded=False):
+                    src_b = edge.get("source_b", "Source B")
+                    claim_b = edge.get("claim_b", "")
+                    date_b = f" ({edge['date_b']})" if edge.get("date_b") else ""
+                    val_b_str = f" [Value: {edge['val_b']} {edge.get('unit_b','')}]" if edge.get("val_b") is not None else ""
+
+                    attr = edge.get("conflicting_attribute") or topic
+                    conf = edge.get("confidence", 0.95)
+                    reasoning = edge.get("reasoning", "Incompatible factual reports detected.")
+
+                    st.markdown(f"""
+                    <div class="vs-container">
+                        <div class="vs-title">
+                            <span>⚡ Contradiction #{idx}.{e_idx}: {attr} Conflict</span>
+                            <span style="font-size:0.8rem; background:#FFE4E6; color:#9F1239; padding:3px 10px; border-radius:99px; margin-left:auto;">
+                                Discrepancy Verified (Confidence: {conf:.0%})
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 15px; align-items: stretch;">
+                            <div style="flex: 5;" class="source-card source-card-a">
+                                <span style="background:#FCA5A5; color:#7F1D1D; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
+                                    Outlet: {src_a}{date_a}
+                                </span>
+                                <h4 style="color:#991B1B; margin:8px 0 4px 0;">"{claim_a}"</h4>
+                                <div style="font-size:0.82rem; color:#7F1D1D;">{val_a_str}</div>
+                            </div>
+                            <div style="flex: 1;" class="vs-badge-center">VS</div>
+                            <div style="flex: 5;" class="source-card source-card-b">
+                                <span style="background:#93C5FD; color:#1E3A8A; padding:2px 8px; border-radius:4px; font-weight:700; font-size:0.8rem;">
+                                    Outlet: {src_b}{date_b}
+                                </span>
+                                <h4 style="color:#1D4ED8; margin:8px 0 4px 0;">"{claim_b}"</h4>
+                                <div style="font-size:0.82rem; color:#1E3A8A;">{val_b_str}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:12px; font-size:0.88rem; color:#881337; background:#FFF1F2; padding:10px 14px; border-radius:8px; border-left:4px solid #F43F5E;">
+                            <b>🧠 AI Verification Reasoning:</b> {reasoning}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+        with st.expander("🔍 Show Meta-Contradiction: Why do news outlets disagree? (Methodology Gap)", expanded=False):
             st.markdown("""
-            **Why do news channels disagree on numbers?**
-            - **Different Counting Windows:** Some agencies count figures across the *entire season* (including pre-monsoon and landslides).
-            - **Strict Event Window:** Other agencies count *only verified drowning deaths* during a single peak 24-hour wave.
-            - **Delayed Verification:** Ground rescue teams submit delayed tallies, leading to temporary differences in reported stats.
-            - *This is why automated aggregators fail when they don't look at methodology!*
+            **Why do news channels report conflicting figures?**
+            1. **Different Counting Windows:** Some agencies count seasonal totals (including landslides/disease); others count only verified drowning deaths during a single 24-hour wave.
+            2. **Official vs Ground Reports:** Wire agencies quote provisional ground numbers, while government bulletins publish delayed verified figures.
+            3. **Lack of Retractions:** Outlets rarely issue formal retractions when old estimates are superseded.
             """)
 
-    # ================= TAB 2: CONFIRMED & DEVELOPING FACTS =================
-    with tab_facts:
-        st.markdown("### ✅ Confirmed Facts (Agreed Upon by Multiple Outlets)")
-        st.caption("When 2 or more independent news sources report the exact same statement without contradiction, our system marks it as Confirmed.")
+    # ================= TAB 2: CORROBORATED & DEVELOPING =================
+    with tab_corrob:
+        st.markdown("### ✅ Corroborated Information (Independent Multi-Source Agreement)")
+        st.caption("When 2 or more independent news outlets publish matching statements with zero detected contradictions, our system flags them as corroborated.")
 
-        for idx, c in enumerate(confirmed_list, 1):
-            sources = sorted(set(m["source_file"] for m in c["claims"]))
+        for idx, c in enumerate(corroborated_clusters, 1):
+            sources = sorted(set(m.get("source_name") or m.get("source_file") for m in c["claims"]))
             sources_badge = " ".join([f"`{s}`" for s in sources])
-            
             st.markdown(f"""
             <div class="confirmed-card">
                 <div style="font-weight:700; font-size:1.05rem; color:#14532D; margin-bottom:4px;">
@@ -387,202 +403,227 @@ if has_results:
             """, unsafe_allow_html=True)
 
         st.markdown("---")
-        st.markdown(f"### ℹ️ Unconfirmed / Single-Source Claims ({len(unconfirmed_list)})")
-        st.caption("These statements appeared in only ONE news outlet. They are not disputed, but cannot yet be independently corroborated.")
-        
-        with st.expander(f"Click to inspect all {len(unconfirmed_list)} single-source claims", expanded=False):
-            for c in unconfirmed_list:
+        st.markdown(f"### ℹ️ Single-Source Claims ({len(unconfirmed_clusters)} Topics)")
+        st.caption("These statements appeared in only ONE news outlet. They are not disputed, but remain uncorroborated.")
+        with st.expander("Inspect all single-source claims", expanded=False):
+            for c in unconfirmed_clusters:
                 for m in c["claims"]:
-                    date_tag = f" `({m['date']})`" if m.get("date") else ""
-                    attr_tag = f" [Attributed to: *{m['attribution']}*]" if m.get("attribution") else ""
-                    st.markdown(f"- 📄 **`{m['source_file']}`**{date_tag}: {m['claim']}{attr_tag}")
+                    src = m.get("source_name") or m.get("source_file")
+                    d_str = f" `({m['date']})`" if m.get("date") else ""
+                    attr_str = f" [Attributed to: *{m['attribution']}*]" if m.get("attribution") else ""
+                    st.markdown(f"- 📄 **`{src}`**{d_str}: \"{m['claim']}\"{attr_str}")
 
-    # ================= TAB 3: READ SOURCE ARTICLES =================
-    with tab_articles:
-        st.markdown("### 📰 Raw News Source Articles")
-        st.info("Here are the 4 real news articles about the 2026 Assam Floods used as the input corpus.")
-        
-        source_files = sorted(glob.glob("data/raw_sources/source*.txt"))
-        if source_files:
-            source_tabs = st.tabs([os.path.basename(f) for f in source_files])
-            for idx, fpath in enumerate(source_files):
-                with source_tabs[idx]:
-                    with open(fpath, "r", encoding="utf-8") as sf:
-                        content = sf.read()
-                    st.code(content, language="text")
-        else:
-            st.warning("No source files found in data/raw_sources/.")
+    # ================= TAB 3: CLAIMS EXPLORER =================
+    with tab_claims:
+        st.markdown("### 🔍 Atomic Claims Explorer")
+        st.caption("Search and filter all granular factual statements extracted by the LLM.")
 
-    # ================= TAB 4: HOW IT WORKS =================
-    with tab_pipeline:
-        st.markdown("### 🧠 How the System Works (Under the Hood)")
-        st.markdown("""
-        Our pipeline follows 4 modular stages to transform unstructured news into verified intelligence:
-        """)
+        col_search, col_src_filter, col_cat_filter = st.columns([2, 1, 1])
+        with col_search:
+            search_query = st.text_input("🔎 Search Claims by keyword:", placeholder="e.g. death, affected, river, rescue")
+        with col_src_filter:
+            selected_src = st.selectbox("Filter by Source:", ["All Sources"] + all_sources)
+        with col_cat_filter:
+            all_cats = sorted(set(c.get("category") or c.get("topic") or "general" for c in claims_data))
+            selected_cat = st.selectbox("Filter by Category:", ["All Categories"] + all_cats)
 
-        s1, s2, s3, s4 = st.columns(4)
-        with s1:
-            st.markdown("""
-            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-top:4px solid #3B82F6; border-radius:10px; padding:15px; height:100%;">
-                <h4 style="margin:0 0 6px 0; color:#1E40AF;">Step 1: Extraction</h4>
-                <p style="font-size:0.85rem; color:#475569; margin:0;">
-                    <b>Groq LLM (Qwen-27B)</b> reads articles and breaks compound sentences into atomic, verifiable facts with dates & attribution.
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        with s2:
-            st.markdown("""
-            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-top:4px solid #8B5CF6; border-radius:10px; padding:15px; height:100%;">
-                <h4 style="margin:0 0 6px 0; color:#5B21B6;">Step 2: Clustering</h4>
-                <p style="font-size:0.85rem; color:#475569; margin:0;">
-                    <b>Sentence-Transformers</b> converts claims to embeddings. <b>Agglomerative Clustering</b> groups claims discussing the same topic.
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        with s3:
-            st.markdown("""
-            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-top:4px solid #EC4899; border-radius:10px; padding:15px; height:100%;">
-                <h4 style="margin:0 0 6px 0; color:#9D174D;">Step 3: Stance</h4>
-                <p style="font-size:0.85rem; color:#475569; margin:0;">
-                    Cross-source pairs within each cluster are tested for <code>agree</code>, <code>disagree</code>, <code>discuss</code>, or <code>unrelated</code>.
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        with s4:
-            st.markdown("""
-            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-top:4px solid #10B981; border-radius:10px; padding:15px; height:100%;">
-                <h4 style="margin:0 0 6px 0; color:#065F46;">Step 4: Synthesis</h4>
-                <p style="font-size:0.85rem; color:#475569; margin:0;">
-                    Generates the final 3-bucket report: <b>Confirmed</b>, <b>Disputed</b> (side-by-side), and <b>Unconfirmed</b>.
-                </p>
+        filtered_claims = claims_data
+        if search_query:
+            filtered_claims = [c for c in filtered_claims if search_query.lower() in c.get("claim", "").lower()]
+        if selected_src != "All Sources":
+            filtered_claims = [c for c in filtered_claims if (c.get("source_name") or c.get("source_file")) == selected_src]
+        if selected_cat != "All Categories":
+            filtered_claims = [c for c in filtered_claims if (c.get("category") or c.get("topic")) == selected_cat]
+
+        st.info(f"Showing **{len(filtered_claims)}** matching atomic claims:")
+
+        for c in filtered_claims:
+            cid = c.get("claim_id", "N/A")
+            src = c.get("source_name") or c.get("source_file")
+            topic = c.get("category") or c.get("topic", "general")
+            val_str = f" | **Value:** `{c['numerical_value']} {c.get('numerical_unit', '')}`" if c.get("numerical_value") is not None else ""
+            date_str = f" | **Date:** `{c['date']}`" if c.get("date") else ""
+            attr_str = f" | **Attribution:** *{c['attribution']}*" if c.get("attribution") else ""
+
+            st.markdown(f"""
+            <div class="claim-box">
+                <div style="font-size:0.8rem; color:#64748B; margin-bottom:4px;">
+                    <code>{cid}</code> • <b>Outlet:</b> <code>{src}</code> • <b>Topic:</b> <span style="background:#E2E8F0; padding:1px 6px; border-radius:4px;">{topic}</span>
+                    {val_str}{date_str}{attr_str}
+                </div>
+                <div style="font-size:0.95rem; font-weight:600; color:#0F172A;">
+                    "{c.get('claim')}"
+                </div>
             </div>
             """, unsafe_allow_html=True)
 
-        st.markdown("---")
-        st.subheader("Data Flow Architecture")
-        st.code("""
-[News Outlets .txt] ──► [LLM Claim Extraction] ──► [output/claims.json]
-                              │
-                              ▼
-                     [SentenceTransformer]
-                              │
-                              ▼
-                  [Agglomerative Clustering] ──► [Same-Fact Groups]
-                              │
-                              ▼
-                  [LLM Stance Classification] ──► [output/clusters_with_stance.json]
-                              │
-                              ▼
-                 [Contradiction-Aware Synthesis] ──► [output/final_summary.md]
-        """, language="text")
-
-    # ================= TAB 5: RUN / TEST CUSTOM PIPELINE =================
-    with tab_run:
-        st.markdown("### 🚀 Run Analysis on Custom or Default News Files")
-        st.caption("You can run the entire pipeline live during your presentation demo.")
-
-        col_cfg, col_act = st.columns([1, 1])
-        with col_cfg:
-            auto_threshold = st.checkbox("🤖 Auto-Detect Optimal Clustering Distance (Adaptive Silhouette)", value=True)
-            threshold = None
-            if not auto_threshold:
-                threshold = st.slider(
-                    "Manual Clustering Distance Threshold",
-                    min_value=0.30,
-                    max_value=0.85,
-                    value=0.55,
-                    step=0.05,
-                    help="Controls grouping sensitivity: 0.55 is default."
-                )
-            mode = st.radio(
-                "Select Data Source:",
-                ["Use Built-in 2026 Assam Floods Articles", "Upload New .txt Files"],
-                index=0
-            )
-
-        with col_act:
-            st.markdown("#### Trigger Execution")
-            uploaded_paths = []
-            if mode == "Upload New .txt Files":
-                uploaded_files = st.file_uploader(
-                    "Upload 2 or more conflicting news .txt files",
-                    type=["txt"],
-                    accept_multiple_files=True,
-                    help="Upload articles from different newspapers/sources about the same incident."
-                )
-                if uploaded_files:
-                    custom_dir = "data/custom_sources"
-                    os.makedirs(custom_dir, exist_ok=True)
-                    # Clear out prior custom files
-                    for old_f in glob.glob(f"{custom_dir}/*"):
-                        try:
-                            os.remove(old_f)
-                        except Exception:
-                            pass
-                    for uf in uploaded_files:
-                        fp = os.path.join(custom_dir, uf.name)
-                        with open(fp, "wb") as f:
-                            f.write(uf.getbuffer())
-                        uploaded_paths.append(fp)
-                    st.success(f"Loaded {len(uploaded_paths)} files ready for analysis!")
-
-            run_btn = st.button("⚡ Run Full AI Pipeline Now", type="primary", use_container_width=True)
-
-        if run_btn:
-            # Validate API Key before execution
-            active_key = os.environ.get("GROQ_API_KEY", "").strip()
-            if not active_key:
-                st.error("🔑 **Groq API Key is required to run live analysis!** Please provide your key in the left sidebar or configure it in Streamlit Cloud Secrets (`GROQ_API_KEY`).")
-                st.stop()
-
-            if mode == "Upload New .txt Files" and len(uploaded_paths) < 2:
-                st.error("Please upload at least 2 news articles (.txt) to analyze contradictions!")
-            else:
-                with st.spinner("Running 4-stage pipeline..."):
-                    prog = st.progress(0)
-                    status = st.empty()
-
-                    status.info("Step 1/3: Extracting atomic claims via Groq LLM...")
-                    prog.progress(20)
-                    spec1 = importlib.util.spec_from_file_location("step1", "src/01_extract_claims.py")
-                    step1 = importlib.util.module_from_spec(spec1)
-                    spec1.loader.exec_module(step1)
-                    
-                    target_sources = uploaded_paths if mode == "Upload New .txt Files" else None
-                    step1.main(input_files=target_sources)
-
-                    status.info("Step 2/3: Clustering facts & classifying stances...")
-                    prog.progress(60)
-                    spec2 = importlib.util.spec_from_file_location("step2", "src/02_cluster_and_classify.py")
-                    step2 = importlib.util.module_from_spec(spec2)
-                    spec2.loader.exec_module(step2)
-                    step2.run_pipeline_step2(distance_threshold=threshold)
-
-                    status.info("Step 3/3: Synthesizing Contradiction-Aware Report...")
-                    prog.progress(90)
-                    spec3 = importlib.util.spec_from_file_location("step3", "src/03_generate_summary.py")
-                    step3 = importlib.util.module_from_spec(spec3)
-                    spec3.loader.exec_module(step3)
-                    step3.run_pipeline_step3()
-
-                    prog.progress(100)
-                    status.success("✅ Analysis successfully completed! Refreshing results...")
-                    st.rerun()
-
-        st.markdown("---")
-        st.subheader("📥 Export Outputs")
-        with open(summary_file, "r", encoding="utf-8") as f:
-            md_text = f.read()
+    # ================= TAB 4: STRUCTURED SUMMARY =================
+    with tab_summary:
+        st.markdown("### 📄 Contradiction-Aware Synthesis Report")
         st.download_button(
-            "📥 Download Final Summary Report (.md)",
-            md_text,
+            "📥 Download Full Summary (.md)",
+            summary_markdown,
             "final_summary.md",
             "text/markdown",
             use_container_width=True
         )
+        st.markdown(summary_markdown)
 
-        with st.expander("View Raw Generated Markdown Report"):
-            st.markdown(md_text)
+    # ================= TAB 5: SOURCE ARTICLES =================
+    with tab_articles:
+        st.markdown("### 📰 Input News Articles")
+        st.caption("Raw source documents ingested into the current analysis session.")
+
+        source_files = sorted(glob.glob("data/raw_sources/*.txt") + glob.glob("data/custom_sources/*.txt"))
+        source_files = [f for f in source_files if not os.path.basename(f).startswith("README")]
+
+        if source_files:
+            art_tabs = st.tabs([os.path.basename(f) for f in source_files])
+            for idx, fp in enumerate(source_files):
+                with art_tabs[idx]:
+                    with open(fp, "r", encoding="utf-8") as sf:
+                        text = sf.read()
+                    st.code(text, language="text")
+        else:
+            st.warning("No source files found in data/raw_sources/ or data/custom_sources/.")
+
+    # ================= TAB 6: HOW IT WORKS =================
+    with tab_architecture:
+        st.markdown("### 🧠 How the System Works (Viva Defense Architecture)")
+        st.markdown("""
+        Our 5-stage modular pipeline transforms conflicting news text into verified intelligence:
+        """)
+        c1, c2, c3, c4 = st.columns(4)
+        with c1:
+            st.info("**1. Claim Extraction**\n\nGroq LLM breaks compound sentences into verifiable atomic claims with attribution & normalized counts.")
+        with c2:
+            st.info("**2. Semantic Clustering**\n\n`all-MiniLM-L6-v2` embeds claims; Agglomerative Clustering groups them by topic using adaptive silhouette distance.")
+        with c3:
+            st.info("**3. Neuro-Symbolic Stance**\n\nDeterministic rules check numbers/dates; LLM CoT evaluates nuances into 5 classes (Agree, Disagree, Discuss, Unrelated, Insufficient).")
+        with c4:
+            st.info("**4. Contradiction Synthesis**\n\nProduces side-by-side juxtaposition of conflicting perspectives with 100% source attribution.")
+
+        st.markdown("---")
+        st.subheader("Data Flow Pipeline")
+        st.code("""
+[Raw News Articles] ──► [LLM Claim Extraction] ──► [output/claims.json]
+                              │
+                              ▼
+                [Sentence-Transformers MiniLM]
+                              │
+                              ▼
+                [Agglomerative Clustering] ──► [Same-Fact Topic Groups]
+                              │
+                              ▼
+             [Neuro-Symbolic Stance Engine] ──► [output/clusters_with_stance.json]
+                              │
+                              ▼
+             [Contradiction-Aware Synthesis] ──► [output/final_summary.md]
+        """, language="text")
+
+    # ================= TAB 7: RUN / LIVE PIPELINE =================
+    with tab_run:
+        st.markdown("### 🚀 Trigger Live Analysis Pipeline")
+        st.caption("You can run the full AI analysis live on default corpus, upload files, or paste custom breaking news text.")
+
+        input_choice = st.radio(
+            "Select Input Mode:",
+            ["Use Built-in Assam Floods Articles (4 Outlets)", "Upload .txt News Files", "Paste Custom News Text Directly"],
+            index=0
+        )
+
+        custom_target_paths = None
+
+        if input_choice == "Upload .txt News Files":
+            uploaded_files = st.file_uploader(
+                "Upload 2 or more conflicting news .txt files",
+                type=["txt"],
+                accept_multiple_files=True
+            )
+            if uploaded_files:
+                os.makedirs(CUSTOM_SOURCES_DIR, exist_ok=True)
+                for f in glob.glob(f"{CUSTOM_SOURCES_DIR}/*"):
+                    try:
+                        os.remove(f)
+                    except Exception:
+                        pass
+                custom_target_paths = []
+                for uf in uploaded_files:
+                    fp = os.path.join(CUSTOM_SOURCES_DIR, uf.name)
+                    with open(fp, "wb") as f_out:
+                        f_out.write(uf.getbuffer())
+                    custom_target_paths.append(fp)
+                st.success(f"Loaded {len(custom_target_paths)} files ready for processing!")
+
+        elif input_choice == "Paste Custom News Text Directly":
+            st.markdown("#### Paste Breaking News Reports (Side-by-Side Analysis)")
+            col_p1, col_p2 = st.columns(2)
+            with col_p1:
+                src_name_1 = st.text_input("Outlet 1 Name:", value="Dainik Jagran", key="p_src1")
+                text_1 = st.text_area("Article 1 Text:", height=180, key="p_txt1", placeholder="Paste first article text...")
+            with col_p2:
+                src_name_2 = st.text_input("Outlet 2 Name:", value="Hindustan Times", key="p_src2")
+                text_2 = st.text_area("Article 2 Text:", height=180, key="p_txt2", placeholder="Paste second conflicting article text...")
+
+            if text_1.strip() and text_2.strip():
+                os.makedirs(CUSTOM_SOURCES_DIR, exist_ok=True)
+                for f in glob.glob(f"{CUSTOM_SOURCES_DIR}/*"):
+                    try:
+                        os.remove(f)
+                    except Exception:
+                        pass
+                f1_path = os.path.join(CUSTOM_SOURCES_DIR, f"{src_name_1.replace(' ', '_').lower()}.txt")
+                f2_path = os.path.join(CUSTOM_SOURCES_DIR, f"{src_name_2.replace(' ', '_').lower()}.txt")
+                with open(f1_path, "w", encoding="utf-8") as f:
+                    f.write(text_1)
+                with open(f2_path, "w", encoding="utf-8") as f:
+                    f.write(text_2)
+                custom_target_paths = [f1_path, f2_path]
+                st.success("Custom news reports loaded into workspace!")
+
+        col_cfg1, col_cfg2 = st.columns(2)
+        with col_cfg1:
+            auto_thresh = st.checkbox("Adaptive Silhouette Threshold (Recommended)", value=True)
+            custom_thresh = None
+            if not auto_thresh:
+                custom_thresh = st.slider("Manual Distance Threshold", 0.30, 0.80, 0.55, 0.05)
+
+        run_btn = st.button("⚡ Run Full AI Pipeline Now", type="primary", use_container_width=True)
+
+        if run_btn:
+            if not get_groq_api_key():
+                st.error("🔑 Groq API Key is required! Please provide it in the left sidebar or .env file.")
+                st.stop()
+
+            if input_choice != "Use Built-in Assam Floods Articles (4 Outlets)" and not custom_target_paths:
+                st.error("Please provide at least 2 source articles to analyze!")
+                st.stop()
+
+            with st.spinner("Executing end-to-end contradiction analysis pipeline..."):
+                prog = st.progress(0)
+                status = st.empty()
+
+                status.info("Stage 1/3: Extracting atomic claims via Groq LLM...")
+                prog.progress(25)
+                run_extraction_pipeline(input_files=custom_target_paths)
+
+                status.info("Stage 2/3: Semantic Clustering & Neuro-Symbolic Stance Engine...")
+                prog.progress(65)
+                run_stance_pipeline(distance_threshold=custom_thresh)
+
+                status.info("Stage 3/3: Synthesizing Contradiction-Aware Summary Report...")
+                prog.progress(90)
+                run_summary_pipeline()
+
+                prog.progress(100)
+                status.success("✅ Analysis completed successfully! Refreshing dashboard...")
+                st.rerun()
 
 else:
-    st.info("No generated data found. Click the button in the sidebar or run the pipeline to begin.")
+    st.info("No prior analysis results found. Click below or open Tab 7 to run the pipeline.")
+    if st.button("🚀 Run Pipeline on Default News Corpus Now", type="primary"):
+        with st.spinner("Processing..."):
+            run_extraction_pipeline()
+            run_stance_pipeline()
+            run_summary_pipeline()
+            st.rerun()
