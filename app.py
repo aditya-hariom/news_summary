@@ -329,7 +329,7 @@ with tab_analyze:
         index=0
     )
 
-    custom_files = None
+    target_files = None
 
     if input_mode == "⚡ Paste News Text Directly (Quickest for Viva Demo)":
         st.markdown("##### Paste Two Conflicting News Reports")
@@ -349,34 +349,12 @@ with tab_analyze:
             src2 = st.text_input("News Outlet 2 Name:", value=st.session_state.get("p_src_2", "MapsOfIndia Wire"), key="src2_in")
             txt2 = st.text_area("Article 2 Text:", value=st.session_state.get("p_txt_2", ""), height=150, placeholder="Paste second news story here...", key="txt2_in")
 
-        if txt1.strip() and txt2.strip():
-            os.makedirs(CUSTOM_SOURCES_DIR, exist_ok=True)
-            for f in glob.glob(f"{CUSTOM_SOURCES_DIR}/*"):
-                try: os.remove(f)
-                except Exception: pass
-            p1 = os.path.join(CUSTOM_SOURCES_DIR, f"{src1.replace(' ', '_').lower()}.txt")
-            p2 = os.path.join(CUSTOM_SOURCES_DIR, f"{src2.replace(' ', '_').lower()}.txt")
-            with open(p1, "w", encoding="utf-8") as f: f.write(txt1)
-            with open(p2, "w", encoding="utf-8") as f: f.write(txt2)
-            custom_files = [p1, p2]
-
     elif input_mode == "📁 Upload .txt Files (Multiple Articles)":
         uploaded = st.file_uploader(
             "Upload 2 or more news articles as .txt files:",
             type=["txt"],
             accept_multiple_files=True
         )
-        if uploaded:
-            os.makedirs(CUSTOM_SOURCES_DIR, exist_ok=True)
-            for f in glob.glob(f"{CUSTOM_SOURCES_DIR}/*"):
-                try: os.remove(f)
-                except Exception: pass
-            custom_files = []
-            for u in uploaded:
-                p = os.path.join(CUSTOM_SOURCES_DIR, u.name)
-                with open(p, "wb") as f: f.write(u.getbuffer())
-                custom_files.append(p)
-            st.success(f"Loaded {len(custom_files)} files ready for analysis!")
 
     st.markdown("---")
     run_button = st.button("🚀 Run Analysis Pipeline", type="primary", use_container_width=True)
@@ -386,15 +364,39 @@ with tab_analyze:
             st.error("🔑 Groq API Key is missing! Please enter it in the left sidebar.")
             st.stop()
 
-        if input_mode != "📚 Use Built-in 2026 Assam Floods News Corpus" and not custom_files:
-            st.error("Please provide at least 2 news articles to compare!")
-            st.stop()
+        if input_mode == "⚡ Paste News Text Directly (Quickest for Viva Demo)":
+            if not txt1.strip() or not txt2.strip():
+                st.error("Please provide text for both news stories before running analysis!")
+                st.stop()
+            os.makedirs(CUSTOM_SOURCES_DIR, exist_ok=True)
+            for f in glob.glob(os.path.join(CUSTOM_SOURCES_DIR, "*")):
+                try: os.remove(f)
+                except Exception: pass
+            p1 = os.path.join(CUSTOM_SOURCES_DIR, f"{src1.replace(' ', '_').lower()}.txt")
+            p2 = os.path.join(CUSTOM_SOURCES_DIR, f"{src2.replace(' ', '_').lower()}.txt")
+            with open(p1, "w", encoding="utf-8") as f: f.write(txt1)
+            with open(p2, "w", encoding="utf-8") as f: f.write(txt2)
+            target_files = [p1, p2]
+
+        elif input_mode == "📁 Upload .txt Files (Multiple Articles)":
+            if not uploaded or len(uploaded) < 2:
+                st.error("Please upload at least 2 news articles (.txt) to compare!")
+                st.stop()
+            os.makedirs(CUSTOM_SOURCES_DIR, exist_ok=True)
+            for f in glob.glob(os.path.join(CUSTOM_SOURCES_DIR, "*")):
+                try: os.remove(f)
+                except Exception: pass
+            target_files = []
+            for u in uploaded:
+                p = os.path.join(CUSTOM_SOURCES_DIR, u.name)
+                with open(p, "wb") as f: f.write(u.getbuffer())
+                target_files.append(p)
 
         with st.spinner("Analyzing articles... (Extracting facts, clustering, and finding conflicts)"):
             prog = st.progress(0)
             
             prog.progress(25)
-            run_extraction_pipeline(input_files=custom_files)
+            run_extraction_pipeline(input_files=target_files)
 
             prog.progress(65)
             run_stance_pipeline()
@@ -602,13 +604,19 @@ with tab_about:
 
     st.markdown("---")
     with st.expander("📰 View Raw Source Articles Used in Analysis", expanded=False):
-        raw_files = sorted(glob.glob("data/raw_sources/*.txt") + glob.glob("data/custom_sources/*.txt"))
-        raw_files = [f for f in raw_files if not os.path.basename(f).startswith("README")]
+        raw_candidates = sorted(glob.glob(os.path.join(RAW_SOURCES_DIR, "*.txt")) + glob.glob(os.path.join(CUSTOM_SOURCES_DIR, "*.txt")))
+        raw_files = [f for f in raw_candidates if not os.path.basename(f).startswith("README") and os.path.isfile(f)]
         if raw_files:
             file_tabs = st.tabs([os.path.basename(f) for f in raw_files])
             for i, fp in enumerate(raw_files):
                 with file_tabs[i]:
-                    with open(fp, "r", encoding="utf-8") as rf:
-                        st.code(rf.read(), language="text")
+                    try:
+                        if os.path.isfile(fp):
+                            with open(fp, "r", encoding="utf-8") as rf:
+                                st.code(rf.read(), language="text")
+                        else:
+                            st.info(f"File {os.path.basename(fp)} is not currently available.")
+                    except Exception as e:
+                        st.warning(f"Could not read {os.path.basename(fp)}: {e}")
         else:
             st.write("No source files available.")
