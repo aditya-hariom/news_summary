@@ -1,76 +1,56 @@
-# Contradiction-Aware Multi-Document News Analysis Report
+# News Comparison Report
 
-**Synthesis Metrics** | Corroborated Topics: 1 | Active Disputes: 1 | Developing Updates: 2 | Single-Source Claims: 6
+**Sources Checked:** 4 | **Conflicts:** 0 | **Agreed Facts:** 1 | **Updates Over Time:** 2 | **Only 1 Source:** 6
 
 ---
 
-## 1. Event Overview
+## Quick Overview
 
-This multi-document report synthesizes coverage across 4 independent news agencies (`source1_wikipedia_compiled`, `source2_npr`, `source3_theunitedindian`, `source4_mapsofindia`) covering major events between 10 August 2026 and 26 July 2026. Initial reporting exhibits significant variance in casualty figures and affected population counts, illustrating how conflicting wire reports, differing counting windows, and delayed official verifications evolve during breaking news.
+Checked **19 facts** across **4 news sources** (`source1_wikipedia_compiled`, `source2_npr`, `source3_theunitedindian`, `source4_mapsofindia`).
+- **0 conflict(s)** where reports give different numbers or details.
+- **1 agreed fact(s)** confirmed by 2 or more sources.
+- **2 timeline update(s)** where figures changed across different dates.
 
-## 2. Disputed Facts & Contradictions (Aamne-Saamne)
+## 1. Conflicting Facts (Side-by-Side)
 
-> **Methodology Notice:** Sources actively contradict one another on the points below. In accordance with contradiction-aware principles, these statements are presented side-by-side with explicit source attribution. The system refrains from picking a 'correct' version.
+> *These reports disagree. Both sides are shown clearly without guessing who is right.*
 
-### Discrepancy #1: Disputed Affected Population (Sources: `source1_wikipedia_compiled`, `source4_mapsofindia`)
+_No conflicting facts were found._
 
-**Reported Perspectives Across Outlets:**
+## 2. Agreed Facts
 
-- **[source1_wikipedia_compiled]** `[2 August 2026]`: "1.78 lakh people were affected on 2 August 2026." — *Attributed to: Times of India*
-- **[source4_mapsofindia]** `[Undated]`: "More than 7.2 lakh people have been affected by the floods." — *Attributed to: MapsOfIndia*
+> *Facts reported the same way by 2 or more news sources.*
 
-**Contradiction Analysis & Attribute Extraction:**
+- **"Several rivers remained above danger levels."** — *Sources: `source2_npr`, `source4_mapsofindia`*
 
-- **CONTRADICTION DETECTED** (Attribute: **Affected Population**, Confidence: 96%):
-  - **[source1_wikipedia_compiled]**: "1.78 lakh people were affected on 2 August 2026."
-  - *versus*
-  - **[source4_mapsofindia]**: "More than 7.2 lakh people have been affected by the floods."
-  - 🧠 *System Verification*: Severe numerical conflict: source1_wikipedia_compiled reports 178000 vs source4_mapsofindia reports 720000 (4.0x disparity) for the same event window.
+## 3. Updates Over Time
 
+> *Numbers or details that changed as reports came out on different dates.*
 
-## 3. Corroborated Information (Multi-Source Agreement)
+### Casualties
 
-> **Attribution Disclaimer:** Multiple independent sources report consistent statements on these items. This reflects journalistic agreement across reporting agencies, not absolute factual certainty.
+- **source1_wikipedia_compiled** *(26 July 2026)* *(via The Hindu)*: "The flood toll was reported at 66 on 26 July 2026."
+- **source1_wikipedia_compiled** *(26 July 2026)* *(via Times of India)*: "The flood toll was reported at 66 on 26 July 2026."
+- **source1_wikipedia_compiled** *(2 August 2026)* *(via Times of India)*: "The death toll climbed to 82 on 2 August 2026."
+- **source2_npr** *(10 August 2026)* *(via Officials)*: "The flood death toll reached 100 as of Monday, 10 August 2026."
+- **source3_theunitedindian** *(22 July 2026)* *(via Times of India)*: "Times of India reported the overall monsoon-season death toll had crossed 50 by 22 July 2026."
 
-### 3.1. Several rivers remained above danger levels.
+### Status Event
 
-- **Supporting Agencies**: `source2_npr`, `source4_mapsofindia`
-- **Direct Statements**:
-  - **source2_npr** (10 August 2026): "Several rivers remained above danger levels."
-  - **source4_mapsofindia**: "The Brahmaputra River crossed danger levels at several locations."
-  - **source4_mapsofindia**: "Tributaries of the Brahmaputra River crossed danger levels at several locations."
+- **source2_npr** *(10 August 2026)* *(via Assam State Disaster Management Authority)*: "The risk of fresh flooding was raised."
+- **source3_theunitedindian** *(via Ground reports)*: "Ground reports described unusually rapid flooding across inland parts of Sivasagar, Charaideo, and Jorhat districts."
 
-## 4. Developing Updates & Chronological Evolution
+## 4. Reported by Only One Source
 
-> *Figures and status updates that shifted naturally across distinct reporting dates as the event progressed.*
+> *Mentioned by only one source so far — not checked by other reports yet.*
 
-### 4.1. Evolving Casualties Over Time
-
-- **[source1_wikipedia_compiled]** `[26 July 2026]`: "The flood toll was reported at 66 on 26 July 2026."
-- **[source1_wikipedia_compiled]** `[26 July 2026]`: "The flood toll was reported at 66 on 26 July 2026."
-- **[source1_wikipedia_compiled]** `[2 August 2026]`: "The death toll climbed to 82 on 2 August 2026."
-- **[source2_npr]** `[10 August 2026]`: "The flood death toll reached 100 as of Monday, 10 August 2026."
-- **[source3_theunitedindian]** `[22 July 2026]`: "Times of India reported the overall monsoon-season death toll had crossed 50 by 22 July 2026."
-
-### 4.2. Evolving Status Event Over Time
-
-- **[source2_npr]** `[10 August 2026]`: "The risk of fresh flooding was raised due to rivers being above danger levels."
-- **[source3_theunitedindian]**: "Ground reports described unusually rapid flooding across inland parts of Sivasagar, Charaideo, and Jorhat districts."
-
-## 5. Unverified / Single-Source Claims
-
-> *Claims published by a single news organization that lack independent corroboration by other outlets in this batch.*
-
-- **[source2_npr]** `[10 August 2026]`: "Two more deaths occurred overnight." [Attributed to: *Officials*]
-- **[source2_npr]**: "Days of heavy monsoon rain caused rivers to overflow."
-- **[source3_theunitedindian]**: "One report counted deaths across the full monsoon season." [Attributed to: *The United Indian*]
-- **[source3_theunitedindian]**: "Another report counted confirmed flood deaths during 2026." [Attributed to: *The United Indian*]
-- **[source3_theunitedindian]**: "Earlier updates focused on one particularly deadly 24-hour period." [Attributed to: *The United Indian*]
-- **[source4_mapsofindia]**: "The official death toll in the Assam floods has swelled to 47." [Attributed to: *official*]
-- **[source4_mapsofindia]**: "The Assam government carried out relief operations."
-
-## 6. Information Gaps & Unknowns
-
-- **Counting Window Standardization:** Reports differ on whether casualty tallies encompass full seasonal flooding vs a single 24-hour wave.
-- **Final Economic Assessment:** Total infrastructure and agricultural damage remains un-quantified across all analyzed outlets.
-- **Reconciliation:** No agency has published an official retraction reconciling the 47 vs 82 vs 100 death toll discrepancy.
+- **source1_wikipedia_compiled** *(2 August 2026)* *(via Times of India)*: "1.78 lakh people were affected on 2 August 2026."
+- **source2_npr** *(10 August 2026)* *(via Officials)*: "Two more deaths occurred overnight."
+- **source2_npr**: "Days of heavy monsoon rain caused rivers to overflow."
+- **source3_theunitedindian** *(via The United Indian)*: "One report counted deaths across the full monsoon season."
+- **source3_theunitedindian** *(via The United Indian)*: "Another report counted confirmed flood deaths during 2026."
+- **source3_theunitedindian** *(via The United Indian)*: "Earlier updates focused on one particularly deadly 24-hour period."
+- **source4_mapsofindia** *(via official)*: "The official death toll in the 2026 Assam floods has swelled to 47."
+- **source4_mapsofindia** *(via official)*: "More than 7.2 lakh people have been affected by the 2026 Assam floods."
+- **source4_mapsofindia**: "Relief operations for the 2026 Assam floods were carried out by the Assam government."
+- **source4_mapsofindia**: "Relief operations for the 2026 Assam floods were carried out by the NDRF."

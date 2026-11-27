@@ -60,22 +60,39 @@ def categorize_clusters(clusters: Dict[str, Any]) -> Tuple[List[Dict[str, Any]],
     return corroborated, disputed, developing, unverified
 
 
-def generate_event_overview(claims: List[Dict[str, Any]]) -> str:
-    """
-    Synthesizes a neutral, non-hallucinated synopsis of the incident based on
-    the high-frequency entities, dates, and locations in the claims corpus.
-    """
-    sources = sorted(set(c.get("source_name") or c.get("source_file") for c in claims))
-    dates = sorted(set(str(c.get("date")) for c in claims if c.get("date")))
+def generate_event_overview(
+    claims: List[Dict[str, Any]],
+    corroborated: Optional[List[Dict[str, Any]]] = None,
+    disputed: Optional[List[Dict[str, Any]]] = None,
+    developing: Optional[List[Dict[str, Any]]] = None,
+) -> str:
+    """Return a short, plain-English overview of the checked articles."""
+    if not claims:
+        return "No news facts were provided to summarize."
 
-    date_range_str = f"between {dates[0]} and {dates[-1]}" if len(dates) >= 2 else "during the reported period"
-    return (
-        f"This multi-document report synthesizes coverage across {len(sources)} independent news agencies "
-        f"({', '.join(f'`{s}`' for s in sources)}) covering major events {date_range_str}. "
-        f"Initial reporting exhibits significant variance in casualty figures and affected population counts, "
-        f"illustrating how conflicting wire reports, differing counting windows, and delayed official verifications "
-        f"evolve during breaking news."
-    )
+    sources = sorted(set(c.get("source_name") or c.get("source_file") or "Unknown" for c in claims))
+    source_list = ", ".join(f"`{s}`" for s in sources)
+    n_conflicts = len(disputed) if disputed is not None else 0
+    n_agreed = len(corroborated) if corroborated is not None else 0
+    n_updates = len(developing) if developing is not None else 0
+
+    lines = [
+        f"Checked **{len(claims)} facts** across **{len(sources)} news sources** ({source_list}).",
+        f"- **{n_conflicts} conflict(s)** where reports give different numbers or details.",
+        f"- **{n_agreed} agreed fact(s)** confirmed by 2 or more sources.",
+    ]
+    if n_updates:
+        lines.append(f"- **{n_updates} timeline update(s)** where figures changed across different dates.")
+    return "\n".join(lines)
+
+
+def _format_claim_bullet(claim: Dict[str, Any]) -> str:
+    """Format a claim bullet with source, optional date, and distinct attribution."""
+    src = str(claim.get("source_name") or claim.get("source_file") or "Unknown")
+    d_str = f" *({claim['date']})*" if claim.get("date") else ""
+    attr_val = str(claim.get("attribution") or "").strip()
+    via = f" *(via {attr_val})*" if attr_val and attr_val.lower() != src.lower() else ""
+    return f"- **{src}**{d_str}{via}: \"{claim['claim']}\""
 
 
 def render_markdown_report(
@@ -85,125 +102,87 @@ def render_markdown_report(
     unverified: List[Dict[str, Any]],
     all_claims: List[Dict[str, Any]]
 ) -> str:
-    """Renders the comprehensive, publication-ready markdown summary."""
-    lines = []
-    lines.append("# Contradiction-Aware Multi-Document News Analysis Report\n")
-    lines.append(
-        f"**Synthesis Metrics** | Corroborated Topics: {len(corroborated)} | "
-        f"Active Disputes: {len(disputed)} | Developing Updates: {len(developing)} | "
-        f"Single-Source Claims: {len(unverified)}\n"
-    )
-    lines.append("---\n")
+    """Render a short, plain-English markdown report comparing all news sources."""
+    sources = sorted(set(c.get("source_name") or c.get("source_file") or "Unknown" for c in all_claims))
+    lines = [
+        "# News Comparison Report\n",
+        (
+            f"**Sources Checked:** {len(sources)} | "
+            f"**Conflicts:** {len(disputed)} | "
+            f"**Agreed Facts:** {len(corroborated)} | "
+            f"**Updates Over Time:** {len(developing)} | "
+            f"**Only 1 Source:** {len(unverified)}\n"
+        ),
+        "---\n",
+        "## Quick Overview\n",
+        generate_event_overview(all_claims, corroborated, disputed, developing) + "\n",
+    ]
 
-    # 1. Event Overview
-    lines.append("## 1. Event Overview\n")
-    lines.append(generate_event_overview(all_claims) + "\n")
-
-    # 2. Disputed Facts (Highest Priority - Never Merged!)
-    lines.append("## 2. Disputed Facts & Contradictions (Aamne-Saamne)\n")
-    lines.append(
-        "> **Methodology Notice:** Sources actively contradict one another on the points below. "
-        "In accordance with contradiction-aware principles, these statements are presented side-by-side "
-        "with explicit source attribution. The system refrains from picking a 'correct' version.\n"
-    )
+    # 1. Conflicting Facts (Side-by-Side)
+    lines.append("## 1. Conflicting Facts (Side-by-Side)\n")
+    lines.append("> *These reports disagree. Both sides are shown clearly without guessing who is right.*\n")
 
     if not disputed:
-        lines.append("_No direct factual contradictions were identified in this corpus._\n")
+        lines.append("_No conflicting facts were found._\n")
     else:
-        for idx, cluster in enumerate(disputed, 1):
-            sources = sorted(set(c.get("source_name") or c.get("source_file") for c in cluster["claims"]))
-            topic_name = cluster.get("topic", "General Incident").replace("_", " ").title()
-            lines.append(f"### Discrepancy #{idx}: Disputed {topic_name} (Sources: {', '.join(f'`{s}`' for s in sources)})\n")
-
-            # Side-by-side statements
-            lines.append("**Reported Perspectives Across Outlets:**\n")
-            for c in cluster["claims"]:
-                src = c.get("source_name") or c.get("source_file")
-                date_tag = f" `[{c['date']}]`" if c.get("date") else " `[Undated]`"
-                attr_tag = f" — *Attributed to: {c['attribution']}*" if c.get("attribution") else ""
-                lines.append(f"- **[{src}]**{date_tag}: \"{c['claim']}\"{attr_tag}")
-
-            # Contradiction edge breakdown
-            lines.append("\n**Contradiction Analysis & Attribute Extraction:**\n")
+        conflict_num = 0
+        for cluster in disputed:
+            topic_name = cluster.get("topic", "Fact").replace("_", " ").title()
             disagree_edges = [e for e in cluster.get("edges", []) if e.get("stance") == "DISAGREE"]
             seen_pairs = set()
             for e in disagree_edges:
-                pair_key = tuple(sorted([e["claim_a"], e["claim_b"]]))
+                pair_key = tuple(sorted([e.get("claim_a", ""), e.get("claim_b", "")]))
                 if pair_key in seen_pairs:
                     continue
                 seen_pairs.add(pair_key)
-                attr_disputed = e.get("conflicting_attribute") or topic_name
-                conf = e.get("confidence", 0.95)
-                lines.append(
-                    f"- **CONTRADICTION DETECTED** (Attribute: **{attr_disputed}**, Confidence: {conf:.0%}):\n"
-                    f"  - **[{e['source_a']}]**: \"{e['claim_a']}\"\n"
-                    f"  - *versus*\n"
-                    f"  - **[{e['source_b']}]**: \"{e['claim_b']}\"\n"
-                    f"  - 🧠 *System Verification*: {e.get('reasoning')}\n"
-                )
-            lines.append("")
+                conflict_num += 1
+                attr = e.get("conflicting_attribute") or topic_name
+                date_a = f" *({e['date_a']})*" if e.get("date_a") else ""
+                date_b = f" *({e['date_b']})*" if e.get("date_b") else ""
+                lines.append(f"### Conflict {conflict_num}: {attr}\n")
+                lines.append(f"- **{e.get('source_a')}**{date_a}: \"{e.get('claim_a')}\"")
+                lines.append(f"- **{e.get('source_b')}**{date_b}: \"{e.get('claim_b')}\"")
+                if e.get("reasoning"):
+                    lines.append(f"- **Why they differ:** {e['reasoning']}")
+                lines.append("")
 
-    # 3. Corroborated Claims
-    lines.append("## 3. Corroborated Information (Multi-Source Agreement)\n")
-    lines.append(
-        "> **Attribution Disclaimer:** Multiple independent sources report consistent statements on these items. "
-        "This reflects journalistic agreement across reporting agencies, not absolute factual certainty.\n"
-    )
+    # 2. Agreed Facts
+    lines.append("## 2. Agreed Facts\n")
+    lines.append("> *Facts reported the same way by 2 or more news sources.*\n")
     if not corroborated:
-        lines.append("_No multi-source corroborated claims detected in this batch._\n")
+        lines.append("_No facts were confirmed by multiple sources._\n")
     else:
-        for idx, cluster in enumerate(corroborated, 1):
-            sources = sorted(set(c.get("source_name") or c.get("source_file") for c in cluster["claims"]))
-            rep_claim = cluster["claims"][0]["claim"]
-            lines.append(f"### 3.{idx}. {rep_claim}\n")
-            lines.append(f"- **Supporting Agencies**: {', '.join(f'`{s}`' for s in sources)}")
-            lines.append("- **Direct Statements**:")
-            for c in cluster["claims"]:
-                src = c.get("source_name") or c.get("source_file")
-                d_str = f" ({c['date']})" if c.get("date") else ""
-                lines.append(f"  - **{src}**{d_str}: \"{c['claim']}\"")
-            lines.append("")
-
-    # 4. Developing & Chronological Progression
-    lines.append("## 4. Developing Updates & Chronological Evolution\n")
-    lines.append(
-        "> *Figures and status updates that shifted naturally across distinct reporting dates as the event progressed.*\n"
-    )
-    if not developing:
-        lines.append("_No distinct temporal progressions detected._\n")
-    else:
-        for idx, cluster in enumerate(developing, 1):
-            topic = cluster.get("topic", "Update").replace("_", " ").title()
-            lines.append(f"### 4.{idx}. Evolving {topic} Over Time\n")
-            for c in cluster["claims"]:
-                src = c.get("source_name") or c.get("source_file")
-                d_str = f" `[{c['date']}]`" if c.get("date") else ""
-                lines.append(f"- **[{src}]**{d_str}: \"{c['claim']}\"")
-            lines.append("")
-
-    # 5. Unverified / Single-Source Reports
-    lines.append("## 5. Unverified / Single-Source Claims\n")
-    lines.append(
-        "> *Claims published by a single news organization that lack independent corroboration by other outlets in this batch.*\n"
-    )
-    if not unverified:
-        lines.append("_All extracted claims were discussed across multiple outlets._\n")
-    else:
-        for cluster in unverified:
-            for c in cluster["claims"]:
-                src = c.get("source_name") or c.get("source_file")
-                d_str = f" `[{c['date']}]`" if c.get("date") else ""
-                attr_str = f" [Attributed to: *{c['attribution']}*]" if c.get("attribution") else ""
-                lines.append(f"- **[{src}]**{d_str}: \"{c['claim']}\"{attr_str}")
+        for cluster in corroborated:
+            claims = cluster.get("claims", [])
+            if not claims:
+                continue
+            c_sources = sorted(set(c.get("source_name") or c.get("source_file") or "Unknown" for c in claims))
+            lines.append(f"- **\"{claims[0]['claim']}\"** — *Sources: {', '.join(f'`{s}`' for s in c_sources)}*")
         lines.append("")
 
-    # 6. Unknowns & Information Gaps
-    lines.append("## 6. Information Gaps & Unknowns\n")
-    lines.append(
-        "- **Counting Window Standardization:** Reports differ on whether casualty tallies encompass full seasonal flooding vs a single 24-hour wave.\n"
-        "- **Final Economic Assessment:** Total infrastructure and agricultural damage remains un-quantified across all analyzed outlets.\n"
-        "- **Reconciliation:** No agency has published an official retraction reconciling the 47 vs 82 vs 100 death toll discrepancy.\n"
-    )
+    # 3. Updates Over Time
+    lines.append("## 3. Updates Over Time\n")
+    lines.append("> *Numbers or details that changed as reports came out on different dates.*\n")
+    if not developing:
+        lines.append("_No date-based updates found._\n")
+    else:
+        for cluster in developing:
+            topic = cluster.get("topic", "Update").replace("_", " ").title()
+            lines.append(f"### {topic}\n")
+            for c in cluster.get("claims", []):
+                lines.append(_format_claim_bullet(c))
+            lines.append("")
+
+    # 4. Reported by Only One Source
+    lines.append("## 4. Reported by Only One Source\n")
+    lines.append("> *Mentioned by only one source so far — not checked by other reports yet.*\n")
+    if not unverified:
+        lines.append("_Every fact was covered by multiple sources._\n")
+    else:
+        for cluster in unverified:
+            for c in cluster.get("claims", []):
+                lines.append(_format_claim_bullet(c))
+        lines.append("")
 
     return "\n".join(lines)
 

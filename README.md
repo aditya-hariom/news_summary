@@ -1,86 +1,73 @@
-# Contradiction-Aware Multi-Document News Analysis Using LLMs
+# News Contradiction Checker (Multi-Document News Analysis)
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://newssummary-zzev4ju2gta656xhj4vtwa.streamlit.app/)
 [![Python 3.11](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 
-An AI-powered NLP pipeline and interactive Streamlit dashboard that analyzes multiple conflicting news articles covering breaking events, extracts atomic factual claims, clusters them by topic, detects agreements and contradictions using a neuro-symbolic hybrid stance classifier, and generates transparent, contradiction-aware summaries with full source attribution.
+Compare multiple news articles on the same event side-by-side. Instead of blending conflicting numbers into a confusing average, this tool separates **conflicting facts**, **agreed facts**, **updates over time**, and **single-source claims** — always showing which news outlet said what.
 
-🌐 **Live Demo:** https://newssummary-zzev4ju2gta656xhj4vtwa.streamlit.app/
-
----
-
-## 📌 Problem Statement & Novelty
-
-When breaking news unfolds, different media outlets frequently publish conflicting casualty figures, dates, and affected-population statistics.
-
-- **Standard AI Summarizers (ChatGPT / Gemini / T5):** Blend conflicting reports into a vague consensus (*"Between 47 and 100 people died..."*), hiding reporting discrepancies and creating hallucinated compromises.
-- **Our System:** Isolates individual factual claims, clusters them by semantic topic, separates timeline progressions (`DISCUSS`) from true contradictions (`DISAGREE`), and displays conflicting statements **side-by-side** with exact outlet names, dates, and reasoning — never picking a winner by majority vote.
+🌐 **Live App:** https://newssummary-zzev4ju2gta656xhj4vtwa.streamlit.app/
 
 ---
 
-## 🏗️ System Architecture
+## Why This Project Exists
+
+When breaking news happens (such as floods, accidents, or policy changes), different news outlets often publish different numbers at the same time.
+
+- **Normal AI Summarizers:** Blend conflicting reports into one vague line (*"Between 47 and 82 people died"*), hiding who reported which number.
+- **This Tool:** Pulls out individual facts from each article, groups facts about the same topic, checks whether outlets agree or disagree, and shows conflicts **side-by-side** with exact source names and dates.
+
+---
+
+## How It Works (4 Simple Steps)
 
 ```text
-Multiple News Outlets (Pasted Text / .txt Uploads / Built-in Corpus)
-                    │
-                    ▼
-    [1. Atomic Claim Extraction & Normalization]
-      Groq LLM (qwen/qwen3.8-27b) + Unit/Number Normalizer
-                    │
-                    ▼
-          [output/claims.json]
-                    │
-                    ▼
-    [2. Semantic Topic Clustering]
-      Sentence-Transformers (all-MiniLM-L6-v2)
-      + Agglomerative Clustering (Cosine Distance)
-      + Adaptive Silhouette Score Search
-                    │
-                    ▼
-    [3. Neuro-Symbolic Stance & Contradiction Engine]
-      Deterministic Rule Engine (Units, Numeric Disparities, Temporal Anchors)
-      + Groq LLM Chain-of-Thought (5-Class FNC-1 Schema)
-                    │
-                    ▼
-      [output/clusters_with_stance.json]
-                    │
-                    ▼
-    [4. Contradiction-Aware Summary Synthesis]
-      Categorization: Corroborated, Disputed, Developing, Unverified
-                    │
-                    ▼
-         [output/final_summary.md]
-                    │
-                    ▼
-   [5. Guided Two-View Streamlit Dashboard (app.py)]
+News Articles (Pasted Text / .txt Upload / Built-in Sample)
+                         │
+                         ▼
+   1. Pick Key Facts (src/extraction.py)
+      Groq LLM (openai/gpt-oss-20b) splits articles into single facts,
+      converts Indian units ('1.78 lakh' -> 178000), and keeps dates & sources.
+                         │
+                         ▼
+   2. Group Same Topics (src/clustering.py)
+      Sentence-Transformers (all-MiniLM-L6-v2) + Agglomerative Clustering
+      group facts talking about the same topic.
+                         │
+                         ▼
+   3. Check Differences (src/stance_classifier.py)
+      Rules (numbers, units, dates) + LLM reasoning label each pair:
+      AGREE, DISAGREE, DISCUSS (date update), UNRELATED, or INSUFFICIENT_EVIDENCE.
+                         │
+                         ▼
+   4. Show Side-by-Side (src/summarizer.py + app.py)
+      Creates a short plain-English report and an interactive 3-tab web app.
 ```
 
 ---
 
-## 🖥️ Dashboard Highlights (`app.py`)
+## What You See in the Web App (`app.py`)
 
-The Streamlit interface is organized into a clean two-view layout:
-
-1. **🔍 Compare & Results**
-   - **Step 1 — Collapsible Input Panel:** Paste two articles side-by-side, upload 2+ `.txt` files, or run the built-in 4-source 2026 Assam Floods corpus (with 1-click quick demo presets in the sidebar).
-   - **Step 2 — Comparison Results:** Live 3-stage pipeline progress (`st.status`), at-a-glance verdict banner and metrics, and four focused result tabs:
-     - **🔴 Conflicts (`DISAGREE`):** Outlet A vs Outlet B side-by-side comparison cards with conflicting attribute badges and reasoning.
-     - **🟢 Agreements (`AGREE`):** Multi-source corroborated facts with source chips.
-     - **🟡 Updates & Single-Source (`DISCUSS` & Unverified):** Chronological/context revisions separated cleanly from single-source claims.
-     - **📄 Full Report:** Rendered Markdown summary with one-click `.md` download.
-2. **📚 Claims Explorer & Guide**
-   - Search and filter individual extracted claims by keyword, outlet, or topic.
-   - Architecture overview, 5-class stance label guide, and raw source article viewer.
+1. **📖 How It Works**
+   - A quick, beginner-friendly overview of the 4 steps and the 4 result labels:
+     - **🔴 Conflicting Facts:** Outlets give different numbers or facts for the same event.
+     - **🟢 Agreed Facts:** Two or more outlets confirm the same fact.
+     - **🟡 Later Updates:** Numbers changed across different reporting dates.
+     - **⚪ Only 1 Source:** Mentioned by just one outlet so far.
+2. **🔍 Compare & Results**
+   - **Step 1:** Paste 2 news reports, upload `.txt` files, or run the built-in 4-report 2026 Assam Floods sample (also available in the sidebar).
+   - **Step 2:** View summary counts, side-by-side **Conflict Cards**, **Agreed Facts**, **Updates Over Time** *(with `via ...` source attribution)*, and a short **Full Report** you can download as `.md`.
+3. **📚 All Facts & Articles**
+   - Search and filter every extracted fact by keyword, news source, or topic, and read the original `.txt` articles.
 
 ---
 
-## 🚀 Quickstart
+## Quickstart (Run Locally)
 
-### 1. Prerequisites
+### 1. Requirements
 - Python 3.11 (see [`runtime.txt`](runtime.txt))
-- Groq API Key from [console.groq.com](https://console.groq.com)
+- A free Groq API Key from [console.groq.com](https://console.groq.com)
 
-### 2. Clone & Install Dependencies
+### 2. Install
 ```bash
 git clone https://github.com/aditya-hariom/news_summary.git
 cd news_summary
@@ -94,52 +81,42 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Configure API Key
+### 3. Add Your API Key
 Copy [`.env.example`](.env.example) to `.env` in the project root:
 ```env
 GROQ_API_KEY=gsk_your_groq_api_key_here
 ```
-*(For Streamlit Cloud deployment, configure `GROQ_API_KEY` in Secrets using [`.streamlit/secrets.toml.example`](.streamlit/secrets.toml.example) as a template — or enter it directly in the dashboard sidebar.)*
+*(Or paste the key directly in the app sidebar at runtime. For Streamlit Cloud, see [`.streamlit/secrets.toml.example`](.streamlit/secrets.toml.example).)*
 
-### 4. Launch the Dashboard
+### 4. Start the App
 ```bash
 streamlit run app.py
 ```
 
 ---
 
-## 💻 Running the Pipeline & Tests via CLI
-
-Run each pipeline stage independently from the project root:
+## Run via Terminal & Tests
 
 ```bash
-# Step 1: Extract atomic factual claims -> output/claims.json
+# Run each stage from the terminal
 python src/extraction.py
-
-# Step 2: Cluster claims & classify cross-source stances -> output/clusters_with_stance.json
 python src/stance_classifier.py
-
-# Step 3: Synthesize contradiction-aware Markdown report -> output/final_summary.md
 python src/summarizer.py
 
-# Step 4: Run benchmark evaluation -> output/evaluation_report.json
+# Run benchmark evaluation -> output/evaluation_report.json
 python src/evaluation.py
 
-# Step 5: Run edge-case & runtime verification suite
+# Run edge-case test suite (10 test cases)
 python tests/test_edge_cases.py
 ```
 
 ---
 
-## 📊 Evaluation & Benchmark Results
+## Evaluation Benchmark (`output/evaluation_report.json`)
 
-### Built-in 4-Source 2026 Assam Floods Corpus (`output/final_summary.md`)
-- **Corroborated Topics:** 1 | **Active Disputes:** 1 | **Developing Updates:** 2 | **Single-Source Claims:** 6
+Tested against 20 manually labeled claim pairs in [`data/evaluation_benchmark/benchmark_pairs.json`](data/evaluation_benchmark/benchmark_pairs.json):
 
-### Stance Classification Benchmark (`output/evaluation_report.json`)
-Evaluated against 20 manually labeled claim pairs in [`data/evaluation_benchmark/benchmark_pairs.json`](data/evaluation_benchmark/benchmark_pairs.json):
-
-| Stance Class | Precision | Recall | F1-Score | Support |
+| Label | Precision | Recall | F1-Score | Pairs |
 |---|---|---|---|---|
 | **AGREE** | 1.00 | 1.00 | **1.00** | 5 |
 | **DISAGREE** | 0.83 | 0.83 | **0.83** | 6 |
@@ -147,56 +124,48 @@ Evaluated against 20 manually labeled claim pairs in [`data/evaluation_benchmark
 | **UNRELATED** | 1.00 | 0.33 | **0.50** | 3 |
 | **INSUFFICIENT_EVIDENCE** | 0.00 | 0.00 | **0.00** | 2 |
 | **Overall Accuracy** | — | — | **75.0%** | 20 |
-| **Macro Average** | 0.667 | 0.633 | **0.600** | — |
 
 ---
 
-## 📁 Repository Structure
+## Project Files
 
 ```text
 news_summary/
-├── app.py                                # Guided two-view Streamlit dashboard
-├── requirements.txt                      # Python dependencies
-├── runtime.txt                           # Python runtime version (python-3.11)
-├── .env.example                          # Environment variable template
-├── .gitignore                            # Ignore rules for venv, secrets, temp uploads
-├── README.md                             # Project documentation
+├── app.py                                # 3-tab Streamlit web app
+├── requirements.txt                      # Python packages
+├── runtime.txt                           # Python version (python-3.11)
+├── .env.example                          # API key template
+├── README.md                             # Project guide
 │
 ├── .streamlit/
-│   ├── config.toml                       # Streamlit theme & server config
+│   ├── config.toml                       # Streamlit theme & server settings
 │   └── secrets.toml.example              # Streamlit Cloud secrets template
 │
 ├── data/
-│   ├── raw_sources/                      # 2026 Assam floods corpus (4 outlets + map)
-│   │   ├── README_contradiction_map.txt
-│   │   ├── source1_wikipedia_compiled.txt
-│   │   ├── source2_npr.txt
-│   │   ├── source3_theunitedindian.txt
-│   │   └── source4_mapsofindia.txt
-│   ├── custom_sources/                   # Ephemeral directory for pasted/uploaded inputs
+│   ├── raw_sources/                      # Built-in 2026 Assam floods sample (4 articles)
+│   ├── custom_sources/                   # Temporary folder for pasted/uploaded inputs
 │   └── evaluation_benchmark/
-│       └── benchmark_pairs.json          # 20 labeled stance evaluation pairs
+│       └── benchmark_pairs.json          # 20 labeled test pairs
 │
 ├── output/
-│   ├── claims.json                       # Extracted atomic claims
-│   ├── clusters_with_stance.json         # Semantic clusters & stance edges
-│   ├── final_summary.md                  # Generated contradiction-aware report
-│   └── evaluation_report.json            # Benchmark metrics & confusion matrix
+│   ├── claims.json                       # Extracted facts
+│   ├── clusters_with_stance.json         # Grouped facts & comparison results
+│   ├── final_summary.md                  # Short plain-English report
+│   └── evaluation_report.json            # Benchmark metrics
 │
 ├── src/
-│   ├── __init__.py
-│   ├── config.py                         # Paths, models, hyperparameters, key loader
-│   ├── extraction.py                     # LLM claim extraction & number normalization
-│   ├── clustering.py                     # Sentence-transformer agglomerative clustering
-│   ├── stance_classifier.py              # Neuro-symbolic stance & contradiction engine
-│   ├── summarizer.py                     # Categorization & Markdown report synthesis
-│   └── evaluation.py                     # Ground-truth benchmark evaluation script
+│   ├── config.py                         # Paths, model settings, API key loader
+│   ├── extraction.py                     # Step 1: Fact extraction & number normalization
+│   ├── clustering.py                     # Step 2: Topic grouping using embeddings
+│   ├── stance_classifier.py              # Step 3: Rules + LLM comparison engine
+│   ├── summarizer.py                     # Step 4: Plain-English report generator
+│   └── evaluation.py                     # Benchmark evaluation runner
 │
 └── tests/
-    └── test_edge_cases.py                # 10-case edge & runtime verification suite
+    └── test_edge_cases.py                # 10-case edge & runtime test suite
 ```
 
 ---
 
-## 👤 Author
+## Author
 Developed by **Aditya** (2026).

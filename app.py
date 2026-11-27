@@ -143,21 +143,73 @@ CUSTOM_CSS = """
         padding: 0.85rem;
     }
     .vs-text {
-        flex: 0.7;
+        flex: 0.6;
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+    .vs-badge {
+        background: #FFE4E6;
+        color: #BE123C;
+        border: 1px solid #FECDD3;
         font-weight: 800;
-        font-size: 1.15rem;
-        color: #E11D48;
+        font-size: 0.82rem;
+        width: 36px;
+        height: 36px;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .claim-quote-a {
+        color: #991B1B;
+        margin: 8px 0 0 0;
+        font-size: 0.98rem;
+        font-weight: 600;
+        line-height: 1.45;
+    }
+    .claim-quote-b {
+        color: #1E40AF;
+        margin: 8px 0 0 0;
+        font-size: 0.98rem;
+        font-weight: 600;
+        line-height: 1.45;
     }
     .reason-box {
         margin-top: 0.75rem;
-        font-size: 0.86rem;
+        font-size: 0.85rem;
         color: #881337;
         background: #FFF1F2;
         padding: 0.6rem 0.85rem;
         border-radius: 6px;
+    }
+    .kpi-card {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+        margin-bottom: 0.8rem;
+    }
+    .kpi-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #64748B;
+        margin-bottom: 2px;
+    }
+    .kpi-value {
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: #0F172A;
+        line-height: 1.2;
+    }
+    .single-card {
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-left: 4px solid #64748B;
+        border-radius: 8px;
+        padding: 0.75rem 0.95rem;
+        margin-bottom: 0.55rem;
     }
 
     .agree-card {
@@ -183,12 +235,30 @@ CUSTOM_CSS = """
         padding: 0.85rem 1rem;
         margin-bottom: 0.65rem;
     }
-    .step-card {
-        background: #F8FAFC;
+    .hiw-step-card {
+        background: #FFFFFF;
         border: 1px solid #E2E8F0;
         border-radius: 10px;
-        padding: 0.95rem;
-        height: 100%;
+        padding: 0.85rem 0.95rem;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+        min-height: 115px;
+    }
+    .hiw-step-badge {
+        display: inline-block;
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        margin-bottom: 0.4rem;
+    }
+    .hiw-label-card {
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        padding: 0.75rem 0.95rem;
+        margin-bottom: 0.6rem;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
     }
 </style>
 """
@@ -240,13 +310,13 @@ def _load_sample_into_state() -> None:
         "According to official disaster reports, the death toll in the Assam floods "
         "has reached 47. More than 7.2 lakh people have been affected."
     )
-    st.session_state["input_mode_radio"] = "Paste 2 Articles"
+    st.session_state["input_mode_radio"] = "Paste 2 Reports"
     st.session_state["expand_input_panel"] = True
 
 
 def _select_builtin_corpus() -> None:
     """Switch input mode to the built-in 4-source corpus and expand inputs."""
-    st.session_state["input_mode_radio"] = "Built-in 2026 Assam Corpus"
+    st.session_state["input_mode_radio"] = "Built-in Sample (4 Reports)"
     st.session_state["expand_input_panel"] = True
 
 
@@ -301,41 +371,41 @@ def _run_pipeline(target_files: Optional[List[str]]) -> None:
         return
 
     try:
-        with st.status("Running Contradiction-Aware Analysis...", expanded=True) as status:
-            st.write("1/3 Extracting atomic factual claims from articles...")
+        with st.status("Checking news reports...", expanded=True) as status:
+            st.write("1/3 Reading articles and pulling out key facts...")
             claims = run_extraction_pipeline(input_files=target_files)
             if not claims:
-                status.update(label="No claims extracted", state="error")
-                st.error("No factual claims could be extracted from the provided input.")
+                status.update(label="No facts found", state="error")
+                st.error("Could not find clear facts in the text you provided. Please try longer news text.")
                 return
 
-            st.write("2/3 Grouping claims by topic and checking cross-source stances...")
+            st.write("2/3 Grouping similar facts and checking for differences...")
             run_stance_pipeline()
 
-            st.write("3/3 Building side-by-side summary report...")
+            st.write("3/3 Preparing your side-by-side summary...")
             run_summary_pipeline()
 
-            status.update(label="Analysis complete!", state="complete", expanded=False)
+            status.update(label="Done!", state="complete", expanded=False)
 
         st.session_state["expand_input_panel"] = False
         st.rerun()
     except Exception as exc:
-        st.error(f"Analysis failed: {exc}")
+        st.error(f"Something went wrong: {exc}")
 
 
 def _render_sidebar(has_data: bool) -> None:
     """Render sidebar setup, quick sample loaders, and reset controls."""
     with st.sidebar:
-        st.markdown("### ⚙️ Setup & Shortcuts")
+        st.markdown("### ⚙️ Settings & Samples")
         if get_groq_api_key():
-            st.success("🟢 **Groq API**: Connected")
+            st.success("🟢 **AI Key**: Connected")
         else:
-            st.warning("🟡 **Groq API Key Required**")
+            st.warning("🟡 **Groq API Key Needed**")
             user_key = st.text_input(
-                "Enter Groq API Key:",
+                "Paste your Groq API Key:",
                 type="password",
                 placeholder="gsk_...",
-                help="Required to run analysis on articles. Get a key at console.groq.com",
+                help="Needed to read and compare articles. Get a free key at console.groq.com",
             )
             if user_key:
                 os.environ["GROQ_API_KEY"] = user_key.strip()
@@ -343,40 +413,40 @@ def _render_sidebar(has_data: bool) -> None:
                 st.rerun()
 
         st.markdown("---")
-        st.markdown("### ⚡ Quick Demo Presets")
+        st.markdown("### ⚡ Try a Sample")
         st.button(
-            "📋 Load 2-Outlet Flood Conflict",
+            "📋 Sample: 2 Conflicting Reports",
             on_click=_load_sample_into_state,
             use_container_width=True,
         )
 
         st.button(
-            "📚 Select Built-in 4-Source Corpus",
+            "📚 Sample: 4 Assam Flood Reports",
             on_click=_select_builtin_corpus,
             use_container_width=True,
         )
 
         if has_data:
             st.markdown("---")
-            if st.button("🗑️ Clear Current Results", use_container_width=True):
+            if st.button("🗑️ Clear Results", use_container_width=True):
                 _clear_saved_outputs()
                 st.session_state["expand_input_panel"] = True
                 st.rerun()
 
         st.markdown("---")
-        st.caption(f"Model: `{GROQ_MODEL}`  \nEmbeddings: `{EMBEDDING_MODEL}`")
+        st.caption(f"AI Model: `{GROQ_MODEL}`  \nMatcher: `{EMBEDDING_MODEL}`")
 
 
 def _render_input_panel(has_data: bool) -> None:
     """Render Step 1 (article selection/pasting) inside a clean collapsible panel."""
     expanded = st.session_state.get("expand_input_panel", not has_data)
     panel_title = (
-        "📝 Step 1: Compare News Articles (click to edit or run a new batch)"
+        "📝 Step 1: Add or Change News Reports"
         if has_data
-        else "📝 Step 1: Choose or Paste News Articles to Compare"
+        else "📝 Step 1: Choose or Paste News Reports"
     )
 
-    st.session_state.setdefault("input_mode_radio", "Paste 2 Articles")
+    st.session_state.setdefault("input_mode_radio", "Paste 2 Reports")
     st.session_state.setdefault("p_src_1", "Times of India")
     st.session_state.setdefault("p_txt_1", "")
     st.session_state.setdefault("p_src_2", "MapsOfIndia Wire")
@@ -384,8 +454,8 @@ def _render_input_panel(has_data: bool) -> None:
 
     with st.expander(panel_title, expanded=expanded):
         mode = st.radio(
-            "Input Method:",
-            ["Paste 2 Articles", "Upload .txt Files", "Built-in 2026 Assam Corpus"],
+            "How do you want to add news?",
+            ["Paste 2 Reports", "Upload Text Files", "Built-in Sample (4 Reports)"],
             horizontal=True,
             key="input_mode_radio",
         )
@@ -393,68 +463,68 @@ def _render_input_panel(has_data: bool) -> None:
         target_files: Optional[List[str]] = None
         ready_to_run = True
 
-        if mode == "Paste 2 Articles":
+        if mode == "Paste 2 Reports":
             col_top_l, col_top_r = st.columns([3, 1])
             with col_top_l:
-                st.caption("Paste two reports covering the same news event to spot agreements and conflicting figures.")
+                st.caption("Paste two news reports about the same event to see where they agree or disagree.")
             with col_top_r:
                 st.button(
-                    "Load Sample Story",
+                    "Fill Sample Reports",
                     type="secondary",
                     on_click=_load_sample_into_state,
                     use_container_width=True,
                 )
 
             col_a, col_b = st.columns(2)
-            with col_a:
-                src1 = st.text_input("Outlet 1 Name", key="p_src_1")
+            with col_a.container(border=True):
+                src1 = st.text_input("News Source 1", key="p_src_1")
                 txt1 = st.text_area(
-                    "Outlet 1 Article Text",
-                    height=150,
-                    placeholder="Paste first news article here...",
+                    "Article 1 Text",
+                    height=140,
+                    placeholder="Paste the first news report here...",
                     key="p_txt_1",
                 )
-            with col_b:
-                src2 = st.text_input("Outlet 2 Name", key="p_src_2")
+            with col_b.container(border=True):
+                src2 = st.text_input("News Source 2", key="p_src_2")
                 txt2 = st.text_area(
-                    "Outlet 2 Article Text",
-                    height=150,
-                    placeholder="Paste second news article here...",
+                    "Article 2 Text",
+                    height=140,
+                    placeholder="Paste the second news report here...",
                     key="p_txt_2",
                 )
 
             if not txt1.strip() or not txt2.strip():
                 ready_to_run = False
 
-        elif mode == "Upload .txt Files":
+        elif mode == "Upload Text Files":
             uploaded = st.file_uploader(
-                "Upload 2 or more `.txt` news articles:",
+                "Upload 2 or more `.txt` news files:",
                 type=["txt"],
                 accept_multiple_files=True,
             )
             if not uploaded or len(uploaded) < 2:
-                st.info("Upload at least 2 `.txt` files to cross-check them.")
+                st.info("Please upload at least 2 `.txt` files to compare them.")
                 ready_to_run = False
 
         else:
             corpus_files = _get_builtin_corpus_files()
             if corpus_files:
                 file_names = ", ".join(f"`{os.path.basename(p)}`" for p in corpus_files)
-                st.info(f"Ready to analyze **{len(corpus_files)} built-in articles**: {file_names}")
+                st.info(f"Ready to check **{len(corpus_files)} built-in Assam flood reports**: {file_names}")
                 target_files = corpus_files
             else:
                 st.warning("No built-in `.txt` files found in `data/raw_sources/`.")
                 ready_to_run = False
 
         run_clicked = st.button(
-            "🚀 Analyze & Compare Articles",
+            "🚀 Compare News Reports",
             type="primary",
             use_container_width=True,
             disabled=not ready_to_run,
         )
 
         if run_clicked:
-            if mode == "Paste 2 Articles":
+            if mode == "Paste 2 Reports":
                 _clear_custom_sources()
                 p1 = os.path.join(CUSTOM_SOURCES_DIR, _safe_filename(src1, "outlet_1"))
                 p2 = os.path.join(CUSTOM_SOURCES_DIR, _safe_filename(src2, "outlet_2"))
@@ -466,7 +536,7 @@ def _render_input_panel(has_data: bool) -> None:
                     f.write(txt2)
                 target_files = [p1, p2]
 
-            elif mode == "Upload .txt Files":
+            elif mode == "Upload Text Files":
                 _clear_custom_sources()
                 target_files = []
                 for idx, ufile in enumerate(uploaded, 1):
@@ -482,43 +552,43 @@ def _render_input_panel(has_data: bool) -> None:
 def _render_conflict_cards(disagree_pairs: List[Dict[str, Any]]) -> None:
     """Render side-by-side Outlet A vs Outlet B contradiction cards."""
     if not disagree_pairs:
-        st.success("🎉 No direct factual contradictions were detected across the analyzed sources.")
+        st.success("🎉 No conflicting facts were found across these reports.")
         return
 
-    st.caption("Conflicting claims are kept side-by-side with exact outlet attribution — the system never guesses a winner.")
+    st.caption("These reports say different things about the same event. Both are shown side-by-side with their source.")
     for idx, edge in enumerate(disagree_pairs, 1):
         attr = edge.get("conflicting_attribute") or edge.get("_topic", "Fact")
-        reasoning = edge.get("reasoning", "Incompatible values or assertions reported.")
+        reasoning = edge.get("reasoning", "The two reports give different numbers or details.")
         date_a = f" ({_esc(edge['date_a'])})" if edge.get("date_a") else ""
         date_b = f" ({_esc(edge['date_b'])})" if edge.get("date_b") else ""
 
         st.markdown(
             f"""
-            <div class="conflict-card">
-                <div class="conflict-header">
-                    <span class="conflict-title">⚡ Conflict #{idx}</span>
-                    <span class="attr-badge">{_esc(attr)} Discrepancy</span>
-                </div>
-                <div class="vs-grid">
-                    <div class="source-box-a">
-                        <span style="font-size:0.76rem; font-weight:700; background:#FECDD3; color:#9F1239; padding:2px 8px; border-radius:4px;">
-                            {_esc(edge.get('source_a'))}{date_a}
-                        </span>
-                        <h4 style="color:#991B1B; margin:8px 0 0 0; font-size:1.02rem; line-height:1.4;">"{_esc(edge.get('claim_a'))}"</h4>
-                    </div>
-                    <div class="vs-text">VS</div>
-                    <div class="source-box-b">
-                        <span style="font-size:0.76rem; font-weight:700; background:#BFDBFE; color:#1E40AF; padding:2px 8px; border-radius:4px;">
-                            {_esc(edge.get('source_b'))}{date_b}
-                        </span>
-                        <h4 style="color:#1D4ED8; margin:8px 0 0 0; font-size:1.02rem; line-height:1.4;">"{_esc(edge.get('claim_b'))}"</h4>
-                    </div>
-                </div>
-                <div class="reason-box">
-                    <b>Why this conflicts:</b> {_esc(reasoning)}
-                </div>
-            </div>
-            """,
+<div class="conflict-card">
+  <div class="conflict-header">
+    <span class="conflict-title">⚡ Conflict #{idx}</span>
+    <span class="attr-badge">{_esc(attr)} Difference</span>
+  </div>
+  <div class="vs-grid">
+    <div class="source-box-a">
+      <span style="font-size:0.76rem; font-weight:700; background:#FECDD3; color:#9F1239; padding:2px 8px; border-radius:4px;">
+        {_esc(edge.get('source_a'))}{date_a}
+      </span>
+      <div class="claim-quote-a">"{_esc(edge.get('claim_a'))}"</div>
+    </div>
+    <div class="vs-text"><span class="vs-badge">VS</span></div>
+    <div class="source-box-b">
+      <span style="font-size:0.76rem; font-weight:700; background:#BFDBFE; color:#1E40AF; padding:2px 8px; border-radius:4px;">
+        {_esc(edge.get('source_b'))}{date_b}
+      </span>
+      <div class="claim-quote-b">"{_esc(edge.get('claim_b'))}"</div>
+    </div>
+  </div>
+  <div class="reason-box">
+    <b>Why they differ:</b> {_esc(reasoning)}
+  </div>
+</div>
+""",
             unsafe_allow_html=True,
         )
 
@@ -526,10 +596,10 @@ def _render_conflict_cards(disagree_pairs: List[Dict[str, Any]]) -> None:
 def _render_agreement_cards(agree_list: List[Dict[str, Any]]) -> None:
     """Render corroborated facts confirmed by two or more outlets."""
     if not agree_list:
-        st.info("No multi-source exact agreements found in this batch.")
+        st.info("No facts were confirmed by multiple sources in this batch.")
         return
 
-    st.caption("Facts confirmed consistently by 2 or more independent outlets.")
+    st.caption("Facts reported the same way by 2 or more news sources.")
     for idx, cluster in enumerate(agree_list, 1):
         claims = cluster.get("claims", [])
         if not claims:
@@ -540,15 +610,15 @@ def _render_agreement_cards(agree_list: List[Dict[str, Any]]) -> None:
 
         st.markdown(
             f"""
-            <div class="agree-card">
-                <div style="font-weight:700; font-size:0.98rem; color:#14532D; margin-bottom:4px;">
-                    🟢 Agreed Fact #{idx}: "{_esc(rep_claim)}"
-                </div>
-                <div style="font-size:0.82rem; color:#166534;">
-                    <b>Confirmed by:</b> {source_chips}
-                </div>
-            </div>
-            """,
+<div class="agree-card">
+  <div style="font-weight:700; font-size:0.98rem; color:#14532D; margin-bottom:4px;">
+    🟢 Agreed Fact #{idx}: "{_esc(rep_claim)}"
+  </div>
+  <div style="font-size:0.82rem; color:#166534;">
+    <b>Reported by:</b> {source_chips}
+  </div>
+</div>
+""",
             unsafe_allow_html=True,
         )
 
@@ -558,11 +628,11 @@ def _render_developing_and_single(
     single_list: List[Dict[str, Any]],
 ) -> None:
     """Render timeline/context updates (DISCUSS) and single-source claims."""
-    st.markdown("##### 🟡 Developing / Timeline Updates (`DISCUSS`)")
+    st.markdown("##### 🟡 Updates Over Time")
     if not developing_list:
-        st.info("No timeline or context-evolution updates detected.")
+        st.info("No date-based updates found.")
     else:
-        st.caption("These claims show different numbers or details because reports come from different dates or scopes.")
+        st.caption("These numbers look different because the reports were published on different dates as the event changed.")
         for idx, cluster in enumerate(developing_list, 1):
             topic = cluster.get("topic", "Event Update").replace("_", " ").title()
             discuss_edges = [e for e in cluster.get("edges", []) if e.get("stance") == "DISCUSS"]
@@ -570,40 +640,59 @@ def _render_developing_and_single(
 
             items_html = []
             for c in cluster.get("claims", []):
-                src = _esc(c.get("source_name") or c.get("source_file") or "Unknown")
+                src_raw = str(c.get("source_name") or c.get("source_file") or "Unknown")
+                src = _esc(src_raw)
                 dt = f" [{_esc(c['date'])}]" if c.get("date") else ""
-                items_html.append(f"<li><b>{src}{dt}:</b> \"{_esc(c.get('claim'))}\"</li>")
+                attr_val = str(c.get("attribution") or "").strip()
+                via = f" <span style='color:#92400E;'>(via {_esc(attr_val)})</span>" if attr_val and attr_val.lower() != src_raw.lower() else ""
+                items_html.append(f"<li><b>{src}{dt}</b>{via}<b>:</b> \"{_esc(c.get('claim'))}\"</li>")
 
             reason_html = (
-                f"<div style='font-size:0.84rem; color:#92400E; margin-top:6px;'><b>Context:</b> {_esc(reason)}</div>"
+                f"<div style='font-size:0.84rem; color:#92400E; margin-top:6px;'><b>Note:</b> {_esc(reason)}</div>"
                 if reason else ""
             )
             st.markdown(
                 f"""
-                <div class="update-card">
-                    <div style="font-weight:700; color:#B45309; margin-bottom:6px;">
-                        🕒 Update #{idx}: {_esc(topic)}
-                    </div>
-                    <ul style="margin:0; padding-left:1.2rem; color:#451A03; font-size:0.92rem;">
-                        {''.join(items_html)}
-                    </ul>
-                    {reason_html}
-                </div>
-                """,
+<div class="update-card">
+  <div style="font-weight:700; color:#B45309; margin-bottom:6px;">
+    🕒 Update #{idx}: {_esc(topic)}
+  </div>
+  <ul style="margin:0; padding-left:1.2rem; color:#451A03; font-size:0.92rem;">
+    {''.join(items_html)}
+  </ul>
+  {reason_html}
+</div>
+""",
                 unsafe_allow_html=True,
             )
 
     st.markdown("---")
-    st.markdown("##### ⚪ Single-Source / Uncorroborated Claims")
+    st.markdown("##### ⚪ Reported by Only One Source")
     if not single_list:
-        st.info("No uncorroborated single-source claims in this batch.")
+        st.info("No single-source facts in this batch.")
     else:
-        st.caption("Reported by only one outlet so far — not disputed, but awaiting independent confirmation.")
+        st.caption("Only one news source mentioned these facts, so we cannot cross-check them yet.")
         for cluster in single_list:
             for c in cluster.get("claims", []):
-                src = c.get("source_name") or c.get("source_file") or "Unknown"
-                d_str = f" `[{c['date']}]`" if c.get("date") else ""
-                st.markdown(f"- **[{src}]**{d_str}: \"{c.get('claim', '')}\"")
+                src_raw = str(c.get("source_name") or c.get("source_file") or "Unknown")
+                src = _esc(src_raw)
+                dt = f" • {_esc(c['date'])}" if c.get("date") else ""
+                attr_val = str(c.get("attribution") or "").strip()
+                via = f" • via {_esc(attr_val)}" if attr_val and attr_val.lower() != src_raw.lower() else ""
+                claim_txt = _esc(c.get("claim", ""))
+                st.markdown(
+                    f"""
+<div class="single-card">
+  <div style="font-size:0.76rem; font-weight:700; color:#475569; margin-bottom:3px;">
+    {src}{dt}{via}
+  </div>
+  <div style="font-size:0.93rem; color:#0F172A; font-weight:500;">
+    "{claim_txt}"
+  </div>
+</div>
+""",
+                    unsafe_allow_html=True,
+                )
 
 
 def _render_results_section(
@@ -617,38 +706,51 @@ def _render_results_section(
     disagree_pairs = _extract_unique_disagree_pairs(disputed_list)
     other_count = len(developing_list) + len(single_list)
 
-    st.markdown("### 📊 Step 2: Comparison Results")
+    st.markdown("### 📊 Step 2: What We Found")
 
     if disagree_pairs:
         st.markdown(
             f"""
-            <div class="verdict-banner verdict-conflict">
-                ⚠️ Found <b>{len(disagree_pairs)} direct contradiction(s)</b> across {len(all_sources)} outlets.
-                Conflicting statements are shown side-by-side below without averaging.
-            </div>
-            """,
+<div class="verdict-banner verdict-conflict">
+  ⚠️ Found <b>{len(disagree_pairs)} conflict(s)</b> across {len(all_sources)} news sources.
+  Both sides are shown clearly below — we never guess or mix numbers.
+</div>
+""",
             unsafe_allow_html=True,
         )
     else:
         st.markdown(
             f"""
-            <div class="verdict-banner verdict-clean">
-                ✅ No direct contradictions found across {len(all_sources)} outlets ({len(claims_list)} claims analyzed).
-            </div>
-            """,
+<div class="verdict-banner verdict-clean">
+  ✅ No conflicts found across {len(all_sources)} news sources ({len(claims_list)} facts checked).
+</div>
+""",
             unsafe_allow_html=True,
         )
 
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Outlets Compared", len(all_sources))
-    m2.metric("Direct Conflicts", len(disagree_pairs))
-    m3.metric("Agreed Facts", len(agree_list))
-    m4.metric("Updates & Single-Source", other_count)
+    kpis = [
+        ("#1D4ED8", "Sources Checked", len(all_sources)),
+        ("#E11D48" if disagree_pairs else "#16A34A", "Conflicts", len(disagree_pairs)),
+        ("#16A34A", "Agreed Facts", len(agree_list)),
+        ("#D97706", "Updates & 1-Source", other_count),
+    ]
+    kpi_cols = st.columns(4)
+    for col, (accent, label, val) in zip(kpi_cols, kpis):
+        with col:
+            st.markdown(
+                f"""
+<div class="kpi-card" style="border-top: 4px solid {accent};">
+  <div class="kpi-label">{label}</div>
+  <div class="kpi-value">{val}</div>
+</div>
+""",
+                unsafe_allow_html=True,
+            )
 
     res_tabs = st.tabs([
         f"🔴 Conflicts ({len(disagree_pairs)})",
-        f"🟢 Agreements ({len(agree_list)})",
-        f"🟡 Updates & Single-Source ({other_count})",
+        f"🟢 Agreed ({len(agree_list)})",
+        f"🟡 Updates & 1-Source ({other_count})",
         "📄 Full Report",
     ])
 
@@ -659,28 +761,81 @@ def _render_results_section(
     with res_tabs[2]:
         _render_developing_and_single(developing_list, single_list)
     with res_tabs[3]:
-        st.download_button(
-            "📥 Download Complete Report (.md)",
-            summary_md,
-            file_name="news_analysis_report.md",
-            mime="text/markdown",
-            use_container_width=True,
-        )
-        st.markdown("---")
-        st.markdown(summary_md)
+        h_left, h_right = st.columns([3, 1])
+        with h_left:
+            st.caption("Plain-English summary ready to read or download.")
+        with h_right:
+            st.download_button(
+                "📥 Download (.md)",
+                summary_md,
+                file_name="news_analysis_report.md",
+                mime="text/markdown",
+                use_container_width=True,
+            )
+        with st.container(border=True):
+            st.markdown(summary_md)
 
 
-def _render_explorer_and_guide(claims_list: List[Dict[str, Any]], all_sources: List[str]) -> None:
-    """Render Claims Explorer, Architecture Overview, and Raw Source Viewer."""
-    st.markdown("### 🔍 Claims Explorer")
+def _render_how_it_works_tab() -> None:
+    """Render a concise first-tab guide explaining the workflow and labels."""
+    st.caption("Unlike normal AI tools that blend conflicting numbers into an average, this tool shows every side clearly with its news source.")
+
+    steps_info = [
+        ("STEP 1", "#1D4ED8", "#DBEAFE", "🔍 Pick Key Facts", "Pulls out simple facts, numbers, and dates from each report."),
+        ("STEP 2", "#6D28D9", "#EDE9FE", "🗂️ Group Topics", "Matches facts from different outlets about the same topic."),
+        ("STEP 3", "#BE123C", "#FFE4E6", "⚖️ Check Differences", "Finds whether outlets agree, conflict, or show date updates."),
+        ("STEP 4", "#15803D", "#DCFCE7", "📊 Show Side-by-Side", "Lists each claim with its exact source — never guesses a winner."),
+    ]
+    cols = st.columns(4)
+    for col, (badge, fg, bg, title, desc) in zip(cols, steps_info):
+        with col:
+            st.markdown(
+                f"""
+<div class="hiw-step-card" style="border-top: 4px solid {fg};">
+  <span class="hiw-step-badge" style="color:{fg}; background:{bg};">{badge}</span>
+  <div style="font-weight:700; font-size:0.95rem; color:#0F172A; margin-bottom:4px;">{title}</div>
+  <div style="font-size:0.82rem; color:#475569; line-height:1.4;">{desc}</div>
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+
+    st.markdown("")
+    st.markdown("##### 🏷️ Result Labels")
+    labels_info = [
+        ("#E11D48", "#BE123C", "🔴 Conflicting Facts", "Reports give different numbers or facts for the same event (e.g. 82 vs 47 deaths)."),
+        ("#16A34A", "#15803D", "🟢 Agreed Facts", "Two or more news sources confirm the exact same fact."),
+        ("#D97706", "#B45309", "🟡 Later Updates", "Numbers changed because reports came out on different dates."),
+        ("#64748B", "#334155", "⚪ Only 1 Source", "Mentioned by just one outlet so far — not cross-checked yet."),
+    ]
+    l1, l2 = st.columns(2)
+    for idx, (border_c, title_c, title, desc) in enumerate(labels_info):
+        target_col = l1 if idx % 2 == 0 else l2
+        with target_col:
+            st.markdown(
+                f"""
+<div class="hiw-label-card" style="border-left: 5px solid {border_c};">
+  <div style="font-weight:700; font-size:0.92rem; color:{title_c}; margin-bottom:2px;">{title}</div>
+  <div style="font-size:0.83rem; color:#334155;">{desc}</div>
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+
+    st.info("👉 Open **🔍 Compare & Results** above to run Step 1 and Step 2.")
+
+
+def _render_explorer_and_sources(claims_list: List[Dict[str, Any]], all_sources: List[str]) -> None:
+    """Render Claims Explorer and Raw Source Viewer."""
+    st.markdown("### 🔍 Search All Extracted Facts")
     if not claims_list:
-        st.info("No extracted claims yet. Run an analysis in the **Compare & Results** tab first.")
+        st.info("No facts extracted yet. Go to **Compare & Results** and run a comparison first.")
     else:
         col_q, col_src, col_top = st.columns([2, 1, 1])
         with col_q:
-            query = st.text_input("Search claims:", placeholder="e.g. death, affected, Assam, rescue")
+            query = st.text_input("Search by word:", placeholder="e.g. death, affected, Assam, rescue")
         with col_src:
-            selected_src = st.selectbox("Filter by Outlet:", ["All Outlets"] + all_sources)
+            selected_src = st.selectbox("Filter by News Source:", ["All Sources"] + all_sources)
         with col_top:
             all_topics = sorted(set(c.get("category") or c.get("topic", "general") for c in claims_list))
             selected_topic = st.selectbox("Filter by Topic:", ["All Topics"] + all_topics)
@@ -689,28 +844,28 @@ def _render_explorer_and_guide(claims_list: List[Dict[str, Any]], all_sources: L
         if query:
             q_low = query.lower()
             filtered = [c for c in filtered if q_low in c.get("claim", "").lower()]
-        if selected_src != "All Outlets":
+        if selected_src != "All Sources":
             filtered = [c for c in filtered if (c.get("source_name") or c.get("source_file")) == selected_src]
         if selected_topic != "All Topics":
             filtered = [c for c in filtered if (c.get("category") or c.get("topic")) == selected_topic]
 
-        st.caption(f"Showing **{len(filtered)}** of {len(claims_list)} extracted claims")
+        st.caption(f"Showing **{len(filtered)}** of {len(claims_list)} facts")
         for c in filtered:
             cid = _esc(c.get("claim_id", "N/A"))
             src = _esc(c.get("source_name") or c.get("source_file") or "Unknown")
             topic = _esc(c.get("category") or c.get("topic", "general"))
             val = (
-                f" • <b>Value:</b> <code>{_esc(c['numerical_value'])} {_esc(c.get('numerical_unit', ''))}</code>"
+                f" • <b>Number:</b> <code>{_esc(c['numerical_value'])} {_esc(c.get('numerical_unit', ''))}</code>"
                 if c.get("numerical_value") is not None else ""
             )
             dt = f" • <b>Date:</b> <code>{_esc(c['date'])}</code>" if c.get("date") else ""
-            attr = f" • <b>Attribution:</b> <i>{_esc(c['attribution'])}</i>" if c.get("attribution") else ""
+            attr = f" • <b>Said by:</b> <i>{_esc(c['attribution'])}</i>" if c.get("attribution") else ""
 
             st.markdown(
                 f"""
                 <div class="claim-item">
                     <div style="font-size:0.76rem; color:#64748B; margin-bottom:4px;">
-                        <code>{cid}</code> • <b>Outlet:</b> <code>{src}</code> • <b>Topic:</b> <code>{topic}</code>{val}{dt}{attr}
+                        <code>{cid}</code> • <b>Source:</b> <code>{src}</code> • <b>Topic:</b> <code>{topic}</code>{val}{dt}{attr}
                     </div>
                     <div style="font-size:0.95rem; font-weight:600; color:#0F172A;">
                         "{_esc(c.get('claim'))}"
@@ -721,35 +876,7 @@ def _render_explorer_and_guide(claims_list: List[Dict[str, Any]], all_sources: L
             )
 
     st.markdown("---")
-    st.markdown("### 🧠 How It Works")
-    c1, c2, c3, c4 = st.columns(4)
-    steps_info = [
-        ("1. Extract Facts", "#1E40AF", "Groq LLM splits articles into single, verifiable atomic claims with numbers and dates."),
-        ("2. Group by Topic", "#5B21B6", "Sentence embeddings (<code>all-MiniLM-L6-v2</code>) cluster claims discussing the same topic."),
-        ("3. Detect Stances", "#BE123C", "Numeric/date rules + LLM reasoning label pairs as Agree, Conflict, or Update."),
-        ("4. Side-by-Side", "#065F46", "Conflicts are shown side-by-side with exact outlet attribution — never averaged."),
-    ]
-    for col, (title, color, desc) in zip((c1, c2, c3, c4), steps_info):
-        with col:
-            st.markdown(
-                f"""
-                <div class="step-card">
-                    <h4 style="margin:0 0 6px 0; color:{color};">{title}</h4>
-                    <p style="font-size:0.84rem; color:#475569; margin:0;">{desc}</p>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-    st.markdown("#### 🏷️ Relationship Labels")
-    st.markdown(
-        "- 🔴 **Conflict (`DISAGREE`)**: Outlets report incompatible figures or outcomes for the same event.\n"
-        "- 🟢 **Agreement (`AGREE`)**: Outlets confirm the same fact or figure.\n"
-        "- 🟡 **Timeline / Context Update (`DISCUSS`)**: Numbers differ due to evolving dates or scopes.\n"
-        "- ⚪ **Unrelated / Insufficient (`UNRELATED` / `INSUFFICIENT_EVIDENCE`)**: Different topics or vague wording."
-    )
-
-    with st.expander("📰 View Raw Source Articles on Disk", expanded=False):
+    with st.expander("📰 Read Original News Articles", expanded=False):
         raw_candidates = sorted(
             glob.glob(os.path.join(RAW_SOURCES_DIR, "*.txt"))
             + glob.glob(os.path.join(CUSTOM_SOURCES_DIR, "*.txt"))
@@ -759,7 +886,7 @@ def _render_explorer_and_guide(claims_list: List[Dict[str, Any]], all_sources: L
             if os.path.isfile(f) and not os.path.basename(f).startswith("README")
         ]
         if not raw_files:
-            st.write("No source `.txt` files found.")
+            st.write("No article `.txt` files found.")
         else:
             file_tabs = st.tabs([os.path.basename(f) for f in raw_files])
             for tab, fp in zip(file_tabs, raw_files):
@@ -777,9 +904,9 @@ def main() -> None:
     st.markdown(
         """
         <div class="app-header">
-            <h1 class="app-title">⚖️ Contradiction-Aware News Analysis</h1>
+            <h1 class="app-title">⚖️ News Contradiction Checker</h1>
             <p class="app-subtitle">
-                Compare news articles side-by-side — detect conflicting figures, confirmed agreements, and timeline updates with full source attribution.
+                Compare news articles side-by-side to see what outlets agree on, what conflicts, and what changed over time.
             </p>
         </div>
         """,
@@ -793,17 +920,24 @@ def main() -> None:
 
     _render_sidebar(has_data)
 
-    primary_tab, guide_tab = st.tabs(["🔍 Compare & Results", "📚 Claims Explorer & Guide"])
+    guide_tab, primary_tab, explorer_tab = st.tabs([
+        "📖 How It Works",
+        "🔍 Compare & Results",
+        "📚 All Facts & Articles",
+    ])
+
+    with guide_tab:
+        _render_how_it_works_tab()
 
     with primary_tab:
         _render_input_panel(has_data)
         if has_data:
             _render_results_section(claims_list, clusters_dict, summary_md, all_sources)
         else:
-            st.info("👆 Select a sample or paste two articles above, then click **Analyze & Compare Articles** to see results.")
+            st.info("👆 Pick a sample or paste two news reports above, then click **Compare News Reports**.")
 
-    with guide_tab:
-        _render_explorer_and_guide(claims_list, all_sources)
+    with explorer_tab:
+        _render_explorer_and_sources(claims_list, all_sources)
 
 
 if __name__ == "__main__":
