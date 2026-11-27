@@ -1,6 +1,6 @@
 {
-  "2": {
-    "cluster_id": 2,
+  "1": {
+    "cluster_id": 1,
     "topic": "casualties",
     "claims": [
       {
@@ -26,7 +26,7 @@
           "temporal_anchor": "26 July 2026"
         },
         "confidence": 0.95,
-        "cluster_id": 2
+        "cluster_id": 1
       },
       {
         "claim_id": "clm_source1_wikipedia_compiled_02",
@@ -51,7 +51,7 @@
           "temporal_anchor": "26 July 2026"
         },
         "confidence": 0.95,
-        "cluster_id": 2
+        "cluster_id": 1
       },
       {
         "claim_id": "clm_source1_wikipedia_compiled_03",
@@ -76,7 +76,7 @@
           "temporal_anchor": "2 August 2026"
         },
         "confidence": 0.95,
-        "cluster_id": 2
+        "cluster_id": 1
       },
       {
         "claim_id": "clm_source2_npr_01",
@@ -85,7 +85,7 @@
         "source_name": "source2_npr",
         "claim": "The flood death toll reached 100 as of Monday, 10 August 2026.",
         "extracted_claim": "The flood death toll reached 100 as of Monday, 10 August 2026.",
-        "normalized_claim": "The flood death toll reached 100 as of 10 August 2026.",
+        "normalized_claim": "The flood death toll reached 100 on 10 August 2026.",
         "topic": "casualties",
         "category": "casualties",
         "numerical_value": 100,
@@ -101,32 +101,7 @@
           "temporal_anchor": "10 August 2026"
         },
         "confidence": 0.95,
-        "cluster_id": 2
-      },
-      {
-        "claim_id": "clm_source2_npr_02",
-        "article_id": "source2_npr",
-        "source_file": "source2_npr",
-        "source_name": "source2_npr",
-        "claim": "Two more deaths occurred overnight before the toll reached 100.",
-        "extracted_claim": "Two more deaths occurred overnight before the toll reached 100.",
-        "normalized_claim": "2 additional deaths occurred overnight.",
-        "topic": "casualties",
-        "category": "casualties",
-        "numerical_value": 2,
-        "numerical_unit": "deaths",
-        "date": "10 August 2026",
-        "attribution": "Officials",
-        "structured_attributes": {
-          "subject": "flood deaths",
-          "predicate": "occurred overnight",
-          "numerical_value": 2,
-          "numerical_unit": "deaths",
-          "location": null,
-          "temporal_anchor": "10 August 2026"
-        },
-        "confidence": 0.95,
-        "cluster_id": 2
+        "cluster_id": 1
       },
       {
         "claim_id": "clm_source3_theunitedindian_01",
@@ -144,89 +119,14 @@
         "attribution": "Times of India",
         "structured_attributes": {
           "subject": "monsoon-season death toll",
-          "predicate": "exceeded",
+          "predicate": "crossed",
           "numerical_value": 50,
           "numerical_unit": "deaths",
           "location": null,
           "temporal_anchor": "22 July 2026"
         },
         "confidence": 0.95,
-        "cluster_id": 2
-      },
-      {
-        "claim_id": "clm_source3_theunitedindian_03",
-        "article_id": "source3_theunitedindian",
-        "source_file": "source3_theunitedindian",
-        "source_name": "source3_theunitedindian",
-        "claim": "One report counted deaths across the full monsoon season.",
-        "extracted_claim": "One report counted deaths across the full monsoon season.",
-        "normalized_claim": "One report counted deaths across the full monsoon season.",
-        "topic": "official_statement",
-        "category": "official_statement",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": null,
-        "attribution": "The United Indian",
-        "structured_attributes": {
-          "subject": "death counting method",
-          "predicate": "counted across full monsoon season",
-          "numerical_value": null,
-          "numerical_unit": null,
-          "location": null,
-          "temporal_anchor": null
-        },
-        "confidence": 0.95,
-        "cluster_id": 2
-      },
-      {
-        "claim_id": "clm_source3_theunitedindian_04",
-        "article_id": "source3_theunitedindian",
-        "source_file": "source3_theunitedindian",
-        "source_name": "source3_theunitedindian",
-        "claim": "Another report counted confirmed flood deaths during 2026.",
-        "extracted_claim": "Another report counted confirmed flood deaths during 2026.",
-        "normalized_claim": "Another report counted confirmed flood deaths during 2026.",
-        "topic": "official_statement",
-        "category": "official_statement",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": null,
-        "attribution": "The United Indian",
-        "structured_attributes": {
-          "subject": "death counting method",
-          "predicate": "counted confirmed flood deaths during 2026",
-          "numerical_value": null,
-          "numerical_unit": null,
-          "location": null,
-          "temporal_anchor": null
-        },
-        "confidence": 0.95,
-        "cluster_id": 2
-      },
-      {
-        "claim_id": "clm_source4_mapsofindia_01",
-        "article_id": "source4_mapsofindia",
-        "source_file": "source4_mapsofindia",
-        "source_name": "source4_mapsofindia",
-        "claim": "The official death toll in the 2026 Assam floods is 47.",
-        "extracted_claim": "The official death toll in the 2026 Assam floods is 47.",
-        "normalized_claim": "The official death toll in the 2026 Assam floods is 47.",
-        "topic": "casualties",
-        "category": "casualties",
-        "numerical_value": 47,
-        "numerical_unit": "deaths",
-        "date": null,
-        "attribution": "official",
-        "structured_attributes": {
-          "subject": "death toll",
-          "predicate": "is",
-          "numerical_value": 47,
-          "numerical_unit": "deaths",
-          "location": null,
-          "temporal_anchor": null
-        },
-        "confidence": 0.95,
-        "cluster_id": 2
+        "cluster_id": 1
       }
     ],
     "edges": [
@@ -250,25 +150,6 @@
         "confidence": 0.92
       },
       {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_01__clm_source2_npr_02",
-        "claim_a_id": "clm_source1_wikipedia_compiled_01",
-        "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "val_a": 66,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source2_npr_02",
-        "claim_b": "Two more deaths occurred overnight before the toll reached 100.",
-        "source_b": "source2_npr",
-        "date_b": "10 August 2026",
-        "val_b": 2,
-        "unit_b": "deaths",
-        "stance": "DISCUSS",
-        "conflicting_attribute": null,
-        "reasoning": "Temporal update: source1_wikipedia_compiled reported 66 (26 july 2026) while source2_npr reported 2 (10 august 2026). Figures naturally evolved over time.",
-        "confidence": 0.92
-      },
-      {
         "pair_id": "pair_clm_source1_wikipedia_compiled_01__clm_source3_theunitedindian_01",
         "claim_a_id": "clm_source1_wikipedia_compiled_01",
         "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
@@ -288,63 +169,6 @@
         "confidence": 0.92
       },
       {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_01__clm_source3_theunitedindian_03",
-        "claim_a_id": "clm_source1_wikipedia_compiled_01",
-        "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "val_a": 66,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_03",
-        "claim_b": "One report counted deaths across the full monsoon season.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_01__clm_source3_theunitedindian_04",
-        "claim_a_id": "clm_source1_wikipedia_compiled_01",
-        "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "val_a": 66,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_04",
-        "claim_b": "Another report counted confirmed flood deaths during 2026.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_01__clm_source4_mapsofindia_01",
-        "claim_a_id": "clm_source1_wikipedia_compiled_01",
-        "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "val_a": 66,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source4_mapsofindia_01",
-        "claim_b": "The official death toll in the 2026 Assam floods is 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "val_b": 47,
-        "unit_b": "deaths",
-        "stance": "DISAGREE",
-        "conflicting_attribute": "Casualties",
-        "reasoning": "Severe numerical conflict: source1_wikipedia_compiled reports 66 vs source4_mapsofindia reports 47 (1.4x disparity) for the same event window.",
-        "confidence": 0.96
-      },
-      {
         "pair_id": "pair_clm_source1_wikipedia_compiled_02__clm_source2_npr_01",
         "claim_a_id": "clm_source1_wikipedia_compiled_02",
         "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
@@ -361,25 +185,6 @@
         "stance": "DISCUSS",
         "conflicting_attribute": null,
         "reasoning": "Temporal update: source1_wikipedia_compiled reported 66 (26 july 2026) while source2_npr reported 100 (10 august 2026). Figures naturally evolved over time.",
-        "confidence": 0.92
-      },
-      {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_02__clm_source2_npr_02",
-        "claim_a_id": "clm_source1_wikipedia_compiled_02",
-        "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "val_a": 66,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source2_npr_02",
-        "claim_b": "Two more deaths occurred overnight before the toll reached 100.",
-        "source_b": "source2_npr",
-        "date_b": "10 August 2026",
-        "val_b": 2,
-        "unit_b": "deaths",
-        "stance": "DISCUSS",
-        "conflicting_attribute": null,
-        "reasoning": "Temporal update: source1_wikipedia_compiled reported 66 (26 july 2026) while source2_npr reported 2 (10 august 2026). Figures naturally evolved over time.",
         "confidence": 0.92
       },
       {
@@ -402,63 +207,6 @@
         "confidence": 0.92
       },
       {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_02__clm_source3_theunitedindian_03",
-        "claim_a_id": "clm_source1_wikipedia_compiled_02",
-        "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "val_a": 66,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_03",
-        "claim_b": "One report counted deaths across the full monsoon season.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_02__clm_source3_theunitedindian_04",
-        "claim_a_id": "clm_source1_wikipedia_compiled_02",
-        "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "val_a": 66,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_04",
-        "claim_b": "Another report counted confirmed flood deaths during 2026.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_02__clm_source4_mapsofindia_01",
-        "claim_a_id": "clm_source1_wikipedia_compiled_02",
-        "claim_a": "The flood toll was reported at 66 on 26 July 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "26 July 2026",
-        "val_a": 66,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source4_mapsofindia_01",
-        "claim_b": "The official death toll in the 2026 Assam floods is 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "val_b": 47,
-        "unit_b": "deaths",
-        "stance": "DISAGREE",
-        "conflicting_attribute": "Casualties",
-        "reasoning": "Severe numerical conflict: source1_wikipedia_compiled reports 66 vs source4_mapsofindia reports 47 (1.4x disparity) for the same event window.",
-        "confidence": 0.96
-      },
-      {
         "pair_id": "pair_clm_source1_wikipedia_compiled_03__clm_source2_npr_01",
         "claim_a_id": "clm_source1_wikipedia_compiled_03",
         "claim_a": "The death toll climbed to 82 on 2 August 2026.",
@@ -475,25 +223,6 @@
         "stance": "DISCUSS",
         "conflicting_attribute": null,
         "reasoning": "Temporal update: source1_wikipedia_compiled reported 82 (2 august 2026) while source2_npr reported 100 (10 august 2026). Figures naturally evolved over time.",
-        "confidence": 0.92
-      },
-      {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_03__clm_source2_npr_02",
-        "claim_a_id": "clm_source1_wikipedia_compiled_03",
-        "claim_a": "The death toll climbed to 82 on 2 August 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "2 August 2026",
-        "val_a": 82,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source2_npr_02",
-        "claim_b": "Two more deaths occurred overnight before the toll reached 100.",
-        "source_b": "source2_npr",
-        "date_b": "10 August 2026",
-        "val_b": 2,
-        "unit_b": "deaths",
-        "stance": "DISCUSS",
-        "conflicting_attribute": null,
-        "reasoning": "Temporal update: source1_wikipedia_compiled reported 82 (2 august 2026) while source2_npr reported 2 (10 august 2026). Figures naturally evolved over time.",
         "confidence": 0.92
       },
       {
@@ -516,63 +245,6 @@
         "confidence": 0.92
       },
       {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_03__clm_source3_theunitedindian_03",
-        "claim_a_id": "clm_source1_wikipedia_compiled_03",
-        "claim_a": "The death toll climbed to 82 on 2 August 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "2 August 2026",
-        "val_a": 82,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_03",
-        "claim_b": "One report counted deaths across the full monsoon season.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_03__clm_source3_theunitedindian_04",
-        "claim_a_id": "clm_source1_wikipedia_compiled_03",
-        "claim_a": "The death toll climbed to 82 on 2 August 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "2 August 2026",
-        "val_a": 82,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_04",
-        "claim_b": "Another report counted confirmed flood deaths during 2026.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source1_wikipedia_compiled_03__clm_source4_mapsofindia_01",
-        "claim_a_id": "clm_source1_wikipedia_compiled_03",
-        "claim_a": "The death toll climbed to 82 on 2 August 2026.",
-        "source_a": "source1_wikipedia_compiled",
-        "date_a": "2 August 2026",
-        "val_a": 82,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source4_mapsofindia_01",
-        "claim_b": "The official death toll in the 2026 Assam floods is 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "val_b": 47,
-        "unit_b": "deaths",
-        "stance": "DISAGREE",
-        "conflicting_attribute": "Casualties",
-        "reasoning": "Severe numerical conflict: source1_wikipedia_compiled reports 82 vs source4_mapsofindia reports 47 (1.7x disparity) for the same event window.",
-        "confidence": 0.96
-      },
-      {
         "pair_id": "pair_clm_source2_npr_01__clm_source3_theunitedindian_01",
         "claim_a_id": "clm_source2_npr_01",
         "claim_a": "The flood death toll reached 100 as of Monday, 10 August 2026.",
@@ -590,201 +262,11 @@
         "conflicting_attribute": null,
         "reasoning": "Temporal update: source2_npr reported 100 (10 august 2026) while source3_theunitedindian reported 50 (22 july 2026). Figures naturally evolved over time.",
         "confidence": 0.92
-      },
-      {
-        "pair_id": "pair_clm_source2_npr_01__clm_source3_theunitedindian_03",
-        "claim_a_id": "clm_source2_npr_01",
-        "claim_a": "The flood death toll reached 100 as of Monday, 10 August 2026.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "val_a": 100,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_03",
-        "claim_b": "One report counted deaths across the full monsoon season.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source2_npr_01__clm_source3_theunitedindian_04",
-        "claim_a_id": "clm_source2_npr_01",
-        "claim_a": "The flood death toll reached 100 as of Monday, 10 August 2026.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "val_a": 100,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_04",
-        "claim_b": "Another report counted confirmed flood deaths during 2026.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source2_npr_01__clm_source4_mapsofindia_01",
-        "claim_a_id": "clm_source2_npr_01",
-        "claim_a": "The flood death toll reached 100 as of Monday, 10 August 2026.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "val_a": 100,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source4_mapsofindia_01",
-        "claim_b": "The official death toll in the 2026 Assam floods is 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "val_b": 47,
-        "unit_b": "deaths",
-        "stance": "DISAGREE",
-        "conflicting_attribute": "Casualties",
-        "reasoning": "Severe numerical conflict: source2_npr reports 100 vs source4_mapsofindia reports 47 (2.1x disparity) for the same event window.",
-        "confidence": 0.96
-      },
-      {
-        "pair_id": "pair_clm_source2_npr_02__clm_source3_theunitedindian_01",
-        "claim_a_id": "clm_source2_npr_02",
-        "claim_a": "Two more deaths occurred overnight before the toll reached 100.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "val_a": 2,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_01",
-        "claim_b": "Times of India reported the overall monsoon-season death toll had crossed 50 by 22 July 2026.",
-        "source_b": "source3_theunitedindian",
-        "date_b": "22 July 2026",
-        "val_b": 50,
-        "unit_b": "deaths",
-        "stance": "DISCUSS",
-        "conflicting_attribute": null,
-        "reasoning": "Temporal update: source2_npr reported 2 (10 august 2026) while source3_theunitedindian reported 50 (22 july 2026). Figures naturally evolved over time.",
-        "confidence": 0.92
-      },
-      {
-        "pair_id": "pair_clm_source2_npr_02__clm_source3_theunitedindian_03",
-        "claim_a_id": "clm_source2_npr_02",
-        "claim_a": "Two more deaths occurred overnight before the toll reached 100.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "val_a": 2,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_03",
-        "claim_b": "One report counted deaths across the full monsoon season.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source2_npr_02__clm_source3_theunitedindian_04",
-        "claim_a_id": "clm_source2_npr_02",
-        "claim_a": "Two more deaths occurred overnight before the toll reached 100.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "val_a": 2,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source3_theunitedindian_04",
-        "claim_b": "Another report counted confirmed flood deaths during 2026.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (casualties vs official_statement).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source2_npr_02__clm_source4_mapsofindia_01",
-        "claim_a_id": "clm_source2_npr_02",
-        "claim_a": "Two more deaths occurred overnight before the toll reached 100.",
-        "source_a": "source2_npr",
-        "date_a": "10 August 2026",
-        "val_a": 2,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source4_mapsofindia_01",
-        "claim_b": "The official death toll in the 2026 Assam floods is 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "val_b": 47,
-        "unit_b": "deaths",
-        "stance": "DISAGREE",
-        "conflicting_attribute": "Casualties",
-        "reasoning": "Severe numerical conflict: source2_npr reports 2 vs source4_mapsofindia reports 47 (23.5x disparity) for the same event window.",
-        "confidence": 0.96
-      },
-      {
-        "pair_id": "pair_clm_source3_theunitedindian_01__clm_source4_mapsofindia_01",
-        "claim_a_id": "clm_source3_theunitedindian_01",
-        "claim_a": "Times of India reported the overall monsoon-season death toll had crossed 50 by 22 July 2026.",
-        "source_a": "source3_theunitedindian",
-        "date_a": "22 July 2026",
-        "val_a": 50,
-        "unit_a": "deaths",
-        "claim_b_id": "clm_source4_mapsofindia_01",
-        "claim_b": "The official death toll in the 2026 Assam floods is 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "val_b": 47,
-        "unit_b": "deaths",
-        "stance": "INSUFFICIENT_EVIDENCE",
-        "conflicting_attribute": null,
-        "reasoning": "Stance could not be verified due to API connection limit: Error code: 400 - {'error': {'message': \"Failed to generate ",
-        "confidence": 0.5
-      },
-      {
-        "pair_id": "pair_clm_source3_theunitedindian_03__clm_source4_mapsofindia_01",
-        "claim_a_id": "clm_source3_theunitedindian_03",
-        "claim_a": "One report counted deaths across the full monsoon season.",
-        "source_a": "source3_theunitedindian",
-        "date_a": null,
-        "val_a": null,
-        "unit_a": null,
-        "claim_b_id": "clm_source4_mapsofindia_01",
-        "claim_b": "The official death toll in the 2026 Assam floods is 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "val_b": 47,
-        "unit_b": "deaths",
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (official_statement vs casualties).",
-        "confidence": 0.95
-      },
-      {
-        "pair_id": "pair_clm_source3_theunitedindian_04__clm_source4_mapsofindia_01",
-        "claim_a_id": "clm_source3_theunitedindian_04",
-        "claim_a": "Another report counted confirmed flood deaths during 2026.",
-        "source_a": "source3_theunitedindian",
-        "date_a": null,
-        "val_a": null,
-        "unit_a": null,
-        "claim_b_id": "clm_source4_mapsofindia_01",
-        "claim_b": "The official death toll in the 2026 Assam floods is 47.",
-        "source_b": "source4_mapsofindia",
-        "date_b": null,
-        "val_b": 47,
-        "unit_b": "deaths",
-        "stance": "UNRELATED",
-        "conflicting_attribute": null,
-        "reasoning": "Different topical categories (official_statement vs casualties).",
-        "confidence": 0.95
       }
     ]
   },
-  "1": {
-    "cluster_id": 1,
+  "4": {
+    "cluster_id": 4,
     "topic": "affected_population",
     "claims": [
       {
@@ -810,24 +292,24 @@
           "temporal_anchor": "2 August 2026"
         },
         "confidence": 0.95,
-        "cluster_id": 1
+        "cluster_id": 4
       },
       {
         "claim_id": "clm_source4_mapsofindia_02",
         "article_id": "source4_mapsofindia",
         "source_file": "source4_mapsofindia",
         "source_name": "source4_mapsofindia",
-        "claim": "More than 7.2 lakh people have been affected by the 2026 Assam floods.",
-        "extracted_claim": "More than 7.2 lakh people have been affected by the 2026 Assam floods.",
-        "normalized_claim": "More than 720000 people have been affected by the 2026 Assam floods.",
+        "claim": "More than 7.2 lakh people have been affected by the floods.",
+        "extracted_claim": "More than 7.2 lakh people have been affected by the floods.",
+        "normalized_claim": "More than 720000 people have been affected by the floods.",
         "topic": "affected_population",
         "category": "affected_population",
         "numerical_value": 720000,
         "numerical_unit": "people",
         "date": null,
-        "attribution": "official",
+        "attribution": "MapsOfIndia",
         "structured_attributes": {
-          "subject": "affected population",
+          "subject": "people affected by floods",
           "predicate": "affected",
           "numerical_value": 720000,
           "numerical_unit": "people",
@@ -835,7 +317,7 @@
           "temporal_anchor": null
         },
         "confidence": 0.95,
-        "cluster_id": 1
+        "cluster_id": 4
       }
     ],
     "edges": [
@@ -848,7 +330,7 @@
         "val_a": 178000,
         "unit_a": "people",
         "claim_b_id": "clm_source4_mapsofindia_02",
-        "claim_b": "More than 7.2 lakh people have been affected by the 2026 Assam floods.",
+        "claim_b": "More than 7.2 lakh people have been affected by the floods.",
         "source_b": "source4_mapsofindia",
         "date_b": null,
         "val_b": 720000,
@@ -862,6 +344,38 @@
   },
   "5": {
     "cluster_id": 5,
+    "topic": "casualties",
+    "claims": [
+      {
+        "claim_id": "clm_source2_npr_02",
+        "article_id": "source2_npr",
+        "source_file": "source2_npr",
+        "source_name": "source2_npr",
+        "claim": "Two more deaths occurred overnight.",
+        "extracted_claim": "Two more deaths occurred overnight.",
+        "normalized_claim": "2 people died overnight.",
+        "topic": "casualties",
+        "category": "casualties",
+        "numerical_value": 2,
+        "numerical_unit": "deaths",
+        "date": "10 August 2026",
+        "attribution": "Officials",
+        "structured_attributes": {
+          "subject": "deaths",
+          "predicate": "occurred",
+          "numerical_value": 2,
+          "numerical_unit": "deaths",
+          "location": null,
+          "temporal_anchor": "10 August 2026"
+        },
+        "confidence": 0.95,
+        "cluster_id": 5
+      }
+    ],
+    "edges": []
+  },
+  "2": {
+    "cluster_id": 2,
     "topic": "status_event",
     "claims": [
       {
@@ -869,9 +383,9 @@
         "article_id": "source2_npr",
         "source_file": "source2_npr",
         "source_name": "source2_npr",
-        "claim": "Several rivers in Assam remained above danger levels.",
-        "extracted_claim": "Several rivers in Assam remained above danger levels.",
-        "normalized_claim": "Several rivers in Assam remained above danger levels.",
+        "claim": "Several rivers remained above danger levels.",
+        "extracted_claim": "Several rivers remained above danger levels.",
+        "normalized_claim": "Several rivers remained above danger levels.",
         "topic": "status_event",
         "category": "status_event",
         "numerical_value": null,
@@ -879,7 +393,7 @@
         "date": "10 August 2026",
         "attribution": "Assam State Disaster Management Authority",
         "structured_attributes": {
-          "subject": "rivers in Assam",
+          "subject": "rivers",
           "predicate": "remained above danger levels",
           "numerical_value": null,
           "numerical_unit": null,
@@ -887,7 +401,7 @@
           "temporal_anchor": "10 August 2026"
         },
         "confidence": 0.95,
-        "cluster_id": 5
+        "cluster_id": 2
       },
       {
         "claim_id": "clm_source4_mapsofindia_03",
@@ -912,7 +426,7 @@
           "temporal_anchor": null
         },
         "confidence": 0.95,
-        "cluster_id": 5
+        "cluster_id": 2
       },
       {
         "claim_id": "clm_source4_mapsofindia_04",
@@ -929,7 +443,7 @@
         "date": null,
         "attribution": null,
         "structured_attributes": {
-          "subject": "Brahmaputra tributaries",
+          "subject": "Brahmaputra River tributaries",
           "predicate": "crossed danger levels",
           "numerical_value": null,
           "numerical_unit": null,
@@ -937,14 +451,14 @@
           "temporal_anchor": null
         },
         "confidence": 0.95,
-        "cluster_id": 5
+        "cluster_id": 2
       }
     ],
     "edges": [
       {
         "pair_id": "pair_clm_source2_npr_03__clm_source4_mapsofindia_03",
         "claim_a_id": "clm_source2_npr_03",
-        "claim_a": "Several rivers in Assam remained above danger levels.",
+        "claim_a": "Several rivers remained above danger levels.",
         "source_a": "source2_npr",
         "date_a": "10 August 2026",
         "val_a": null,
@@ -955,15 +469,15 @@
         "date_b": null,
         "val_b": null,
         "unit_b": null,
-        "stance": "AGREE",
+        "stance": "INSUFFICIENT_EVIDENCE",
         "conflicting_attribute": null,
-        "reasoning": "Both claims describe the same situation where rivers in Assam (specifically the Brahmaputra, which is the major river in the region) are above danger levels. Claim B provides specific detail (Brahmaputra) that is substantively consistent with the general statement in Claim A (Several rivers).",
-        "confidence": 0.95
+        "reasoning": "Stance could not be verified due to API connection limit: Error code: 400 - {'error': {'message': \"Failed to generate ",
+        "confidence": 0.5
       },
       {
         "pair_id": "pair_clm_source2_npr_03__clm_source4_mapsofindia_04",
         "claim_a_id": "clm_source2_npr_03",
-        "claim_a": "Several rivers in Assam remained above danger levels.",
+        "claim_a": "Several rivers remained above danger levels.",
         "source_a": "source2_npr",
         "date_a": "10 August 2026",
         "val_a": null,
@@ -976,7 +490,7 @@
         "unit_b": null,
         "stance": "AGREE",
         "conflicting_attribute": null,
-        "reasoning": "Both claims report that water levels in the Assam region (specifically the Brahmaputra and its tributaries) exceeded danger levels, which are substantively consistent facts regarding the same flooding situation.",
+        "reasoning": "Both claims describe the same situation where water levels in river systems (specifically the Brahmaputra and its tributaries) exceeded danger levels at multiple locations, making them substantively consistent.",
         "confidence": 0.95
       }
     ]
@@ -1006,31 +520,6 @@
           "numerical_unit": null,
           "location": null,
           "temporal_anchor": "10 August 2026"
-        },
-        "confidence": 0.95,
-        "cluster_id": 0
-      },
-      {
-        "claim_id": "clm_source2_npr_05",
-        "article_id": "source2_npr",
-        "source_file": "source2_npr",
-        "source_name": "source2_npr",
-        "claim": "Days of heavy monsoon rain caused rivers to overflow.",
-        "extracted_claim": "Days of heavy monsoon rain caused rivers to overflow.",
-        "normalized_claim": "Days of heavy monsoon rain caused rivers to overflow.",
-        "topic": "status_event",
-        "category": "status_event",
-        "numerical_value": null,
-        "numerical_unit": null,
-        "date": null,
-        "attribution": null,
-        "structured_attributes": {
-          "subject": "heavy monsoon rain",
-          "predicate": "caused rivers to overflow",
-          "numerical_value": null,
-          "numerical_unit": null,
-          "location": null,
-          "temporal_anchor": null
         },
         "confidence": 0.95,
         "cluster_id": 0
@@ -1080,30 +569,100 @@
         "conflicting_attribute": null,
         "reasoning": "Claim A reports a general risk of flooding due to high river levels, while Claim B provides specific ground reports of rapid flooding occurring in particular districts. Claim B substantiates the risk mentioned in Claim A with concrete evidence of the event unfolding, representing a progression from warning to active incident rather than a direct contradiction or simple confirmation of the same static fact.",
         "confidence": 0.9
-      },
-      {
-        "pair_id": "pair_clm_source2_npr_05__clm_source3_theunitedindian_02",
-        "claim_a_id": "clm_source2_npr_05",
-        "claim_a": "Days of heavy monsoon rain caused rivers to overflow.",
-        "source_a": "source2_npr",
-        "date_a": null,
-        "val_a": null,
-        "unit_a": null,
-        "claim_b_id": "clm_source3_theunitedindian_02",
-        "claim_b": "Ground reports described unusually rapid flooding across inland parts of Sivasagar, Charaideo, and Jorhat districts.",
-        "source_b": "source3_theunitedindian",
-        "date_b": null,
-        "val_b": null,
-        "unit_b": null,
-        "stance": "AGREE",
-        "conflicting_attribute": null,
-        "reasoning": "Both claims describe the same phenomenon of severe flooding caused by heavy monsoon rains in the same region (Assam, India, implied by the specific districts in Claim B). Claim B provides specific geographic details (Sivasagar, Charaideo, Jorhat) that substantiate the general statement in Claim A about rivers overflowing due to monsoon rain.",
-        "confidence": 0.95
       }
     ]
   },
+  "8": {
+    "cluster_id": 8,
+    "topic": "status_event",
+    "claims": [
+      {
+        "claim_id": "clm_source2_npr_05",
+        "article_id": "source2_npr",
+        "source_file": "source2_npr",
+        "source_name": "source2_npr",
+        "claim": "Days of heavy monsoon rain caused rivers to overflow.",
+        "extracted_claim": "Days of heavy monsoon rain caused rivers to overflow.",
+        "normalized_claim": "Heavy monsoon rain caused rivers to overflow.",
+        "topic": "status_event",
+        "category": "status_event",
+        "numerical_value": null,
+        "numerical_unit": null,
+        "date": null,
+        "attribution": null,
+        "structured_attributes": {
+          "subject": "rivers",
+          "predicate": "overflowed due to heavy monsoon rain",
+          "numerical_value": null,
+          "numerical_unit": null,
+          "location": null,
+          "temporal_anchor": null
+        },
+        "confidence": 0.95,
+        "cluster_id": 8
+      }
+    ],
+    "edges": []
+  },
   "3": {
     "cluster_id": 3,
+    "topic": "official_statement",
+    "claims": [
+      {
+        "claim_id": "clm_source3_theunitedindian_03",
+        "article_id": "source3_theunitedindian",
+        "source_file": "source3_theunitedindian",
+        "source_name": "source3_theunitedindian",
+        "claim": "One report counted deaths across the full monsoon season.",
+        "extracted_claim": "One report counted deaths across the full monsoon season.",
+        "normalized_claim": "One report counted deaths across the full monsoon season.",
+        "topic": "official_statement",
+        "category": "official_statement",
+        "numerical_value": null,
+        "numerical_unit": null,
+        "date": null,
+        "attribution": "The United Indian",
+        "structured_attributes": {
+          "subject": "death counting method",
+          "predicate": "counted deaths across full monsoon season",
+          "numerical_value": null,
+          "numerical_unit": null,
+          "location": null,
+          "temporal_anchor": null
+        },
+        "confidence": 0.95,
+        "cluster_id": 3
+      },
+      {
+        "claim_id": "clm_source3_theunitedindian_04",
+        "article_id": "source3_theunitedindian",
+        "source_file": "source3_theunitedindian",
+        "source_name": "source3_theunitedindian",
+        "claim": "Another report counted confirmed flood deaths during 2026.",
+        "extracted_claim": "Another report counted confirmed flood deaths during 2026.",
+        "normalized_claim": "Another report counted confirmed flood deaths during 2026.",
+        "topic": "official_statement",
+        "category": "official_statement",
+        "numerical_value": null,
+        "numerical_unit": null,
+        "date": null,
+        "attribution": "The United Indian",
+        "structured_attributes": {
+          "subject": "death counting method",
+          "predicate": "counted confirmed flood deaths during 2026",
+          "numerical_value": null,
+          "numerical_unit": null,
+          "location": null,
+          "temporal_anchor": null
+        },
+        "confidence": 0.95,
+        "cluster_id": 3
+      }
+    ],
+    "edges": []
+  },
+  "6": {
+    "cluster_id": 6,
     "topic": "official_statement",
     "claims": [
       {
@@ -1129,13 +688,45 @@
           "temporal_anchor": null
         },
         "confidence": 0.95,
-        "cluster_id": 3
+        "cluster_id": 6
       }
     ],
     "edges": []
   },
-  "4": {
-    "cluster_id": 4,
+  "9": {
+    "cluster_id": 9,
+    "topic": "casualties",
+    "claims": [
+      {
+        "claim_id": "clm_source4_mapsofindia_01",
+        "article_id": "source4_mapsofindia",
+        "source_file": "source4_mapsofindia",
+        "source_name": "source4_mapsofindia",
+        "claim": "The official death toll in the Assam floods has swelled to 47.",
+        "extracted_claim": "The official death toll in the Assam floods has swelled to 47.",
+        "normalized_claim": "The official death toll in the Assam floods is 47.",
+        "topic": "casualties",
+        "category": "casualties",
+        "numerical_value": 47,
+        "numerical_unit": "deaths",
+        "date": null,
+        "attribution": "official",
+        "structured_attributes": {
+          "subject": "Assam floods death toll",
+          "predicate": "swelled to",
+          "numerical_value": 47,
+          "numerical_unit": "deaths",
+          "location": null,
+          "temporal_anchor": null
+        },
+        "confidence": 0.95,
+        "cluster_id": 9
+      }
+    ],
+    "edges": []
+  },
+  "7": {
+    "cluster_id": 7,
     "topic": "rescue_relief",
     "claims": [
       {
@@ -1143,9 +734,9 @@
         "article_id": "source4_mapsofindia",
         "source_file": "source4_mapsofindia",
         "source_name": "source4_mapsofindia",
-        "claim": "The Assam government carried out relief operations for the 2026 Assam floods.",
-        "extracted_claim": "The Assam government carried out relief operations for the 2026 Assam floods.",
-        "normalized_claim": "The Assam government carried out relief operations for the 2026 Assam floods.",
+        "claim": "The Assam government carried out relief operations.",
+        "extracted_claim": "The Assam government carried out relief operations.",
+        "normalized_claim": "The Assam government carried out relief operations.",
         "topic": "rescue_relief",
         "category": "rescue_relief",
         "numerical_value": null,
@@ -1161,7 +752,7 @@
           "temporal_anchor": null
         },
         "confidence": 0.95,
-        "cluster_id": 4
+        "cluster_id": 7
       }
     ],
     "edges": []

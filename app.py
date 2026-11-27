@@ -1,16 +1,20 @@
 """
-Contradiction-Aware News Analysis System — Student & Viva Friendly Dashboard
-----------------------------------------------------------------------------
-A clean, minimal, beginner-friendly interface designed for a 5-minute college viva demonstration.
-Visualizes news contradictions side-by-side with 100% source attribution.
+Contradiction-Aware News Analysis System — Guided Streamlit Dashboard
+---------------------------------------------------------------------
+A clean, two-view interface for comparing news reports side-by-side,
+highlighting direct contradictions, corroborated facts, and timeline updates
+with full source attribution.
 """
 
-import os
-import sys
-import json
 import glob
+import html
+import json
+import os
+import re
+import sys
+from typing import Any, Dict, List, Optional, Tuple
+
 import streamlit as st
-from dotenv import load_dotenv
 
 # Ensure project root is in sys.path
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -18,20 +22,20 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 from src.config import (
-    get_groq_api_key,
-    GROQ_MODEL,
-    EMBEDDING_MODEL,
     CLAIMS_FILE,
     CLUSTERS_FILE,
-    SUMMARY_FILE,
-    RAW_SOURCES_DIR,
     CUSTOM_SOURCES_DIR,
+    EMBEDDING_MODEL,
+    GROQ_MODEL,
+    RAW_SOURCES_DIR,
+    SUMMARY_FILE,
+    get_groq_api_key,
 )
 from src.extraction import run_extraction_pipeline
 from src.stance_classifier import run_stance_pipeline
-from src.summarizer import run_summary_pipeline
+from src.summarizer import categorize_clusters, run_summary_pipeline
 
-# 1. Page Configuration
+
 st.set_page_config(
     page_title="News Contradiction Analyzer",
     page_icon="⚖️",
@@ -39,26 +43,25 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# 2. Clean, Minimal, Consistent Styling
-st.markdown("""
+
+CUSTOM_CSS = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    
+
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    
-    /* Clean Top Header */
+
     .app-header {
-        background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
         color: #F8FAFC;
-        padding: 1.8rem 2rem;
+        padding: 1.4rem 1.8rem;
         border-radius: 14px;
-        margin-bottom: 1.2rem;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
     }
     .app-title {
-        font-size: 2rem;
+        font-size: 1.75rem;
         font-weight: 800;
         margin: 0;
         background: linear-gradient(90deg, #38BDF8, #818CF8);
@@ -66,134 +69,187 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
     }
     .app-subtitle {
-        color: #94A3B8;
-        font-size: 1rem;
-        margin-top: 0.4rem;
-        margin-bottom: 0;
+        color: #CBD5E1;
+        font-size: 0.95rem;
+        margin: 0.35rem 0 0 0;
     }
 
-    /* Status & Badge Pills */
-    .pill {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 9999px;
-        font-size: 0.78rem;
-        font-weight: 700;
-        margin-right: 6px;
+    .verdict-banner {
+        padding: 0.9rem 1.15rem;
+        border-radius: 10px;
+        margin: 0.6rem 0 1rem 0;
+        font-size: 0.95rem;
+        font-weight: 600;
     }
-    .pill-agree { background: #DCFCE7; color: #15803D; }
-    .pill-conflict { background: #FFE4E6; color: #BE123C; }
-    .pill-discuss { background: #FEF3C7; color: #B45309; }
-    .pill-unrelated { background: #F1F5F9; color: #475569; }
-    .pill-insufficient { background: #F3E8FF; color: #6B21A8; }
+    .verdict-conflict {
+        background: #FFF1F2;
+        border: 1px solid #FECDD3;
+        border-left: 5px solid #E11D48;
+        color: #881337;
+    }
+    .verdict-clean {
+        background: #F0FDF4;
+        border: 1px solid #BBF7D0;
+        border-left: 5px solid #16A34A;
+        color: #14532D;
+    }
 
-    /* Contradiction VS Card */
     .conflict-card {
         background: #FFFFFF;
-        border: 2px solid #FDA4AF;
+        border: 1.5px solid #FDA4AF;
         border-radius: 12px;
-        padding: 1.2rem;
-        margin-bottom: 1.2rem;
-        box-shadow: 0 2px 10px rgba(244, 63, 94, 0.06);
+        padding: 1.1rem 1.2rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(244, 63, 94, 0.06);
+    }
+    .conflict-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 0.75rem;
+    }
+    .conflict-title {
+        font-weight: 700;
+        color: #BE123C;
+        font-size: 1.02rem;
+    }
+    .attr-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        background: #FFE4E6;
+        color: #9F1239;
+        padding: 3px 10px;
+        border-radius: 9999px;
+    }
+    .vs-grid {
+        display: flex;
+        gap: 12px;
+        align-items: stretch;
     }
     .source-box-a {
+        flex: 5;
         background: #FFF1F2;
         border: 1px solid #FECDD3;
         border-radius: 8px;
-        padding: 0.9rem;
-        height: 100%;
+        padding: 0.85rem;
     }
     .source-box-b {
+        flex: 5;
         background: #EFF6FF;
         border: 1px solid #BFDBFE;
         border-radius: 8px;
-        padding: 0.9rem;
-        height: 100%;
+        padding: 0.85rem;
     }
     .vs-text {
+        flex: 0.7;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 800;
-        font-size: 1.3rem;
+        font-size: 1.15rem;
         color: #E11D48;
     }
+    .reason-box {
+        margin-top: 0.75rem;
+        font-size: 0.86rem;
+        color: #881337;
+        background: #FFF1F2;
+        padding: 0.6rem 0.85rem;
+        border-radius: 6px;
+    }
 
-    /* Agreed Fact Card */
     .agree-card {
         background: #F0FDF4;
         border: 1px solid #BBF7D0;
         border-left: 5px solid #16A34A;
         border-radius: 8px;
-        padding: 1rem 1.1rem;
-        margin-bottom: 0.8rem;
+        padding: 0.9rem 1.05rem;
+        margin-bottom: 0.75rem;
     }
-
-    /* Claims Card */
+    .update-card {
+        background: #FFFBEB;
+        border: 1px solid #FDE68A;
+        border-left: 5px solid #D97706;
+        border-radius: 8px;
+        padding: 0.9rem 1.05rem;
+        margin-bottom: 0.75rem;
+    }
     .claim-item {
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
         border-radius: 8px;
-        padding: 0.9rem;
-        margin-bottom: 0.7rem;
+        padding: 0.85rem 1rem;
+        margin-bottom: 0.65rem;
     }
-
-    /* How it works card */
     .step-card {
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
         border-radius: 10px;
-        padding: 1rem;
+        padding: 0.95rem;
         height: 100%;
     }
 </style>
-""", unsafe_allow_html=True)
+"""
 
-# 3. Clean Header
-st.markdown("""
-<div class="app-header">
-    <h1 class="app-title">⚖️ Contradiction-Aware News Analysis</h1>
-    <p class="app-subtitle">
-        An AI system that compares news reports on breaking events, finds agreements and contradictions, and presents them side-by-side with source attribution.
-    </p>
-</div>
-""", unsafe_allow_html=True)
 
-# 4. Sidebar: Simple Controls & API Status
-with st.sidebar:
-    st.markdown("### ⚙️ System Setup")
-    api_key_status = get_groq_api_key()
-    if api_key_status:
-        st.success("🟢 **Groq API**: Connected")
-    else:
-        st.warning("🟡 **Groq API Key Required**")
-        user_key = st.text_input(
-            "Enter Groq API Key:",
-            type="password",
-            placeholder="gsk_...",
-            help="Required to run analysis on new articles. Get a free key at console.groq.com"
-        )
-        if user_key:
-            os.environ["GROQ_API_KEY"] = user_key.strip()
-            st.success("API key registered!")
-            st.rerun()
+def _esc(value: Any) -> str:
+    """Safely HTML-escape text rendered inside markdown HTML blocks."""
+    return html.escape("" if value is None else str(value), quote=True)
 
-    st.markdown("---")
-    st.markdown("### 💡 Quick Viva Guide")
-    st.markdown("**What makes this unique?**")
-    st.caption("Standard AI summarizers blend conflicting numbers into an average. Our system highlights disputes side-by-side without guessing.")
-    
-    st.markdown("---")
-    st.caption("College Minor Project • Aditya")
 
-# 5. Load Data & Prepare Metrics
-has_data = os.path.exists(CLUSTERS_FILE) and os.path.exists(CLAIMS_FILE) and os.path.exists(SUMMARY_FILE)
+def _safe_filename(name: str, fallback: str) -> str:
+    """Convert an outlet name into a safe lowercase .txt filename."""
+    cleaned = re.sub(r"[^a-zA-Z0-9_-]+", "_", name.strip().lower()).strip("_")
+    return f"{cleaned or fallback}.txt"
 
-claims_list = []
-clusters_dict = {}
-summary_md = ""
 
-if has_data:
+def _clear_custom_sources() -> None:
+    """Remove temporary custom source files while keeping .gitkeep intact."""
+    os.makedirs(CUSTOM_SOURCES_DIR, exist_ok=True)
+    for path in glob.glob(os.path.join(CUSTOM_SOURCES_DIR, "*")):
+        if os.path.basename(path) == ".gitkeep":
+            continue
+        try:
+            if os.path.isfile(path):
+                os.remove(path)
+        except OSError:
+            pass
+
+
+def _clear_saved_outputs() -> None:
+    """Delete previous pipeline output files so the user starts fresh."""
+    for path in (CLAIMS_FILE, CLUSTERS_FILE, SUMMARY_FILE):
+        try:
+            if os.path.isfile(path):
+                os.remove(path)
+        except OSError:
+            pass
+
+
+def _load_sample_into_state() -> None:
+    """Populate the paste boxes with a built-in conflicting 2-article example."""
+    st.session_state["p_src_1"] = "Times of India"
+    st.session_state["p_txt_1"] = (
+        "State officials confirmed that 82 people have died across Assam due to "
+        "severe flooding. Over 1.78 lakh people have been affected."
+    )
+    st.session_state["p_src_2"] = "MapsOfIndia Wire"
+    st.session_state["p_txt_2"] = (
+        "According to official disaster reports, the death toll in the Assam floods "
+        "has reached 47. More than 7.2 lakh people have been affected."
+    )
+    st.session_state["input_mode_radio"] = "Paste 2 Articles"
+    st.session_state["expand_input_panel"] = True
+
+
+def _load_analysis_outputs() -> Tuple[bool, List[Dict[str, Any]], Dict[str, Any], str]:
+    """Load generated claims, clusters, and markdown summary if present."""
+    required = (CLAIMS_FILE, CLUSTERS_FILE, SUMMARY_FILE)
+    if not all(os.path.exists(p) for p in required):
+        return False, [], {}, ""
+
     try:
         with open(CLAIMS_FILE, "r", encoding="utf-8") as f:
             claims_list = json.load(f)
@@ -201,441 +257,542 @@ if has_data:
             clusters_dict = json.load(f)
         with open(SUMMARY_FILE, "r", encoding="utf-8") as f:
             summary_md = f.read()
+        return True, claims_list, clusters_dict, summary_md
     except Exception:
-        has_data = False
+        return False, [], {}, ""
 
-# Organize clusters for display
-disputed_list = []
-agree_list = []
-developing_list = []
-single_list = []
 
-for cid, cdata in clusters_dict.items():
-    claims = cdata.get("claims", [])
-    edges = cdata.get("edges", [])
-    sources = set(c.get("source_name") or c.get("source_file") for c in claims)
-    
-    has_disagree = any(e.get("stance") == "DISAGREE" for e in edges)
-    has_agree = any(e.get("stance") == "AGREE" for e in edges)
-    has_discuss = any(e.get("stance") == "DISCUSS" for e in edges)
+def _extract_unique_disagree_pairs(disputed_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Collect deduplicated DISAGREE edges across disputed clusters."""
+    pairs: List[Dict[str, Any]] = []
+    seen = set()
+    for cluster in disputed_list:
+        topic = cluster.get("topic", "Incident").replace("_", " ").title()
+        for edge in cluster.get("edges", []):
+            if edge.get("stance") != "DISAGREE":
+                continue
+            key = tuple(sorted([edge.get("claim_a", ""), edge.get("claim_b", "")]))
+            if key in seen:
+                continue
+            seen.add(key)
+            pairs.append({**edge, "_topic": topic})
+    return pairs
 
-    if len(sources) <= 1:
-        single_list.append(cdata)
-    elif has_disagree:
-        disputed_list.append(cdata)
-    elif has_agree:
-        agree_list.append(cdata)
-    elif has_discuss:
-        developing_list.append(cdata)
-    else:
-        single_list.append(cdata)
 
-# Count total unique sources
-all_sources = sorted(set(c.get("source_name") or c.get("source_file") for c in claims_list))
+def _get_builtin_corpus_files() -> List[str]:
+    """Return built-in news corpus files excluding documentation READMEs."""
+    candidates = sorted(glob.glob(os.path.join(RAW_SOURCES_DIR, "*.txt")))
+    return [
+        f for f in candidates
+        if os.path.isfile(f) and not os.path.basename(f).startswith("README")
+    ]
 
-# 6. Main Navigation (Tabs with Auto-Switch support)
-tab_names = [
-    "🏠 Home / Overview",
-    "📰 Analyze News",
-    "📊 Results",
-    "🔍 Claims Explorer",
-    "🧠 About / How It Works",
-]
 
-# Set active tab via session state if requested (e.g. after analysis)
-if "active_nav_tab" not in st.session_state:
-    st.session_state["active_nav_tab"] = tab_names[0]
+def _run_pipeline(target_files: Optional[List[str]]) -> None:
+    """Execute the 3-stage NLP pipeline with live progress updates."""
+    if not get_groq_api_key():
+        st.error("Groq API Key is missing. Please add it in the left sidebar first.")
+        return
 
-# Radio-styled or Pills-styled top tabs
-selected_tab = st.radio(
-    "Navigation",
-    tab_names,
-    index=tab_names.index(st.session_state["active_nav_tab"]) if st.session_state["active_nav_tab"] in tab_names else 0,
-    horizontal=True,
-    label_visibility="collapsed",
-    key="main_navbar"
-)
-st.session_state["active_nav_tab"] = selected_tab
+    try:
+        with st.status("Running Contradiction-Aware Analysis...", expanded=True) as status:
+            st.write("1/3 Extracting atomic factual claims from articles...")
+            claims = run_extraction_pipeline(input_files=target_files)
+            if not claims:
+                status.update(label="No claims extracted", state="error")
+                st.error("No factual claims could be extracted from the provided input.")
+                return
 
-# ==============================================================================
-# TAB 1: HOME / OVERVIEW
-# ==============================================================================
-if selected_tab == "🏠 Home / Overview":
-    st.markdown("### 📌 Welcome to Contradiction-Aware News Analysis")
-    st.write(
-        "When breaking news happens, different newspapers often report conflicting death tolls, dates, or casualty numbers. "
-        "Standard AI tools (like ChatGPT) often blend these numbers together into a single misleading average. "
-        "**This project solves that problem by keeping facts separate and displaying contradictions side-by-side.**"
-    )
-
-    # 4 Simple Steps of the Pipeline
-    st.markdown("#### 🔄 How Information Flows Through Our System")
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.markdown("""
-        <div class="step-card">
-            <h4 style="margin:0 0 6px 0; color:#1E40AF;">1. Extract Facts</h4>
-            <p style="font-size:0.85rem; color:#475569; margin:0;">
-                The LLM reads news articles and breaks compound sentences into atomic, verifiable facts.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown("""
-        <div class="step-card">
-            <h4 style="margin:0 0 6px 0; color:#5B21B6;">2. Group by Topic</h4>
-            <p style="font-size:0.85rem; color:#475569; margin:0;">
-                AI sentence embeddings group claims that discuss the exact same factual topic together.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col3:
-        st.markdown("""
-        <div class="step-card">
-            <h4 style="margin:0 0 6px 0; color:#BE123C;">3. Detect Conflicts</h4>
-            <p style="font-size:0.85rem; color:#475569; margin:0;">
-                Rules and AI compare statements to check if sources agree, contradict, or report updates.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-    with col4:
-        st.markdown("""
-        <div class="step-card">
-            <h4 style="margin:0 0 6px 0; color:#065F46;">4. Clear Summary</h4>
-            <p style="font-size:0.85rem; color:#475569; margin:0;">
-                Generates a clean report showing agreements, conflicts, and single-source claims side-by-side.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("---")
-
-    # Current Project Status Card
-    st.markdown("#### 📈 Current Active News Analysis Status")
-    if has_data:
-        m1, m2, m3, m4 = st.columns(4)
-        with m1:
-            st.metric("Articles Analyzed", f"{len(all_sources)} Outlets", help="Independent news organizations in this batch")
-        with m2:
-            st.metric("Facts Extracted", f"{len(claims_list)} Claims", help="Individual verifiable statements extracted")
-        with m3:
-            st.metric("Conflicts Found", f"{len(disputed_list)} Disputed Topics", help="Factual contradictions identified between outlets")
-        with m4:
-            st.metric("Agreed Facts", f"{len(agree_list)} Topics", help="Facts confirmed by multiple outlets")
-
-        st.info("💡 **Ready to explore?** Click on the **📊 Results** tab above to see the detected conflicts side-by-side, or go to **📰 Analyze News** to test your own articles.")
-    else:
-        st.warning("No analysis results found yet. Go to the **📰 Analyze News** tab to run your first analysis!")
-
-# ==============================================================================
-# TAB 2: ANALYZE NEWS
-# ==============================================================================
-elif selected_tab == "📰 Analyze News":
-    st.markdown("### 📰 Run News Analysis")
-    st.caption("Choose how you want to input articles: paste text directly, upload .txt files, or use the built-in disaster corpus.")
-
-    input_mode = st.radio(
-        "Choose Input Source:",
-        [
-            "⚡ Paste News Text Directly (Quickest for Viva Demo)",
-            "📁 Upload .txt Files (Multiple Articles)",
-            "📚 Use Built-in 2026 Assam Floods News Corpus"
-        ],
-        index=0
-    )
-
-    target_files = None
-
-    if input_mode == "⚡ Paste News Text Directly (Quickest for Viva Demo)":
-        st.markdown("##### Paste Two Conflicting News Reports")
-        
-        # Quick Demo Button to pre-fill conflicting examples (same event window for immediate RED conflict card)
-        if st.button("📋 Load Sample Conflicting Story (Assam Floods Casualties)", type="secondary"):
-            st.session_state["p_src_1"] = "Times of India"
-            st.session_state["p_txt_1"] = "State officials confirmed that 82 people have died across Assam due to severe flooding. Over 1.78 lakh people have been affected."
-            st.session_state["p_src_2"] = "MapsOfIndia Wire"
-            st.session_state["p_txt_2"] = "According to official disaster reports, the death toll in the Assam floods has reached 47. More than 7.2 lakh people have been affected."
-            st.rerun()
-
-        col_a, col_b = st.columns(2)
-        with col_a:
-            src1 = st.text_input("News Outlet 1 Name:", value=st.session_state.get("p_src_1", "Times of India"))
-            txt1 = st.text_area("Article 1 Text:", value=st.session_state.get("p_txt_1", ""), height=160, placeholder="Paste first news story here...")
-        with col_b:
-            src2 = st.text_input("News Outlet 2 Name:", value=st.session_state.get("p_src_2", "MapsOfIndia Wire"))
-            txt2 = st.text_area("Article 2 Text:", value=st.session_state.get("p_txt_2", ""), height=160, placeholder="Paste second news story here...")
-
-    elif input_mode == "📁 Upload .txt Files (Multiple Articles)":
-        uploaded = st.file_uploader(
-            "Upload 2 or more news articles as .txt files:",
-            type=["txt"],
-            accept_multiple_files=True
-        )
-
-    st.markdown("---")
-    run_button = st.button("🚀 Run Analysis Pipeline", type="primary", use_container_width=True)
-
-    if run_button:
-        if not get_groq_api_key():
-            st.error("🔑 Groq API Key is missing! Please enter it in the left sidebar.")
-            st.stop()
-
-        if input_mode == "⚡ Paste News Text Directly (Quickest for Viva Demo)":
-            if not txt1.strip() or not txt2.strip():
-                st.error("Please provide text for both news stories before running analysis!")
-                st.stop()
-            os.makedirs(CUSTOM_SOURCES_DIR, exist_ok=True)
-            for f in glob.glob(os.path.join(CUSTOM_SOURCES_DIR, "*")):
-                try: os.remove(f)
-                except Exception: pass
-            p1 = os.path.join(CUSTOM_SOURCES_DIR, f"{src1.replace(' ', '_').lower()}.txt")
-            p2 = os.path.join(CUSTOM_SOURCES_DIR, f"{src2.replace(' ', '_').lower()}.txt")
-            with open(p1, "w", encoding="utf-8") as f: f.write(txt1)
-            with open(p2, "w", encoding="utf-8") as f: f.write(txt2)
-            target_files = [p1, p2]
-
-        elif input_mode == "📁 Upload .txt Files (Multiple Articles)":
-            if not uploaded or len(uploaded) < 2:
-                st.error("Please upload at least 2 news articles (.txt) to compare!")
-                st.stop()
-            os.makedirs(CUSTOM_SOURCES_DIR, exist_ok=True)
-            for f in glob.glob(os.path.join(CUSTOM_SOURCES_DIR, "*")):
-                try: os.remove(f)
-                except Exception: pass
-            target_files = []
-            for u in uploaded:
-                p = os.path.join(CUSTOM_SOURCES_DIR, u.name)
-                with open(p, "wb") as f: f.write(u.getbuffer())
-                target_files.append(p)
-
-        with st.spinner("Analyzing articles... (Extracting facts, clustering, and finding conflicts)"):
-            prog = st.progress(0)
-            
-            prog.progress(25)
-            run_extraction_pipeline(input_files=target_files)
-
-            prog.progress(65)
+            st.write("2/3 Grouping claims by topic and checking cross-source stances...")
             run_stance_pipeline()
 
-            prog.progress(90)
+            st.write("3/3 Building side-by-side summary report...")
             run_summary_pipeline()
 
-            prog.progress(100)
-            # Auto-switch to Results tab
-            st.session_state["active_nav_tab"] = "📊 Results"
-            st.success("✅ Analysis Complete! Switching to Results tab...")
-            time.sleep(1)
+            status.update(label="Analysis complete!", state="complete", expanded=False)
+
+        st.session_state["expand_input_panel"] = False
+        st.rerun()
+    except Exception as exc:
+        st.error(f"Analysis failed: {exc}")
+
+
+def _render_sidebar(has_data: bool) -> None:
+    """Render sidebar setup, quick sample loaders, and reset controls."""
+    with st.sidebar:
+        st.markdown("### ⚙️ Setup & Shortcuts")
+        if get_groq_api_key():
+            st.success("🟢 **Groq API**: Connected")
+        else:
+            st.warning("🟡 **Groq API Key Required**")
+            user_key = st.text_input(
+                "Enter Groq API Key:",
+                type="password",
+                placeholder="gsk_...",
+                help="Required to run analysis on articles. Get a key at console.groq.com",
+            )
+            if user_key:
+                os.environ["GROQ_API_KEY"] = user_key.strip()
+                st.success("API key saved for this session.")
+                st.rerun()
+
+        st.markdown("---")
+        st.markdown("### ⚡ Quick Demo Presets")
+        if st.button("📋 Load 2-Outlet Flood Conflict", use_container_width=True):
+            _load_sample_into_state()
             st.rerun()
 
-# ==============================================================================
-# TAB 3: RESULTS
-# ==============================================================================
-elif selected_tab == "📊 Results":
-    st.markdown("### 📊 Contradiction-Aware Analysis Results")
-    st.caption("Here is what our AI found after cross-checking all articles.")
+        if st.button("📚 Select Built-in 4-Source Corpus", use_container_width=True):
+            st.session_state["input_mode_radio"] = "Built-in 2026 Assam Corpus"
+            st.session_state["expand_input_panel"] = True
+            st.rerun()
 
-    if not has_data:
-        st.info("No results to display. Go to the **Analyze News** tab to run your first test!")
-    else:
-        # Simple Human-Readable Legend
-        st.markdown("""
-        <div>
-            <span class="pill pill-conflict">🔴 Reports Conflict</span>
-            <span class="pill pill-agree">🟢 Reports Agree</span>
-            <span class="pill pill-discuss">🟡 Different Time / Context</span>
-            <span class="pill pill-unrelated">⚪ Single Source</span>
-        </div>
-        """, unsafe_allow_html=True)
-        st.markdown("")
-
-        # 1. DISPUTED FACTS SECTION
-        st.markdown("#### 🚨 Conflicting Information (Placed Side-by-Side)")
-        st.write("These statements directly contradict each other. The system does not pick a winner; it highlights both with their sources.")
-
-        if not disputed_list:
-            st.success("🎉 No factual contradictions detected! All analyzed sources agree or report complementary details.")
-        else:
-            for idx, cluster in enumerate(disputed_list, 1):
-                topic = cluster.get("topic", "Incident").replace("_", " ").title()
-                disagree_edges = [e for e in cluster.get("edges", []) if e.get("stance") == "DISAGREE"]
-
-                seen = set()
-                for e in disagree_edges:
-                    key = tuple(sorted([e["claim_a"], e["claim_b"]]))
-                    if key in seen:
-                        continue
-                    seen.add(key)
-
-                    attr = e.get("conflicting_attribute") or topic
-                    reasoning = e.get("reasoning", "Discrepancy detected.")
-
-                    st.markdown(f"""
-                    <div class="conflict-card">
-                        <div style="font-weight:700; color:#BE123C; font-size:1.05rem; margin-bottom:10px;">
-                            ⚡ Conflict #{idx}: {attr} Discrepancy
-                        </div>
-                        <div style="display:flex; gap:12px; align-items:stretch;">
-                            <div style="flex:5;" class="source-box-a">
-                                <span style="font-size:0.75rem; font-weight:700; background:#FECDD3; color:#9F1239; padding:2px 8px; border-radius:4px;">
-                                    {e['source_a']} {f"({e['date_a']})" if e.get('date_a') else ''}
-                                </span>
-                                <h4 style="color:#991B1B; margin:8px 0 0 0; font-size:1.05rem;">"{e['claim_a']}"</h4>
-                            </div>
-                            <div style="flex:1;" class="vs-text">VS</div>
-                            <div style="flex:5;" class="source-box-b">
-                                <span style="font-size:0.75rem; font-weight:700; background:#BFDBFE; color:#1E40AF; padding:2px 8px; border-radius:4px;">
-                                    {e['source_b']} {f"({e['date_b']})" if e.get('date_b') else ''}
-                                </span>
-                                <h4 style="color:#1D4ED8; margin:8px 0 0 0; font-size:1.05rem;">"{e['claim_b']}"</h4>
-                            </div>
-                        </div>
-                        <div style="margin-top:10px; font-size:0.85rem; color:#881337; background:#FFF1F2; padding:8px 12px; border-radius:6px;">
-                            <b>🔍 Why this is a conflict:</b> {reasoning}
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+        if has_data:
+            st.markdown("---")
+            if st.button("🗑️ Clear Current Results", use_container_width=True):
+                _clear_saved_outputs()
+                st.session_state["expand_input_panel"] = True
+                st.rerun()
 
         st.markdown("---")
+        st.caption(f"Model: `{GROQ_MODEL}`  \nEmbeddings: `{EMBEDDING_MODEL}`")
 
-        # 2. AGREED FACTS SECTION
-        st.markdown("#### ✅ Consistently Reported Facts (Agreement)")
-        st.write("These facts were confirmed by two or more independent media outlets.")
 
-        if not agree_list:
-            st.info("No multi-source identical agreements found in this batch.")
-        else:
-            for idx, cluster in enumerate(agree_list, 1):
-                sources = sorted(set(m.get("source_name") or m.get("source_file") for m in cluster["claims"]))
-                rep_claim = cluster["claims"][0]["claim"]
-                st.markdown(f"""
-                <div class="agree-card">
-                    <div style="font-weight:700; font-size:1rem; color:#14532D; margin-bottom:4px;">
-                        🟢 Fact #{idx}: "{rep_claim}"
-                    </div>
-                    <div style="font-size:0.82rem; color:#166534;">
-                        <b>Reported by:</b> {' • '.join([f'<code>{s}</code>' for s in sources])}
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+def _render_input_panel(has_data: bool) -> None:
+    """Render Step 1 (article selection/pasting) inside a clean collapsible panel."""
+    expanded = st.session_state.get("expand_input_panel", not has_data)
+    panel_title = (
+        "📝 Step 1: Compare News Articles (click to edit or run a new batch)"
+        if has_data
+        else "📝 Step 1: Choose or Paste News Articles to Compare"
+    )
 
-        st.markdown("---")
+    st.session_state.setdefault("input_mode_radio", "Paste 2 Articles")
+    st.session_state.setdefault("p_src_1", "Times of India")
+    st.session_state.setdefault("p_txt_1", "")
+    st.session_state.setdefault("p_src_2", "MapsOfIndia Wire")
+    st.session_state.setdefault("p_txt_2", "")
 
-        # 3. SINGLE SOURCE & DEVELOPING CLAIMS
-        with st.expander(f"ℹ️ View Single-Source & Developing Claims ({len(single_list)} items)", expanded=False):
-            st.caption("These statements appeared in only ONE outlet or reflect evolving dates. They are not disputed, but remain uncorroborated.")
-            for c in single_list:
-                for m in c["claims"]:
-                    src = m.get("source_name") or m.get("source_file")
-                    d_str = f" `[{m['date']}]`" if m.get("date") else ""
-                    st.markdown(f"- **[{src}]**{d_str}: \"{m['claim']}\"")
-
-        # 4. DOWNLOAD FULL REPORT
-        st.markdown("---")
-        st.download_button(
-            "📥 Download Complete Summary Report (.md)",
-            summary_md,
-            "news_analysis_report.md",
-            "text/markdown",
-            use_container_width=True
+    with st.expander(panel_title, expanded=expanded):
+        mode = st.radio(
+            "Input Method:",
+            ["Paste 2 Articles", "Upload .txt Files", "Built-in 2026 Assam Corpus"],
+            horizontal=True,
+            key="input_mode_radio",
         )
 
-# ==============================================================================
-# TAB 4: CLAIMS EXPLORER
-# ==============================================================================
-elif selected_tab == "🔍 Claims Explorer":
-    st.markdown("### 🔍 Claims Explorer")
-    st.caption("Search, filter, and inspect individual factual statements extracted by the AI.")
+        target_files: Optional[List[str]] = None
+        ready_to_run = True
 
-    if not claims_list:
-        st.info("No extracted claims found. Run an analysis first!")
+        if mode == "Paste 2 Articles":
+            col_top_l, col_top_r = st.columns([3, 1])
+            with col_top_l:
+                st.caption("Paste two reports covering the same news event to spot agreements and conflicting figures.")
+            with col_top_r:
+                if st.button("Load Sample Story", type="secondary", use_container_width=True):
+                    _load_sample_into_state()
+                    st.rerun()
+
+            col_a, col_b = st.columns(2)
+            with col_a:
+                src1 = st.text_input("Outlet 1 Name", key="p_src_1")
+                txt1 = st.text_area(
+                    "Outlet 1 Article Text",
+                    height=150,
+                    placeholder="Paste first news article here...",
+                    key="p_txt_1",
+                )
+            with col_b:
+                src2 = st.text_input("Outlet 2 Name", key="p_src_2")
+                txt2 = st.text_area(
+                    "Outlet 2 Article Text",
+                    height=150,
+                    placeholder="Paste second news article here...",
+                    key="p_txt_2",
+                )
+
+            if not txt1.strip() or not txt2.strip():
+                ready_to_run = False
+
+        elif mode == "Upload .txt Files":
+            uploaded = st.file_uploader(
+                "Upload 2 or more `.txt` news articles:",
+                type=["txt"],
+                accept_multiple_files=True,
+            )
+            if not uploaded or len(uploaded) < 2:
+                st.info("Upload at least 2 `.txt` files to cross-check them.")
+                ready_to_run = False
+
+        else:
+            corpus_files = _get_builtin_corpus_files()
+            if corpus_files:
+                file_names = ", ".join(f"`{os.path.basename(p)}`" for p in corpus_files)
+                st.info(f"Ready to analyze **{len(corpus_files)} built-in articles**: {file_names}")
+                target_files = corpus_files
+            else:
+                st.warning("No built-in `.txt` files found in `data/raw_sources/`.")
+                ready_to_run = False
+
+        run_clicked = st.button(
+            "🚀 Analyze & Compare Articles",
+            type="primary",
+            use_container_width=True,
+            disabled=not ready_to_run,
+        )
+
+        if run_clicked:
+            if mode == "Paste 2 Articles":
+                _clear_custom_sources()
+                p1 = os.path.join(CUSTOM_SOURCES_DIR, _safe_filename(src1, "outlet_1"))
+                p2 = os.path.join(CUSTOM_SOURCES_DIR, _safe_filename(src2, "outlet_2"))
+                if p1 == p2:
+                    p2 = os.path.join(CUSTOM_SOURCES_DIR, _safe_filename(f"{src2}_2", "outlet_2"))
+                with open(p1, "w", encoding="utf-8") as f:
+                    f.write(txt1)
+                with open(p2, "w", encoding="utf-8") as f:
+                    f.write(txt2)
+                target_files = [p1, p2]
+
+            elif mode == "Upload .txt Files":
+                _clear_custom_sources()
+                target_files = []
+                for idx, ufile in enumerate(uploaded, 1):
+                    fname = _safe_filename(os.path.splitext(ufile.name)[0], f"upload_{idx}")
+                    dest = os.path.join(CUSTOM_SOURCES_DIR, fname)
+                    with open(dest, "wb") as f:
+                        f.write(ufile.getbuffer())
+                    target_files.append(dest)
+
+            _run_pipeline(target_files)
+
+
+def _render_conflict_cards(disagree_pairs: List[Dict[str, Any]]) -> None:
+    """Render side-by-side Outlet A vs Outlet B contradiction cards."""
+    if not disagree_pairs:
+        st.success("🎉 No direct factual contradictions were detected across the analyzed sources.")
+        return
+
+    st.caption("Conflicting claims are kept side-by-side with exact outlet attribution — the system never guesses a winner.")
+    for idx, edge in enumerate(disagree_pairs, 1):
+        attr = edge.get("conflicting_attribute") or edge.get("_topic", "Fact")
+        reasoning = edge.get("reasoning", "Incompatible values or assertions reported.")
+        date_a = f" ({_esc(edge['date_a'])})" if edge.get("date_a") else ""
+        date_b = f" ({_esc(edge['date_b'])})" if edge.get("date_b") else ""
+
+        st.markdown(
+            f"""
+            <div class="conflict-card">
+                <div class="conflict-header">
+                    <span class="conflict-title">⚡ Conflict #{idx}</span>
+                    <span class="attr-badge">{_esc(attr)} Discrepancy</span>
+                </div>
+                <div class="vs-grid">
+                    <div class="source-box-a">
+                        <span style="font-size:0.76rem; font-weight:700; background:#FECDD3; color:#9F1239; padding:2px 8px; border-radius:4px;">
+                            {_esc(edge.get('source_a'))}{date_a}
+                        </span>
+                        <h4 style="color:#991B1B; margin:8px 0 0 0; font-size:1.02rem; line-height:1.4;">"{_esc(edge.get('claim_a'))}"</h4>
+                    </div>
+                    <div class="vs-text">VS</div>
+                    <div class="source-box-b">
+                        <span style="font-size:0.76rem; font-weight:700; background:#BFDBFE; color:#1E40AF; padding:2px 8px; border-radius:4px;">
+                            {_esc(edge.get('source_b'))}{date_b}
+                        </span>
+                        <h4 style="color:#1D4ED8; margin:8px 0 0 0; font-size:1.02rem; line-height:1.4;">"{_esc(edge.get('claim_b'))}"</h4>
+                    </div>
+                </div>
+                <div class="reason-box">
+                    <b>Why this conflicts:</b> {_esc(reasoning)}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+def _render_agreement_cards(agree_list: List[Dict[str, Any]]) -> None:
+    """Render corroborated facts confirmed by two or more outlets."""
+    if not agree_list:
+        st.info("No multi-source exact agreements found in this batch.")
+        return
+
+    st.caption("Facts confirmed consistently by 2 or more independent outlets.")
+    for idx, cluster in enumerate(agree_list, 1):
+        claims = cluster.get("claims", [])
+        if not claims:
+            continue
+        sources = sorted(set(c.get("source_name") or c.get("source_file") or "Unknown" for c in claims))
+        rep_claim = claims[0].get("claim", "")
+        source_chips = " • ".join(f"<code>{_esc(s)}</code>" for s in sources)
+
+        st.markdown(
+            f"""
+            <div class="agree-card">
+                <div style="font-weight:700; font-size:0.98rem; color:#14532D; margin-bottom:4px;">
+                    🟢 Agreed Fact #{idx}: "{_esc(rep_claim)}"
+                </div>
+                <div style="font-size:0.82rem; color:#166534;">
+                    <b>Confirmed by:</b> {source_chips}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+def _render_developing_and_single(
+    developing_list: List[Dict[str, Any]],
+    single_list: List[Dict[str, Any]],
+) -> None:
+    """Render timeline/context updates (DISCUSS) and single-source claims."""
+    st.markdown("##### 🟡 Developing / Timeline Updates (`DISCUSS`)")
+    if not developing_list:
+        st.info("No timeline or context-evolution updates detected.")
     else:
-        col_s, col_src, col_top = st.columns([2, 1, 1])
-        with col_s:
-            q = st.text_input("🔎 Search by word:", placeholder="e.g. death, affected, water, rescue", help="Filters claims containing this keyword")
+        st.caption("These claims show different numbers or details because reports come from different dates or scopes.")
+        for idx, cluster in enumerate(developing_list, 1):
+            topic = cluster.get("topic", "Event Update").replace("_", " ").title()
+            discuss_edges = [e for e in cluster.get("edges", []) if e.get("stance") == "DISCUSS"]
+            reason = discuss_edges[0].get("reasoning", "") if discuss_edges else ""
+
+            items_html = []
+            for c in cluster.get("claims", []):
+                src = _esc(c.get("source_name") or c.get("source_file") or "Unknown")
+                dt = f" [{_esc(c['date'])}]" if c.get("date") else ""
+                items_html.append(f"<li><b>{src}{dt}:</b> \"{_esc(c.get('claim'))}\"</li>")
+
+            reason_html = (
+                f"<div style='font-size:0.84rem; color:#92400E; margin-top:6px;'><b>Context:</b> {_esc(reason)}</div>"
+                if reason else ""
+            )
+            st.markdown(
+                f"""
+                <div class="update-card">
+                    <div style="font-weight:700; color:#B45309; margin-bottom:6px;">
+                        🕒 Update #{idx}: {_esc(topic)}
+                    </div>
+                    <ul style="margin:0; padding-left:1.2rem; color:#451A03; font-size:0.92rem;">
+                        {''.join(items_html)}
+                    </ul>
+                    {reason_html}
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+    st.markdown("---")
+    st.markdown("##### ⚪ Single-Source / Uncorroborated Claims")
+    if not single_list:
+        st.info("No uncorroborated single-source claims in this batch.")
+    else:
+        st.caption("Reported by only one outlet so far — not disputed, but awaiting independent confirmation.")
+        for cluster in single_list:
+            for c in cluster.get("claims", []):
+                src = c.get("source_name") or c.get("source_file") or "Unknown"
+                d_str = f" `[{c['date']}]`" if c.get("date") else ""
+                st.markdown(f"- **[{src}]**{d_str}: \"{c.get('claim', '')}\"")
+
+
+def _render_results_section(
+    claims_list: List[Dict[str, Any]],
+    clusters_dict: Dict[str, Any],
+    summary_md: str,
+    all_sources: List[str],
+) -> None:
+    """Render Step 2: overview verdict, metrics, and categorized result tabs."""
+    agree_list, disputed_list, developing_list, single_list = categorize_clusters(clusters_dict)
+    disagree_pairs = _extract_unique_disagree_pairs(disputed_list)
+    other_count = len(developing_list) + len(single_list)
+
+    st.markdown("### 📊 Step 2: Comparison Results")
+
+    if disagree_pairs:
+        st.markdown(
+            f"""
+            <div class="verdict-banner verdict-conflict">
+                ⚠️ Found <b>{len(disagree_pairs)} direct contradiction(s)</b> across {len(all_sources)} outlets.
+                Conflicting statements are shown side-by-side below without averaging.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            f"""
+            <div class="verdict-banner verdict-clean">
+                ✅ No direct contradictions found across {len(all_sources)} outlets ({len(claims_list)} claims analyzed).
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Outlets Compared", len(all_sources))
+    m2.metric("Direct Conflicts", len(disagree_pairs))
+    m3.metric("Agreed Facts", len(agree_list))
+    m4.metric("Updates & Single-Source", other_count)
+
+    res_tabs = st.tabs([
+        f"🔴 Conflicts ({len(disagree_pairs)})",
+        f"🟢 Agreements ({len(agree_list)})",
+        f"🟡 Updates & Single-Source ({other_count})",
+        "📄 Full Report",
+    ])
+
+    with res_tabs[0]:
+        _render_conflict_cards(disagree_pairs)
+    with res_tabs[1]:
+        _render_agreement_cards(agree_list)
+    with res_tabs[2]:
+        _render_developing_and_single(developing_list, single_list)
+    with res_tabs[3]:
+        st.download_button(
+            "📥 Download Complete Report (.md)",
+            summary_md,
+            file_name="news_analysis_report.md",
+            mime="text/markdown",
+            use_container_width=True,
+        )
+        st.markdown("---")
+        st.markdown(summary_md)
+
+
+def _render_explorer_and_guide(claims_list: List[Dict[str, Any]], all_sources: List[str]) -> None:
+    """Render Claims Explorer, Viva Cheat-Sheet, and Raw Source Viewer."""
+    st.markdown("### 🔍 Claims Explorer")
+    if not claims_list:
+        st.info("No extracted claims yet. Run an analysis in the **Compare & Results** tab first.")
+    else:
+        col_q, col_src, col_top = st.columns([2, 1, 1])
+        with col_q:
+            query = st.text_input("Search claims:", placeholder="e.g. death, affected, Assam, rescue")
         with col_src:
             selected_src = st.selectbox("Filter by Outlet:", ["All Outlets"] + all_sources)
         with col_top:
             all_topics = sorted(set(c.get("category") or c.get("topic", "general") for c in claims_list))
-            selected_top = st.selectbox("Filter by Topic:", ["All Topics"] + all_topics)
+            selected_topic = st.selectbox("Filter by Topic:", ["All Topics"] + all_topics)
 
         filtered = claims_list
-        if q:
-            filtered = [c for c in filtered if q.lower() in c.get("claim", "").lower()]
+        if query:
+            q_low = query.lower()
+            filtered = [c for c in filtered if q_low in c.get("claim", "").lower()]
         if selected_src != "All Outlets":
             filtered = [c for c in filtered if (c.get("source_name") or c.get("source_file")) == selected_src]
-        if selected_top != "All Topics":
-            filtered = [c for c in filtered if (c.get("category") or c.get("topic")) == selected_top]
+        if selected_topic != "All Topics":
+            filtered = [c for c in filtered if (c.get("category") or c.get("topic")) == selected_topic]
 
-        st.info(f"Showing **{len(filtered)}** claims:")
-
+        st.caption(f"Showing **{len(filtered)}** of {len(claims_list)} extracted claims")
         for c in filtered:
-            cid = c.get("claim_id", "N/A")
-            src = c.get("source_name") or c.get("source_file")
-            topic = c.get("category") or c.get("topic", "general")
-            val = f" | Number: `{c['numerical_value']} {c.get('numerical_unit', '')}`" if c.get("numerical_value") is not None else ""
-            dt = f" | Date: `{c['date']}`" if c.get("date") else ""
-            attr = f" | Attribution: *{c['attribution']}*" if c.get("attribution") else ""
+            cid = _esc(c.get("claim_id", "N/A"))
+            src = _esc(c.get("source_name") or c.get("source_file") or "Unknown")
+            topic = _esc(c.get("category") or c.get("topic", "general"))
+            val = (
+                f" • <b>Value:</b> <code>{_esc(c['numerical_value'])} {_esc(c.get('numerical_unit', ''))}</code>"
+                if c.get("numerical_value") is not None else ""
+            )
+            dt = f" • <b>Date:</b> <code>{_esc(c['date'])}</code>" if c.get("date") else ""
+            attr = f" • <b>Attribution:</b> <i>{_esc(c['attribution'])}</i>" if c.get("attribution") else ""
 
-            st.markdown(f"""
-            <div class="claim-item">
-                <div style="font-size:0.75rem; color:#64748B; margin-bottom:4px;">
-                    <code>{cid}</code> • <b>Outlet:</b> <code>{src}</code> • <b>Topic:</b> <code>{topic}</code>
-                    {val}{dt}{attr}
+            st.markdown(
+                f"""
+                <div class="claim-item">
+                    <div style="font-size:0.76rem; color:#64748B; margin-bottom:4px;">
+                        <code>{cid}</code> • <b>Outlet:</b> <code>{src}</code> • <b>Topic:</b> <code>{topic}</code>{val}{dt}{attr}
+                    </div>
+                    <div style="font-size:0.95rem; font-weight:600; color:#0F172A;">
+                        "{_esc(c.get('claim'))}"
+                    </div>
                 </div>
-                <div style="font-size:0.95rem; font-weight:600; color:#0F172A;">
-                    "{c.get('claim')}"
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+                """,
+                unsafe_allow_html=True,
+            )
 
-# ==============================================================================
-# TAB 5: ABOUT / HOW IT WORKS
-# ==============================================================================
-elif selected_tab == "🧠 About / How It Works":
-    st.markdown("### 🧠 How the System Works (Viva Explanation Guide)")
-    st.write(
-        "This project is a **College Minor Project** designed to demonstrate how NLP and Large Language Models "
-        "can detect conflicting information across news sources."
+    st.markdown("---")
+    st.markdown("### 🧠 How It Works (Viva Quick Guide)")
+    c1, c2, c3, c4 = st.columns(4)
+    steps_info = [
+        ("1. Extract Facts", "#1E40AF", "Groq LLM splits articles into single, verifiable atomic claims with numbers and dates."),
+        ("2. Group by Topic", "#5B21B6", "Sentence embeddings (`all-MiniLM-L6-v2`) cluster claims discussing the same topic."),
+        ("3. Detect Stances", "#BE123C", "Numeric/date rules + LLM reasoning label pairs as Agree, Conflict, or Update."),
+        ("4. Side-by-Side", "#065F46", "Conflicts are shown side-by-side with exact outlet attribution — never averaged."),
+    ]
+    for col, (title, color, desc) in zip((c1, c2, c3, c4), steps_info):
+        with col:
+            st.markdown(
+                f"""
+                <div class="step-card">
+                    <h4 style="margin:0 0 6px 0; color:{color};">{title}</h4>
+                    <p style="font-size:0.84rem; color:#475569; margin:0;">{desc}</p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+    st.markdown("#### 🏷️ Relationship Labels")
+    st.markdown(
+        "- 🔴 **Conflict (`DISAGREE`)**: Outlets report incompatible figures or outcomes for the same event.\n"
+        "- 🟢 **Agreement (`AGREE`)**: Outlets confirm the same fact or figure.\n"
+        "- 🟡 **Timeline / Context Update (`DISCUSS`)**: Numbers differ due to evolving dates or scopes.\n"
+        "- ⚪ **Unrelated / Insufficient (`UNRELATED` / `INSUFFICIENT_EVIDENCE`)**: Different topics or vague wording."
     )
 
-    st.markdown("#### 📖 Key Definitions for Your Viva")
-    v1, v2 = st.columns(2)
-    with v1:
-        st.markdown("""
-        - **Atomic Claim:** A single, minimal factual statement that can be verified independently (e.g. *"5 people died"*). Breaking news paragraphs into atomic claims prevents confusion.
-        - **Semantic Clustering:** Using sentence embeddings (`all-MiniLM-L6-v2`) to group claims talking about the same topic, even if they use different words.
-        """)
-    with v2:
-        st.markdown("""
-        - **Neuro-Symbolic Stance:** Combining mathematical rules (for exact numbers and dates) with an LLM (for linguistic intent) to classify relationships accurately.
-        - **Contradiction-Awareness:** Presenting conflicting numbers side-by-side with source names, rather than hiding disagreements in an artificial summary.
-        """)
-
-    st.markdown("---")
-    st.markdown("#### 🏷️ Meaning of Relationship Labels")
-    st.markdown("""
-    - 🟢 **Reports Agree (`AGREE`)**: Both news outlets report the exact same fact or number.
-    - 🔴 **Reports Conflict (`DISAGREE`)**: Outlets report incompatible figures or outcomes for the same event window.
-    - 🟡 **May Describe Different Time / Context (`DISCUSS`)**: Numbers differ because one report was published earlier and one later as the situation evolved.
-    - ⚪ **Claims About Different Things (`UNRELATED`)**: Statements belong to completely different topics (e.g. food packets vs death tolls).
-    - ⚠️ **Not Enough Information to Decide (`INSUFFICIENT_EVIDENCE`)**: Vague wording without dates or numbers to make a confident comparison.
-    """)
-
-    st.markdown("---")
-    with st.expander("📰 View Raw Source Articles Used in Analysis", expanded=False):
-        raw_candidates = sorted(glob.glob(os.path.join(RAW_SOURCES_DIR, "*.txt")) + glob.glob(os.path.join(CUSTOM_SOURCES_DIR, "*.txt")))
-        raw_files = [f for f in raw_candidates if not os.path.basename(f).startswith("README") and os.path.isfile(f)]
-        if raw_files:
-            file_tabs = st.tabs([os.path.basename(f) for f in raw_files])
-            for i, fp in enumerate(raw_files):
-                with file_tabs[i]:
-                    try:
-                        if os.path.isfile(fp):
-                            with open(fp, "r", encoding="utf-8") as rf:
-                                st.code(rf.read(), language="text")
-                        else:
-                            st.info(f"File {os.path.basename(fp)} is not currently available.")
-                    except Exception as e:
-                        st.warning(f"Could not read {os.path.basename(fp)}: {e}")
+    with st.expander("📰 View Raw Source Articles on Disk", expanded=False):
+        raw_candidates = sorted(
+            glob.glob(os.path.join(RAW_SOURCES_DIR, "*.txt"))
+            + glob.glob(os.path.join(CUSTOM_SOURCES_DIR, "*.txt"))
+        )
+        raw_files = [
+            f for f in raw_candidates
+            if os.path.isfile(f) and not os.path.basename(f).startswith("README")
+        ]
+        if not raw_files:
+            st.write("No source `.txt` files found.")
         else:
-            st.write("No source files available.")
+            file_tabs = st.tabs([os.path.basename(f) for f in raw_files])
+            for tab, fp in zip(file_tabs, raw_files):
+                with tab:
+                    try:
+                        with open(fp, "r", encoding="utf-8") as rf:
+                            st.code(rf.read(), language="text")
+                    except OSError as exc:
+                        st.warning(f"Could not read {os.path.basename(fp)}: {exc}")
+
+
+def main() -> None:
+    """Render the complete Contradiction-Aware News Analysis dashboard."""
+    st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="app-header">
+            <h1 class="app-title">⚖️ Contradiction-Aware News Analysis</h1>
+            <p class="app-subtitle">
+                Compare news articles side-by-side — detect conflicting figures, confirmed agreements, and timeline updates with full source attribution.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    has_data, claims_list, clusters_dict, summary_md = _load_analysis_outputs()
+    all_sources = sorted(
+        set((c.get("source_name") or c.get("source_file") or "Unknown") for c in claims_list)
+    )
+
+    _render_sidebar(has_data)
+
+    primary_tab, guide_tab = st.tabs(["🔍 Compare & Results", "📚 Claims Explorer & Viva Guide"])
+
+    with primary_tab:
+        _render_input_panel(has_data)
+        if has_data:
+            _render_results_section(claims_list, clusters_dict, summary_md, all_sources)
+        else:
+            st.info("👆 Select a sample or paste two articles above, then click **Analyze & Compare Articles** to see results.")
+
+    with guide_tab:
+        _render_explorer_and_guide(claims_list, all_sources)
+
+
+if __name__ == "__main__":
+    main()
