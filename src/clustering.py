@@ -187,7 +187,7 @@ def cluster_claims(
 
 def test_clustering_on_sample_pairs() -> bool:
     """
-    Validation unit test for college demonstration.
+    Validation unit test for semantic claim clustering.
     Confirms that:
     1. Semantically identical claims cluster together.
     2. Factually distinct claims do not cluster together.
@@ -229,5 +229,5 @@ def test_clustering_on_sample_pairs() -> bool:
 
 
 if __name__ == "__main__":
-    print("Testing Semantic Clustering on Viva Sample Cases...")
+    print("Testing Semantic Clustering on Sample Cases...")
     test_clustering_on_sample_pairs()

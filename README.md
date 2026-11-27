@@ -68,9 +68,9 @@ The Streamlit interface is organized into a clean two-view layout:
      - **🟢 Agreements (`AGREE`):** Multi-source corroborated facts with source chips.
      - **🟡 Updates & Single-Source (`DISCUSS` & Unverified):** Chronological/context revisions separated cleanly from single-source claims.
      - **📄 Full Report:** Rendered Markdown summary with one-click `.md` download.
-2. **📚 Claims Explorer & Viva Guide**
+2. **📚 Claims Explorer & Guide**
    - Search and filter individual extracted claims by keyword, outlet, or topic.
-   - Quick viva cheat-sheet, 5-class stance label guide, and raw source article viewer.
+   - Architecture overview, 5-class stance label guide, and raw source article viewer.
 
 ---
 
@@ -114,24 +114,19 @@ Run each pipeline stage independently from the project root:
 
 ```bash
 # Step 1: Extract atomic factual claims -> output/claims.json
-python src/01_extract_claims.py
+python src/extraction.py
 
 # Step 2: Cluster claims & classify cross-source stances -> output/clusters_with_stance.json
-python src/02_cluster_and_classify.py
+python src/stance_classifier.py
 
 # Step 3: Synthesize contradiction-aware Markdown report -> output/final_summary.md
-python src/03_generate_summary.py
+python src/summarizer.py
 
 # Step 4: Run benchmark evaluation -> output/evaluation_report.json
 python src/evaluation.py
 
 # Step 5: Run edge-case & runtime verification suite
 python tests/test_edge_cases.py
-```
-
-*(Optional)* Regenerate the academic PDF report ([`Project_Implementation_Report.pdf`](Project_Implementation_Report.pdf)):
-```bash
-python generate_pdf_report.py
 ```
 
 ---
@@ -166,9 +161,6 @@ news_summary/
 ├── .env.example                          # Environment variable template
 ├── .gitignore                            # Ignore rules for venv, secrets, temp uploads
 ├── README.md                             # Project documentation
-├── VIVA_GUIDE.md                         # Viva Q&A and conceptual defense notes
-├── generate_pdf_report.py                # Academic PDF report generator (ReportLab)
-├── Project_Implementation_Report.pdf     # Generated academic project report
 │
 ├── .streamlit/
 │   ├── config.toml                       # Streamlit theme & server config
@@ -198,10 +190,7 @@ news_summary/
 │   ├── clustering.py                     # Sentence-transformer agglomerative clustering
 │   ├── stance_classifier.py              # Neuro-symbolic stance & contradiction engine
 │   ├── summarizer.py                     # Categorization & Markdown report synthesis
-│   ├── evaluation.py                     # Ground-truth benchmark evaluation script
-│   ├── 01_extract_claims.py              # CLI wrapper for Stage 1
-│   ├── 02_cluster_and_classify.py        # CLI wrapper for Stage 2
-│   └── 03_generate_summary.py            # CLI wrapper for Stage 3
+│   └── evaluation.py                     # Ground-truth benchmark evaluation script
 │
 └── tests/
     └── test_edge_cases.py                # 10-case edge & runtime verification suite
@@ -209,6 +198,5 @@ news_summary/
 
 ---
 
-## 🎓 Academic Notes
-Developed by **Aditya** as a **College Minor Project (2026)**.
-For viva preparation, architecture walkthroughs, and Q&A defenses, see [`VIVA_GUIDE.md`](VIVA_GUIDE.md).
+## 👤 Author
+Developed by **Aditya** (2026).

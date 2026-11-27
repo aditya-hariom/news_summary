@@ -244,6 +244,12 @@ def _load_sample_into_state() -> None:
     st.session_state["expand_input_panel"] = True
 
 
+def _select_builtin_corpus() -> None:
+    """Switch input mode to the built-in 4-source corpus and expand inputs."""
+    st.session_state["input_mode_radio"] = "Built-in 2026 Assam Corpus"
+    st.session_state["expand_input_panel"] = True
+
+
 def _load_analysis_outputs() -> Tuple[bool, List[Dict[str, Any]], Dict[str, Any], str]:
     """Load generated claims, clusters, and markdown summary if present."""
     required = (CLAIMS_FILE, CLUSTERS_FILE, SUMMARY_FILE)
@@ -338,14 +344,17 @@ def _render_sidebar(has_data: bool) -> None:
 
         st.markdown("---")
         st.markdown("### ⚡ Quick Demo Presets")
-        if st.button("📋 Load 2-Outlet Flood Conflict", use_container_width=True):
-            _load_sample_into_state()
-            st.rerun()
+        st.button(
+            "📋 Load 2-Outlet Flood Conflict",
+            on_click=_load_sample_into_state,
+            use_container_width=True,
+        )
 
-        if st.button("📚 Select Built-in 4-Source Corpus", use_container_width=True):
-            st.session_state["input_mode_radio"] = "Built-in 2026 Assam Corpus"
-            st.session_state["expand_input_panel"] = True
-            st.rerun()
+        st.button(
+            "📚 Select Built-in 4-Source Corpus",
+            on_click=_select_builtin_corpus,
+            use_container_width=True,
+        )
 
         if has_data:
             st.markdown("---")
@@ -389,9 +398,12 @@ def _render_input_panel(has_data: bool) -> None:
             with col_top_l:
                 st.caption("Paste two reports covering the same news event to spot agreements and conflicting figures.")
             with col_top_r:
-                if st.button("Load Sample Story", type="secondary", use_container_width=True):
-                    _load_sample_into_state()
-                    st.rerun()
+                st.button(
+                    "Load Sample Story",
+                    type="secondary",
+                    on_click=_load_sample_into_state,
+                    use_container_width=True,
+                )
 
             col_a, col_b = st.columns(2)
             with col_a:
@@ -659,7 +671,7 @@ def _render_results_section(
 
 
 def _render_explorer_and_guide(claims_list: List[Dict[str, Any]], all_sources: List[str]) -> None:
-    """Render Claims Explorer, Viva Cheat-Sheet, and Raw Source Viewer."""
+    """Render Claims Explorer, Architecture Overview, and Raw Source Viewer."""
     st.markdown("### 🔍 Claims Explorer")
     if not claims_list:
         st.info("No extracted claims yet. Run an analysis in the **Compare & Results** tab first.")
@@ -709,11 +721,11 @@ def _render_explorer_and_guide(claims_list: List[Dict[str, Any]], all_sources: L
             )
 
     st.markdown("---")
-    st.markdown("### 🧠 How It Works (Viva Quick Guide)")
+    st.markdown("### 🧠 How It Works")
     c1, c2, c3, c4 = st.columns(4)
     steps_info = [
         ("1. Extract Facts", "#1E40AF", "Groq LLM splits articles into single, verifiable atomic claims with numbers and dates."),
-        ("2. Group by Topic", "#5B21B6", "Sentence embeddings (`all-MiniLM-L6-v2`) cluster claims discussing the same topic."),
+        ("2. Group by Topic", "#5B21B6", "Sentence embeddings (<code>all-MiniLM-L6-v2</code>) cluster claims discussing the same topic."),
         ("3. Detect Stances", "#BE123C", "Numeric/date rules + LLM reasoning label pairs as Agree, Conflict, or Update."),
         ("4. Side-by-Side", "#065F46", "Conflicts are shown side-by-side with exact outlet attribution — never averaged."),
     ]
@@ -781,7 +793,7 @@ def main() -> None:
 
     _render_sidebar(has_data)
 
-    primary_tab, guide_tab = st.tabs(["🔍 Compare & Results", "📚 Claims Explorer & Viva Guide"])
+    primary_tab, guide_tab = st.tabs(["🔍 Compare & Results", "📚 Claims Explorer & Guide"])
 
     with primary_tab:
         _render_input_panel(has_data)
