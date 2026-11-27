@@ -25,7 +25,7 @@ News Articles (Pasted Text / .txt Upload / Built-in Sample)
                          │
                          ▼
    1. Pick Key Facts (src/extraction.py)
-      Groq LLM (openai/gpt-oss-20b) splits articles into single facts,
+      Groq LLM (qwen/qwen3.8-27b) splits articles into single facts,
       converts Indian units ('1.78 lakh' -> 178000), and keeps dates & sources.
                          │
                          ▼
